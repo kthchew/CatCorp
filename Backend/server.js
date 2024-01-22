@@ -23,9 +23,8 @@ app.get('/getCourses', async (req, res) => {
         'Accept': "application/json+canvas-string-ids"
       }
     });
-    console.log(response)
-    // const ids = response.data.map(course => course);
-    return res.json(response.data);
+    var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active");
+    return res.json(activeCourses);
   } catch (error) {
     console.error('Error fetching courses:', error);
     res.status(200).json({ message: "No courses available" });

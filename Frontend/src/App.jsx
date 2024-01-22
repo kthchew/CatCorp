@@ -14,7 +14,7 @@ function App() {
         "canvas_api_token": API_KEY
       }   
     })
-    // console.log(res)
+    console.log(res)
     setCourseIds(res.data);
   }
 
@@ -25,10 +25,15 @@ function App() {
 
   return (
     <>
-      <div>Your course IDs:</div>
-      {courseIds ? 
+      <h1>Your course info:</h1>
+      {courseIds && courseIds.message != "No courses available" ? 
         courseIds.map((c) => {
-          return <div key={c.id}>{c.name} - {c.id}</div>
+          return <div key={c.id}>
+            <h3>{c.name} - {c.id}</h3>
+
+          </div>
+          
+          
         })
       : 
         <div>Loading...</div>
