@@ -11,8 +11,28 @@ function App() {
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
+/*  HOW ARE COURSES STORED?
+  [
+    course id
+    course name
+    course assignments: [ assignments BEFORE last login aren't used. Ones that have been submitted have additional info (indented terms)
+      [ 
+        assignment id
+        assignment name
+        due date
+          submission date
+          submission points
+          points possible
+      ],
+      ...
+    ]
+  ]
+*/
+
 
   const getCourseData = async () => {
+    await getUserData();
+
     const res = await axios.get(`${API_URL}/getCourses`, {
       params: {
         "canvas_api_token": API_KEY
@@ -30,7 +50,15 @@ function App() {
         }   
       })
       assignments.data.ids.map((a) => {
-        newAssignments.push(a.id)
+        var assignmentArray = [a.id, a.name, a.due_at];
+        if (a.has_submitted_submissions) {
+          
+
+          assignmentArray.concat([])
+        }
+
+
+        newAssignments.push(assignmentArray)
       })
       newCourses.push([c.id, c.name, newAssignments])
 
@@ -53,7 +81,6 @@ function App() {
 
   useEffect(() => {
     getCourseData();
-    getUserData();
   }, [])
 
 
@@ -66,7 +93,7 @@ function App() {
             <h3>{c[1]} - {c[0]}</h3>
             {c[2].map((a) => {
               return <div key={a}>
-                <h4>{a}</h4>
+                <h4>{a[1]} - {a[0]}</h4>
               </div>
             })}
           </div>
@@ -74,7 +101,7 @@ function App() {
           
         })
       : 
-        <div>Loading...</div>
+        <h2>Loading...</h2>
       }
     </>
   )
