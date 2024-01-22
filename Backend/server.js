@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-var JSONBig = require('json-bigint');
 
 const app = express();
 app.use(cors());
@@ -16,14 +15,13 @@ app.get('/getCourses', async (req, res) => {
 
   try {
     const response = await axios.get(`https://canvas.instructure.com/api/v1/courses/`, {
-      transformResponse: [function transform(data) {
-        data = JSONBig.parse(data); //have to use this to avoid course ID rounding errors
-        return data;
-      }],
       params: {
         'access_token': canvas_api_token,
         "per_page": "100"
       },
+      headers: {
+        'Accept': "application/json+canvas-string-ids"
+      }
     });
     console.log(response)
     // const ids = response.data.map(course => course);
@@ -48,6 +46,9 @@ app.get('/getAssignments', async (req, res) => {
         'access_token': canvas_api_token,
         "per_page": "100"
       },
+      headers: {
+        'Accept': "application/json+canvas-string-ids"
+      }
     });
     const ids = response.data.map(course => course);
     return res.json({ ids });
