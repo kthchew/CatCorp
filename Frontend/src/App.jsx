@@ -6,7 +6,8 @@ const API_URL = "http://localhost:3500"
 const API_KEY = "1016~yq9pdLLpNzxvv8av456xSyWIzCA5MWHdbjODqaPCG6F3g2c351rknG6Zkf99RDwr"
 
 function App() {
-  const [courses, setCourses] = useState(null)
+  const [courses, setCourses] = useState(null);
+  const [userId, setUserId] = useState(null);
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -17,7 +18,7 @@ function App() {
         "canvas_api_token": API_KEY
       }   
     })
-    // console.log(res)
+
     var newCourses = [];
     await Promise.all(res.data.map(async (c) => {
 
@@ -28,7 +29,6 @@ function App() {
           "course_id": c.id,
         }   
       })
-      console.log(assignments)
       assignments.data.ids.map((a) => {
         newAssignments.push(a.id)
       })
@@ -41,14 +41,25 @@ function App() {
     setCourses(newCourses);
   }
 
+  const getUserData = async () => {
+    const res = await axios.get(`${API_URL}/getUser`, {
+      params: {
+        "canvas_api_token": API_KEY
+      }   
+    })
+    // console.log(res)
+    setUserId(res.data.id)
+  }
+
   useEffect(() => {
     getCourseData();
+    getUserData();
   }, [])
 
 
   return (
     <>
-      <h1>Your course info:</h1>
+      <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
       {courses && courses.message != "No courses available" ? 
         courses.map((c) => {
           return <div key={c[0]}>
