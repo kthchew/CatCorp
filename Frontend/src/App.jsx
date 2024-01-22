@@ -1,33 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
+const API_URL = "http://localhost:3500"
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [courseIds, setCourseIds] = useState([])
+
+  const getCourses = async () => {
+    const res = await axios.get(`${API_URL}/getCourses`, {
+      params: {
+        "canvas_api_token": "1016~yq9pdLLpNzxvv8av456xSyWIzCA5MWHdbjODqaPCG6F3g2c351rknG6Zkf99RDwr"
+      }
+    })
+    setCourseIds(res.data.ids);
+  }
+
+  useEffect(() => {
+    getCourses();
+  }, [])
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>Your course IDs:</div>
+      {courseIds.length != 0 ? 
+        courseIds.map((id) => {
+          return <div key={id}>{id}</div>
+        })
+      : 
+        <div>Loading...</div>
+      }
     </>
   )
 }
