@@ -23,7 +23,7 @@ app.get('/getCourses', async (req, res) => {
         'Accept': "application/json+canvas-string-ids"
       }
     });
-    var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active");
+    var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active"); //DO FURTHER FILTERING FOR end_at
     return res.json(activeCourses);
   } catch (error) {
     console.error('Error fetching courses:', error);
