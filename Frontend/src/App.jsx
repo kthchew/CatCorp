@@ -14,6 +14,7 @@ function App() {
         "canvas_api_token": API_KEY
       }   
     })
+    // console.log(res)
     setCourseIds(res.data);
   }
 
