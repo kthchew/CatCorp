@@ -86,7 +86,7 @@ app.get('/getSubmission', async (req, res) => {
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
 
-  if (!canvas_api_token || !course_id || assignment_id || user_id) {
+  if (!canvas_api_token || !course_id || !assignment_id || !user_id) {
     return res.status(400).json({ error: 'canvas_api_token, course_id, assignment_id, and user_id are required' });
   }
 

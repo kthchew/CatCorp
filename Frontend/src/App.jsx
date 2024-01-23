@@ -20,6 +20,7 @@ function App() {
         assignment id
         assignment name
         due date
+          submission id
           submission date
           submission points
           points possible
@@ -31,7 +32,6 @@ function App() {
 
 
   const getCourseData = async () => {
-    await getUserData();
 
     const res = await axios.get(`${API_URL}/getCourses`, {
       params: {
@@ -49,17 +49,28 @@ function App() {
           "course_id": c.id,
         }   
       })
-      assignments.data.ids.map((a) => {
+      
+      await Promise.all(assignments.data.map(async (a) => {
         var assignmentArray = [a.id, a.name, a.due_at];
         if (a.has_submitted_submissions) {
-          
+          var submission = await axios.get(`${API_URL}/getSubmission`, {
+            params: {
+              "canvas_api_token": API_KEY,
+              "course_id": c.id,
+              "assignment_id": a.id,
+              "user_id": userId
+            }   
+          })
+          submission = submission.data;
 
-          assignmentArray.concat([])
+          assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
         }
 
 
         newAssignments.push(assignmentArray)
-      })
+      }))
+
+
       newCourses.push([c.id, c.name, newAssignments])
 
     }))
@@ -75,13 +86,16 @@ function App() {
         "canvas_api_token": API_KEY
       }   
     })
-    // console.log(res)
-    setUserId(res.data.id)
+    await setUserId(res.data.id)
   }
 
   useEffect(() => {
-    getCourseData();
+    getUserData();
   }, [])
+
+  useEffect(() => {
+    getCourseData();
+  }, [userId])
 
 
   return (
