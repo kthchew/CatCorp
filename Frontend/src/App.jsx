@@ -107,7 +107,7 @@ function App() {
             <h3>{c[1]} - {c[0]}</h3>
             {c[2].map((a) => {
               return <div key={a}>
-                <h4>{a[1]} - {a[0]}</h4>
+                <h4 style={a.length > 3 ? {color:'lightgreen'} : {}}>{a[1]} - {a[0]}</h4>
               </div>
             })}
           </div>
