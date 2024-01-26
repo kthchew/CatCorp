@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const {connectToServer, getDb} = require('./db/conn.js')
+const { ObjectID } = require('mongodb')
 
 const app = express();
 app.use(cors());
-
 
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
@@ -109,8 +110,23 @@ app.get('/getSubmission', async (req, res) => {
 })
 
 
+app.get('/logout', async (req, res) => {
+  const user_id = req.query.user_id;
+  
+  let db = getDb();
+  db.updateOne({"canvasUser" : user_id}, { $set: { "lastLogout": Date.now() } })
+  console.log("< logged out user " + user_id)
+  res.status(200).json({ message: "Logged out!" });
+})
 
-
+app.get('/login', async (req, res) => {
+  const user_id = req.query.user_id;
+  
+  let db = getDb();
+  console.log("> logged in user " + user_id)
+  let user = await db.findOne({"canvasUser" : user_id})
+  res.status(200).json({ user });
+})
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });
@@ -118,5 +134,6 @@ app.get('/', async (req, res) => {
 
 
 app.listen(3500, () => {
+  connectToServer();
   console.log('Server running on port 3500');
 });
