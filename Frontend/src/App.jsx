@@ -8,6 +8,7 @@ const API_KEY = "1016~yq9pdLLpNzxvv8av456xSyWIzCA5MWHdbjODqaPCG6F3g2c351rknG6Zkf
 function App() {
   const [courses, setCourses] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [userData, setUserData] = useState(null);
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -30,8 +31,30 @@ function App() {
   ]
 */
 
+  const getUserData = async () => {
+    const res = await axios.get(`${API_URL}/getUser`, {
+      params: {
+        "canvas_api_token": API_KEY
+      }   
+    })
+    await setUserId(res.data.id)
+    return res.data.id;
+  }
+
+  const loginUser = async () => {
+    if (!userId) {return}
+
+    const res = await axios.get(`${API_URL}/login`, {
+      params: {
+        "user_id": userId
+      }   
+    })
+    console.log(res.data.user)
+    await setUserData(res.data.user);
+  }
 
   const getCourseData = async () => {
+    if (!userId) {return}
 
     const res = await axios.get(`${API_URL}/getCourses`, {
       params: {
@@ -80,16 +103,6 @@ function App() {
     setCourses(newCourses);
   }
 
-  const getUserData = async () => {
-    const res = await axios.get(`${API_URL}/getUser`, {
-      params: {
-        "canvas_api_token": API_KEY
-      }   
-    })
-    await setUserId(res.data.id)
-    return res.data.id;
-  }
-
   const handleClose = async (event, tempUser) => {
     event.preventDefault();
     var u = await tempUser;
@@ -110,8 +123,12 @@ function App() {
   }, [])
 
   useEffect(() => {
-    getCourseData();
+    loginUser();
   }, [userId])
+
+  useEffect(() => {
+    getCourseData();
+  }, [userData])
 
 
   return (
