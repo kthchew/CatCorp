@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const {connectToServer, getDb} = require('./db/conn.js')
+const { ObjectID } = require('mongodb')
 
 const app = express();
 app.use(cors());
-
 
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
@@ -118,5 +119,6 @@ app.get('/', async (req, res) => {
 
 
 app.listen(3500, () => {
+  connectToServer();
   console.log('Server running on port 3500');
 });
