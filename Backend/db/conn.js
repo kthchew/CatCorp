@@ -9,11 +9,11 @@ module.exports = {
   connectToServer: async function (callback) {
     await client.connect();
     _db = client.db("catdata").collection("users");
-    console.log("test")
-    let results = await _db.find({})
-    .limit(50)
-    .toArray();
-    console.log(results);
+    console.log("Connected to Database!")
+    // let results = await _db.find({})
+    // .limit(50)
+    // .toArray();
+    // console.log(results);
   },
  
   getDb: function () {

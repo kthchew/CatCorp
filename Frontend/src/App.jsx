@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './App.css'
-import 'dotenv/config'
 
 const API_URL = "http://localhost:3500"
 const API_KEY = "1016~yq9pdLLpNzxvv8av456xSyWIzCA5MWHdbjODqaPCG6F3g2c351rknG6Zkf99RDwr"
@@ -88,14 +87,30 @@ function App() {
       }   
     })
     await setUserId(res.data.id)
+    return res.data.id;
+  }
+
+  const handleClose = async (event, tempUser) => {
+    event.preventDefault();
+    var u = await tempUser;
+    
+    const res = await axios.get(`${API_URL}/logout`, {
+      params: {
+        "user_id": u
+      }
+    })
+    
+    return event.returnValue = 'Are you sure you want to close?';
   }
 
   useEffect(() => {
-    getUserData();
+    let tempUser = getUserData();
+    window.addEventListener('beforeunload', (ev) => {handleClose(ev, tempUser)});
+    return () => {window.removeEventListener('beforeunload', handleClose)} //unload
   }, [])
 
   useEffect(() => {
-    getCourseData();
+    // getCourseData();
   }, [userId])
 
 
