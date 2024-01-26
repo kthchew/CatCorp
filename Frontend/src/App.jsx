@@ -99,7 +99,7 @@ function App() {
         "user_id": u
       }
     })
-    
+
     return event.returnValue = 'Are you sure you want to close?';
   }
 
@@ -110,7 +110,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    // getCourseData();
+    getCourseData();
   }, [userId])
 
 

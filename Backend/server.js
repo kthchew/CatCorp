@@ -114,11 +114,19 @@ app.get('/logout', async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
-  db.updateOne({"canvasUser" : user_id}, { $set: { "lastLogout": Date.now()  } })
-  console.log("logged out user " + user_id)
+  db.updateOne({"canvasUser" : user_id}, { $set: { "lastLogout": Date.now() } })
+  console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })
 
+app.get('/login', async (req, res) => {
+  const user_id = req.query.user_id;
+  
+  let db = getDb();
+  console.log("> logged in user " + user_id)
+  let user = await db.findOne({"canvasUser" : user_id})
+  res.status(200).json({ user });
+})
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });
