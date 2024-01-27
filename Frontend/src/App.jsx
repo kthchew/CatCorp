@@ -21,10 +21,10 @@ function App() {
         assignment id
         assignment name
         due date
+        points possible
           submission id
           submission date
           submission points
-          points possible
       ],
       ...
     ]
@@ -140,8 +140,9 @@ function App() {
           return <div key={c[0]}>
             <h3>{c[1]} - {c[0]}</h3>
             {c[2].map((a) => {
+              console.log(Date.parse(a[5]));
               return <div key={a}>
-                <h4 style={a.length > 3 ? {color:'lightgreen'} : {}}>{a[1]} - {a[0]}</h4>
+                <h4 style={a.length > 3 ? (Date.parse(a[5]) > userData.lastLogout ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
               </div>
             })}
           </div>
