@@ -1,6 +1,9 @@
 import { useState } from "react";
+import axios from "axios"
 import logo from "./img/temp.png"
 import "./css/Login.css"
+
+const API_URL = "http://localhost:3500"
 
 export default function Login() {
   const [username, setUser] = useState("");
@@ -8,9 +11,17 @@ export default function Login() {
 
   const handleSubmit = (e) => {
       e.preventDefault();
-      //login API/function
+      attemptLogin(username);
       alert("Username: " + username + " " + "Password: " + password);
   };
+
+  const attemptLogin = async (u) => {
+    const temp = await axios.get(`${API_URL}/loginUser`, {
+      params: {
+        "username": u,
+      }   
+    })
+  }
 
   return (
     <div className="loginContainer">

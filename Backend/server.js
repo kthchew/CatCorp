@@ -136,6 +136,18 @@ app.get('/login', limiter, async (req, res) => {
   res.status(200).json({ user });
 })
 
+app.get('/loginUser', async (req, res) => {
+  const u = req.query.username;
+  
+  let db = getDb();
+  let user = await db.find({"username" : u})
+  user = await user.toArray();
+  console.log("USER", user);
+
+  // res.status(200).json({ user });
+})
+
+
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });
 });
