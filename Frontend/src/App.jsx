@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './App.css'
+import Login from "./Login"
 
 const API_URL = "http://localhost:3500"
-const API_KEY = "1016~yq9pdLLpNzxvv8av456xSyWIzCA5MWHdbjODqaPCG6F3g2c351rknG6Zkf99RDwr"
+const API_KEY = "1016~QnB4inkhkICfbC2knyRorSzgHQE5vyuJzCTKeAA68Y6kKxxO90O3GTdq2ozNmP6H"
 
 function App() {
   const [courses, setCourses] = useState(null);
@@ -134,6 +135,7 @@ function App() {
 
   return (
     <>
+      <Login/>
       <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
       {courses && courses.message != "No courses available" ? 
         courses.map((c) => {

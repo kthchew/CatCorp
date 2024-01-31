@@ -1,19 +1,13 @@
-
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'Courier New', Courier, monospace;
-}
-
 :root {
     --primaryColor: blue;
     --accentColor: cyan;
     --darkColor: rgb(9, 9, 83);
 }
 
-body {
-    height: 100vh;
-    overflow: hidden;
+.loginBackground {
+    height: 100%;
+    width: 100%;
+    /* overflow: hidden; */
     background: var(--primaryColor);
     background: linear-gradient(
         0deg, 
@@ -22,10 +16,13 @@ body {
     color: var(--darkColor);
 }
 
-img {
-    max-width: 90;
-    margin-bottom: 1rem;
-}
+.stretchedToMargin {
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-right:0px;
+    margin-left:0px;
+    background-color: green;
+  }
 
 h2 {
     color: black;
@@ -34,14 +31,7 @@ h2 {
 }
 
 input {
-    color: var(--primaryColor);
-    background-color: transparent;
-    border: none;
-    border-width: 10px;
-    border-bottom: solid 2px var(--primaryColor);
-    padding-inline: 0.2rem;
-    padding-bottom: 0.2rem;
-    font-weight: bold;
+
 }
 
 button {
@@ -61,16 +51,26 @@ button:active {
     transform: scale(0.9);
 }
 
-.container {
+.loginContainer {
+    font-family: 'Courier New', Courier, monospace;
+
+    
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:10%;
+    top:10%;
+    left:35%;
+    right:35%;
+
+
+
     display: flex;
     align-items: center;
     flex-direction: column;
     border-radius: 14px;
     padding-block: 3rem;
-    margin-top: 1.5rem;
     margin-inline: auto;
-    width: 105%;
-    max-width: 1250px;
     box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5);
     background-color: white;
 }
@@ -80,6 +80,15 @@ button:active {
     flex-direction: column;
     margin-block: 1rem;
     gap: 0.5rem;
+
+    color: var(--primaryColor);
+    background-color: transparent;
+    border: none;
+    border-width: 10px;
+    border-bottom: solid 2px var(--primaryColor);
+    padding-inline: 0.2rem;
+    padding-bottom: 0.2rem;
+    font-weight: bold;
 }
 
 :focus  {
@@ -105,4 +114,20 @@ button:active {
     color: var(--primaryColor);
     margin-top: 2rem;
     text-align: center;
+}
+
+
+
+.loginLogo {
+    margin: -60px -40px;
+    width: 120%;
+}
+
+.loginHeader {
+    font-weight: bold;
+    margin: 0px 0px;
+}
+
+.loginLabel {
+    margin: 0px 0px;
 }

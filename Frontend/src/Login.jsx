@@ -2,28 +2,29 @@ import { useState } from "react";
 import logo from "./img/temp.png"
 import "./css/Login.css"
 
-function Login() {
+export default function Login() {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
+
   const handleSubmit = (e) => {
       e.preventDefault();
       //login API/function
       alert("Username: " + username + " " + "Password: " + password);
   };
+
   return (
-  <>
-    <div className="container">
-      <img src={logo} alt="Cat Corporate" width={700} height={460}/>
-      <h2>Welcome to Cat Corporate!!!</h2>
+    <div className="loginContainer">
+      <img src={logo} alt="Cat Corporate" className="loginLogo"/>
+      <h2 className="loginHeader">Welcome to Cat Corporate!!!</h2>
       <form onSubmit={(e)=> handleSubmit(e)}>
           <div className="inputContainer">
-           <p>Username</p>
+           <p className="loginLabel">Username</p>
              <input value={username}
              onChange={(e) => setUser(e.target.value)}
              type="text" />
           </div>
           <div className="inputContainer">
-            <p>Password</p>
+            <p className="loginLabel">Password</p>
             <input value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"/>
@@ -38,8 +39,5 @@ function Login() {
       </form>
       <small className="copyright">&copy; 2024 Cat Corporate</small>
     </div>
-  </>
   );
 }
-
-export default Login;
