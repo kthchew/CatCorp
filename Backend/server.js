@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const {connectToServer, getDb} = require('./db/conn.js')
-const { ObjectID } = require('mongodb')
 
 const app = express();
 app.use(cors());

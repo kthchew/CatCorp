@@ -6,7 +6,7 @@ const client = new MongoClient(Db);
 var _db;
  
 module.exports = {
-  connectToServer: async function (callback) {
+  connectToServer: async function () {
     await client.connect();
     _db = client.db("catdata").collection("users");
     console.log("Connected to Database!")
