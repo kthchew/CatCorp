@@ -11,14 +11,16 @@ Currently, two official plugins are available:
 
 To run frontend:
 
-`cd frontend`
-
-`npm run dev`
+```
+cd frontend
+npm run dev
+```
 
 To run backend:
 > create a file named ".env" in the "Backend" folder, paste in the following code (i will provide the db string):
 >  `VITE_CONN_STRING = <DATABASE CONNECTION STRING>`
 
-`cd backend`
-
-`node server.js`
+```
+cd backend
+npm run dev
+```

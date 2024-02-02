@@ -41,73 +41,12 @@ function App() {
     return res.data.id;
   }
 
-  const loginUser = async () => {
-    if (!userId) {return}
-
-    const res = await axios.get(`${API_URL}/login`, {
-      params: {
-        "user_id": userId
-      }   
-    })
-    console.log(res.data.user)
-    await setUserData(res.data.user);
-  }
-
-  const getCourseData = async () => {
-    if (!userId) {return}
-
-    const res = await axios.get(`${API_URL}/getCourses`, {
-      params: {
-        "canvas_api_token": API_KEY
-      }   
-    })
-
-    var newCourses = [];
-    await Promise.all(res.data.map(async (c) => {
-
-      var newAssignments = [];
-      const assignments = await axios.get(`${API_URL}/getAssignments`, {
-        params: {
-          "canvas_api_token": API_KEY,
-          "course_id": c.id,
-        }   
-      })
-      
-      await Promise.all(assignments.data.map(async (a) => {
-        var assignmentArray = [a.id, a.name, a.due_at];
-        if (a.has_submitted_submissions) {
-          var submission = await axios.get(`${API_URL}/getSubmission`, {
-            params: {
-              "canvas_api_token": API_KEY,
-              "course_id": c.id,
-              "assignment_id": a.id,
-              "user_id": userId
-            }   
-          })
-          submission = submission.data;
-
-          assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
-        }
-
-
-        newAssignments.push(assignmentArray)
-      }))
-
-
-      newCourses.push([c.id, c.name, newAssignments])
-
-    }))
-
-
-    console.log(newCourses)
-    setCourses(newCourses);
-  }
-
   const handleClose = async (event, tempUser) => {
     event.preventDefault();
     var u = await tempUser;
     
-    const res = await axios.get(`${API_URL}/logout`, {
+    // TODO: check result?
+    await axios.get(`${API_URL}/logout`, {
       params: {
         "user_id": u
       }
@@ -123,12 +62,74 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const loginUser = async () => {
+      if (!userId) {return}
+  
+      const res = await axios.get(`${API_URL}/login`, {
+        params: {
+          "user_id": userId
+        }   
+      })
+      console.log(res.data.user)
+      await setUserData(res.data.user);
+    }
+
     loginUser();
   }, [userId])
 
   useEffect(() => {
+    const getCourseData = async () => {
+      if (!userId) {return}
+  
+      const res = await axios.get(`${API_URL}/getCourses`, {
+        params: {
+          "canvas_api_token": API_KEY
+        }   
+      })
+  
+      var newCourses = [];
+      await Promise.all(res.data.map(async (c) => {
+  
+        var newAssignments = [];
+        const assignments = await axios.get(`${API_URL}/getAssignments`, {
+          params: {
+            "canvas_api_token": API_KEY,
+            "course_id": c.id,
+          }   
+        })
+        
+        await Promise.all(assignments.data.map(async (a) => {
+          var assignmentArray = [a.id, a.name, a.due_at];
+          if (a.has_submitted_submissions) {
+            var submission = await axios.get(`${API_URL}/getSubmission`, {
+              params: {
+                "canvas_api_token": API_KEY,
+                "course_id": c.id,
+                "assignment_id": a.id,
+                "user_id": userId
+              }   
+            })
+            submission = submission.data;
+  
+            assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
+          }
+  
+  
+          newAssignments.push(assignmentArray)
+        }))
+  
+  
+        newCourses.push([c.id, c.name, newAssignments])
+  
+      }))
+  
+  
+      console.log(newCourses)
+      setCourses(newCourses);
+    }
+
     getCourseData();
-  }, [userData])
+  }, [userData, userId])
 
 
   return (
