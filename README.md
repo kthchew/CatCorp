@@ -12,7 +12,8 @@ Currently, two official plugins are available:
 To run frontend:
 
 ```
-npm run frontend-dev
+cd frontend
+npm run dev
 ```
 
 To run backend:
@@ -20,5 +21,6 @@ To run backend:
 >  `VITE_CONN_STRING = <DATABASE CONNECTION STRING>`
 
 ```
-npm run backend
+cd backend
+npm run dev
 ```

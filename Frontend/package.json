@@ -1,21 +1,16 @@
 {
-  "name": "catcorp",
+  "name": "catcorp-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "frontend-dev": "cd ./Frontend && vite",
-    "frontend-build": "cd ./Frontend && vite build",
-    "frontend-preview": "cd ./Frontend && vite preview",
-    "backend": "cd ./Backend && node server.js",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.6.5",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.18.2",
-    "mongodb": "^6.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

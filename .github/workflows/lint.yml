@@ -21,7 +21,7 @@ jobs:
           node-version: 20
 
       - name: Install Node.js dependencies
-        run: npm install eslint
+        run: npm install eslint eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-react-refresh
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
