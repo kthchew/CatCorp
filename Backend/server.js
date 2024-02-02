@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const {connectToServer, getDb} = require('./db/conn.js')
+const bcrypt = require('bcrypt')
 
 const RateLimit = require('express-rate-limit');
 const limiter = RateLimit({
@@ -138,15 +139,41 @@ app.get('/login', limiter, async (req, res) => {
 
 app.get('/loginUser', async (req, res) => {
   const u = req.query.username;
+  const p = req.query.password;
   
+  if (!u || !p) {
+    return res.status(400).json({message: "Username and password required!"});
+  }
+
   let db = getDb();
   let user = await db.find({"username" : u})
   user = await user.toArray();
-  console.log("USER", user);
 
-  // res.status(200).json({ user });
+  var json;
+  var code;
+
+  if (user.length > 0) {
+    code = 401;
+    json = {message: "Incorrect password!"}
+  } else {
+    code = 404;
+    json = {message: "No users found!"}
+  }
+
+  const evals = await user.map(async (u) => {
+    var correctPass = await bcrypt.compare(p, u.password);
+    console.log("TEST", correctPass)
+
+    if (correctPass) {
+      code = 200;
+      json = {u};
+    }
+  })
+
+  await Promise.all(evals);
+
+  return res.status(code).json(json);
 })
-
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });
