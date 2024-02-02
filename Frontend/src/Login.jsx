@@ -20,16 +20,6 @@ export default function Login() {
 
 
   const attemptLogin = async () => {
-    var hashed = "";
-    if (password) {
-      var salt = bcrypt.genSaltSync(10);
-      hashed = bcrypt.hashSync(password, salt)
-      console.log(hashed);
-      var test = await bcrypt.compare(password, "$2a$10$WBUiCqozDwfT4yP.mwpyquziDEVByTYGgOzuzTzn2XTLvIVZYwqXK");
-      console.log("LOGIN RESULT: ", test);
-    }
-  
-
     if (logState == "login") {
       const temp = await axios.get(`${API_URL}/loginUser`, {
         params: {
@@ -37,6 +27,7 @@ export default function Login() {
           "password": password
         }   
       })
+      console.log(temp)
 
     } else if (logState == "create") {
       
