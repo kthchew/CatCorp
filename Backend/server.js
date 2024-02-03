@@ -3,6 +3,12 @@ const cors = require('cors');
 const axios = require('axios');
 const {connectToServer, getDb} = require('./db/conn.js')
 
+const RateLimit = require('express-rate-limit');
+const limiter = RateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
 const app = express();
 app.use(cors());
 
@@ -58,7 +64,6 @@ app.get('/getCourses', async (req, res) => {
 
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
-  // course ID can only have digits; remove anything that isn't a digit
   const course_id = req.query.course_id;
   const is_num = /^\d+$/
 
@@ -85,7 +90,6 @@ app.get('/getAssignments', async (req, res) => {
 
 app.get('/getSubmission', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
-  // these IDs can only have digits; remove any character that isn't a digit
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
@@ -114,7 +118,7 @@ app.get('/getSubmission', async (req, res) => {
 })
 
 
-app.get('/logout', async (req, res) => {
+app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
@@ -123,7 +127,7 @@ app.get('/logout', async (req, res) => {
   res.status(200).json({ message: "Logged out!" });
 })
 
-app.get('/login', async (req, res) => {
+app.get('/login', limiter, async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
