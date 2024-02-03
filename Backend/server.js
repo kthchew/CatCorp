@@ -175,6 +175,27 @@ app.get('/loginUser', async (req, res) => {
   return res.status(code).json(json);
 })
 
+app.get('/registerAccount', async (req, res) => {
+  const username = req.query.username;
+  const password = req.query.password;
+  
+  if (!username || !password) {
+    return res.status(400).json({message: "Input both a username and password"});
+  }
+
+  let db = getDb();
+  let user = await db.find({"username" : username})
+  user = await user.toArray();
+
+  if (user.length > 0) {
+    return res.status(400).json({message: "Username already taken"});
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: null, lastLogout: null})
+  return res.status(200).json({message: "User registered"});
+});
+
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });
 });

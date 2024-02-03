@@ -4,7 +4,7 @@ import './App.css'
 import Login from "./Login"
 
 const API_URL = "http://localhost:3500"
-const API_KEY = 
+const API_KEY = "nolol"
 
 function App() {
   const [courses, setCourses] = useState(null);
