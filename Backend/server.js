@@ -58,9 +58,11 @@ app.get('/getCourses', async (req, res) => {
 
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
+  // course ID can only have digits; remove anything that isn't a digit
   const course_id = req.query.course_id;
+  const is_num = /^\d+$/
 
-  if (!canvas_api_token || !course_id) {
+  if (!canvas_api_token || !course_id || !is_num.test(course_id)) {
     return res.status(400).json({ error: 'canvas_api_token and course_id are required' });
   }
 
@@ -83,11 +85,14 @@ app.get('/getAssignments', async (req, res) => {
 
 app.get('/getSubmission', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
+  // these IDs can only have digits; remove any character that isn't a digit
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
+  const is_num = /^\d+$/
 
-  if (!canvas_api_token || !course_id || !assignment_id || !user_id) {
+  if (!canvas_api_token || !course_id || !assignment_id || !user_id ||
+    !is_num.test(course_id) || !is_num.test(assignment_id) || !is_num.test(user_id)) {
     return res.status(400).json({ error: 'canvas_api_token, course_id, assignment_id, and user_id are required' });
   }
 
@@ -113,7 +118,7 @@ app.get('/logout', async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
-  db.updateOne({"canvasUser" : user_id}, { $set: { "lastLogout": Date.now() } })
+  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogout": Date.now() } })
   console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })
@@ -123,7 +128,7 @@ app.get('/login', async (req, res) => {
   
   let db = getDb();
   console.log("> logged in user " + user_id)
-  let user = await db.findOne({"canvasUser" : user_id})
+  let user = await db.findOne({ "canvasUser": { $eq: user_id } })
   res.status(200).json({ user });
 })
 
