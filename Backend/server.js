@@ -3,6 +3,12 @@ const cors = require('cors');
 const axios = require('axios');
 const {connectToServer, getDb} = require('./db/conn.js')
 
+const RateLimit = require('express-rate-limit');
+const limiter = RateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
 const app = express();
 app.use(cors());
 
@@ -59,8 +65,9 @@ app.get('/getCourses', async (req, res) => {
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
+  const is_num = /^\d+$/
 
-  if (!canvas_api_token || !course_id) {
+  if (!canvas_api_token || !course_id || !is_num.test(course_id)) {
     return res.status(400).json({ error: 'canvas_api_token and course_id are required' });
   }
 
@@ -86,8 +93,10 @@ app.get('/getSubmission', async (req, res) => {
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
+  const is_num = /^\d+$/
 
-  if (!canvas_api_token || !course_id || !assignment_id || !user_id) {
+  if (!canvas_api_token || !course_id || !assignment_id || !user_id ||
+    !is_num.test(course_id) || !is_num.test(assignment_id) || !is_num.test(user_id)) {
     return res.status(400).json({ error: 'canvas_api_token, course_id, assignment_id, and user_id are required' });
   }
 
@@ -109,21 +118,21 @@ app.get('/getSubmission', async (req, res) => {
 })
 
 
-app.get('/logout', async (req, res) => {
+app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
-  db.updateOne({"canvasUser" : user_id}, { $set: { "lastLogout": Date.now() } })
+  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogout": Date.now() } })
   console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })
 
-app.get('/login', async (req, res) => {
+app.get('/login', limiter, async (req, res) => {
   const user_id = req.query.user_id;
   
   let db = getDb();
   console.log("> logged in user " + user_id)
-  let user = await db.findOne({"canvasUser" : user_id})
+  let user = await db.findOne({ "canvasUser": { $eq: user_id } })
   res.status(200).json({ user });
 })
 
