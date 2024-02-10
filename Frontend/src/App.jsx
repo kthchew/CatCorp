@@ -10,6 +10,7 @@ function App() {
   const [courses, setCourses] = useState(null);
   const [userId, setUserId] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [loginTime, setLoginTime] = useState(null);
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -49,7 +50,8 @@ function App() {
     // TODO: check result?
     await axios.get(`${API_URL}/logout`, {
       params: {
-        "user_id": u
+        "user_id": u,
+        "login_time": loginTime
       }
     })
 
@@ -135,7 +137,7 @@ function App() {
 
   return (
     <>
-      <Login/>
+      <Login loginTime={setLoginTime}/>
       <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
       {courses && courses.message != "No courses available" ? 
         courses.map((c) => {

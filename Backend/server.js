@@ -121,9 +121,10 @@ app.get('/getSubmission', async (req, res) => {
 
 app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
+  const logout_time = req.query.login_time;
   
   let db = getDb();
-  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogout": Date.now() } })
+  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
   console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })

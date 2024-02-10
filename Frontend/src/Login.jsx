@@ -6,7 +6,7 @@ import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
 
-export default function Login() {
+export default function Login({setLoginTime}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [canvasAPIKey, setCanvasAPIKey] = useState("");
@@ -20,6 +20,8 @@ export default function Login() {
 
 
   const attemptLogin = async () => {
+    setLoginTime(Date.now());
+
     if (logState === "login") {
       const temp = await axios.get(`${API_URL}/loginUser`, {
         params: {
@@ -102,4 +104,7 @@ function CanvasAPIKeyContainer({ keyVal, setKey }) {
 CanvasAPIKeyContainer.propTypes = {
   keyVal: PropTypes.string,
   setKey: PropTypes.func
+}
+Login.propTypes = {
+  setLoginTime: PropTypes.func
 }
