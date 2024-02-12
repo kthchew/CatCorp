@@ -4,7 +4,6 @@ import './App.css'
 import Login from "./Login"
 
 const API_URL = "http://localhost:3500"
-// const API_KEY = "nolol"
 
 function App() {
   const [courses, setCourses] = useState(null);
@@ -65,7 +64,7 @@ function App() {
     window.addEventListener('beforeunload', (ev) => {handleClose(ev)});
     getUserData();
     return () => {window.removeEventListener('beforeunload', handleClose)} //unload
-  }, [userData, apiKey, loginTime])
+  }, [userData])
 
 
   useEffect(() => {
@@ -122,7 +121,7 @@ function App() {
     }
 
     getCourseData();
-  }, [userId, apiKey])
+  }, [userId])
 
 
   return (

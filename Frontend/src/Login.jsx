@@ -13,15 +13,15 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    attemptLogin();
+    attemptLogin(logState);
     alert("Username: " + username + " " + "Password: " + password);
   };
 
 
-  const attemptLogin = async () => {
+  const attemptLogin = async (method) => {
     setLoginTime(Date.now());
 
-    if (logState === "login") {
+    if (method === "login") {
       try {
         const temp = await axios.get(`${API_URL}/loginUser`, {
           params: {
@@ -33,7 +33,7 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
         setApiKey(localStorage.getItem("canvasAPIKey"))
         setUserData(temp.data)
       } catch (e) {
-        console.log(e);
+        console.log("login failed");
       }
 
     } else if (logState === "create") {
@@ -47,8 +47,9 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
         localStorage.setItem("canvasAPIKey", apiKey)
 
         //LOG IN THE USER AS WELL
+        await setLogState("login");
+        attemptLogin("login"); //logState doesn't update by func call for some reason
 
-        console.log(temp)
       } catch (e) {
         console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
       }
