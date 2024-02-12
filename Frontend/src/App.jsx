@@ -34,54 +34,43 @@ function App() {
   ]
 */
 
-  const getUserData = async () => {
-    const res = await axios.get(`${API_URL}/getUser`, {
-      params: {
-        "canvas_api_token": apiKey
-      }   
-    })
-    await setUserId(res.data.id)
-    return res.data.id;
-  }
 
-  const handleClose = async (event, tempUser) => {
-    event.preventDefault();
-    var u = await tempUser;
-    
-    // TODO: check result?
-    await axios.get(`${API_URL}/logout`, {
-      params: {
-        "user_id": u,
-        "login_time": loginTime
-      }
-    })
-
-    return event.returnValue = 'Are you sure you want to close?';
-  }
 
   useEffect(() => {
-    let tempUser = getUserData();
-    window.addEventListener('beforeunload', (ev) => {handleClose(ev, tempUser)});
-    return () => {window.removeEventListener('beforeunload', handleClose)} //unload
-  }, [])
-
-  useEffect(() => {
-    // const loginUser = async () => {
-    //   if (!userId) {return}
+    const getUserData = async () => {
+      const res = await axios.get(`${API_URL}/getUser`, {
+        params: {
+          "canvas_api_token": apiKey
+        }   
+      })
+      await setUserId(res.data.id)
+      return res.data.id;
+    }
   
-    //   const res = await axios.get(`${API_URL}/login`, {
-    //     params: {
-    //       "user_id": userId
-    //     }   
-    //   })
-    //   console.log(res.data.user)
-    //   await setUserData(res.data.user);
-    // }
+    const handleClose = async (event) => {
+      event.preventDefault();
+      console.log(loginTime, userData.u.username)
+      
+      // TODO: check result?
+      await axios.get(`${API_URL}/logout`, {
+        params: {
+          "user_id": userData.u.username,
+          "login_time": loginTime
+        }
+      })
+  
+      return event.returnValue = 'Are you sure you want to close?';
+    }
 
-    // loginUser();
-  }, [userId])
+    window.addEventListener('beforeunload', (ev) => {handleClose(ev)});
+    getUserData();
+    return () => {window.removeEventListener('beforeunload', handleClose)} //unload
+  }, [userData, apiKey, loginTime])
+
 
   useEffect(() => {
+    console.log()
+
     const getCourseData = async () => {
       if (!userId) {return}
   
@@ -145,7 +134,6 @@ function App() {
           return <div key={c[0]}>
             <h3>{c[1]} - {c[0]}</h3>
             {c[2].map((a) => {
-              console.log(Date.parse(a[5]));
               return <div key={a}>
                 <h4 style={a.length > 3 ? (Date.parse(a[5]) > userData.lastLogout ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
               </div>

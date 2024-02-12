@@ -121,22 +121,23 @@ app.get('/getSubmission', async (req, res) => {
 
 app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
-  const logout_time = req.query.login_time;
+  const login_time = req.query.login_time;  
+  console.log(login_time)
   
   let db = getDb();
-  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
+  db.updateOne({ "username": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
   console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })
 
-app.get('/login', limiter, async (req, res) => {
-  const user_id = req.query.user_id;
+// app.get('/login', limiter, async (req, res) => {
+//   const user_id = req.query.user_id;
   
-  let db = getDb();
-  console.log("> logged in user " + user_id)
-  let user = await db.findOne({ "canvasUser": { $eq: user_id } })
-  res.status(200).json({ user });
-})
+//   let db = getDb();
+//   console.log("> logged in user " + user_id)
+//   let user = await db.findOne({ "canvasUser": { $eq: user_id } })
+//   res.status(200).json({ user });
+// })
 
 app.get('/loginUser', async (req, res) => {
   const u = req.query.username;
