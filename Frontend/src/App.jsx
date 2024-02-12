@@ -4,13 +4,14 @@ import './App.css'
 import Login from "./Login"
 
 const API_URL = "http://localhost:3500"
-const API_KEY = "nolol"
+// const API_KEY = "nolol"
 
 function App() {
   const [courses, setCourses] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null); //canvas user id
+  const [userData, setUserData] = useState(null); //from db
   const [loginTime, setLoginTime] = useState(null);
+  const [apiKey, setApiKey] = useState(null)
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -36,7 +37,7 @@ function App() {
   const getUserData = async () => {
     const res = await axios.get(`${API_URL}/getUser`, {
       params: {
-        "canvas_api_token": API_KEY
+        "canvas_api_token": apiKey
       }   
     })
     await setUserId(res.data.id)
@@ -65,19 +66,19 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const loginUser = async () => {
-      if (!userId) {return}
+    // const loginUser = async () => {
+    //   if (!userId) {return}
   
-      const res = await axios.get(`${API_URL}/login`, {
-        params: {
-          "user_id": userId
-        }   
-      })
-      console.log(res.data.user)
-      await setUserData(res.data.user);
-    }
+    //   const res = await axios.get(`${API_URL}/login`, {
+    //     params: {
+    //       "user_id": userId
+    //     }   
+    //   })
+    //   console.log(res.data.user)
+    //   await setUserData(res.data.user);
+    // }
 
-    loginUser();
+    // loginUser();
   }, [userId])
 
   useEffect(() => {
@@ -86,7 +87,7 @@ function App() {
   
       const res = await axios.get(`${API_URL}/getCourses`, {
         params: {
-          "canvas_api_token": API_KEY
+          "canvas_api_token": apiKey
         }   
       })
   
@@ -96,7 +97,7 @@ function App() {
         var newAssignments = [];
         const assignments = await axios.get(`${API_URL}/getAssignments`, {
           params: {
-            "canvas_api_token": API_KEY,
+            "canvas_api_token": apiKey,
             "course_id": c.id,
           }   
         })
@@ -106,7 +107,7 @@ function App() {
           if (a.has_submitted_submissions) {
             var submission = await axios.get(`${API_URL}/getSubmission`, {
               params: {
-                "canvas_api_token": API_KEY,
+                "canvas_api_token": apiKey,
                 "course_id": c.id,
                 "assignment_id": a.id,
                 "user_id": userId
@@ -132,12 +133,12 @@ function App() {
     }
 
     getCourseData();
-  }, [userData, userId])
+  }, [userId, apiKey])
 
 
   return (
     <>
-      <Login loginTime={setLoginTime}/>
+      <Login setLoginTime={setLoginTime} apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData}/>
       <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
       {courses && courses.message != "No courses available" ? 
         courses.map((c) => {

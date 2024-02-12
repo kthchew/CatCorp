@@ -6,10 +6,9 @@ import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
 
-export default function Login({setLoginTime}) {
+export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [canvasAPIKey, setCanvasAPIKey] = useState("");
   const [logState, setLogState] = useState("login");
 
   const handleSubmit = (e) => {
@@ -23,13 +22,19 @@ export default function Login({setLoginTime}) {
     setLoginTime(Date.now());
 
     if (logState === "login") {
-      const temp = await axios.get(`${API_URL}/loginUser`, {
-        params: {
-          "username": username,
-          "password": password
-        }
-      })
-      console.log(temp)
+      try {
+        const temp = await axios.get(`${API_URL}/loginUser`, {
+          params: {
+            "username": username,
+            "password": password
+          }
+        })
+
+        setApiKey(localStorage.getItem("canvasAPIKey"))
+        setUserData(temp.data)
+      } catch (e) {
+        console.log(e);
+      }
 
     } else if (logState === "create") {
       try {
@@ -39,11 +44,13 @@ export default function Login({setLoginTime}) {
             "password": password
           }
         })
-        localStorage.setItem("canvasAPIKey", canvasAPIKey)
+        localStorage.setItem("canvasAPIKey", apiKey)
+
+        //LOG IN THE USER AS WELL
 
         console.log(temp)
       } catch (e) {
-        console.log("account creation failed")
+        console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
       }
     }
   }
@@ -74,8 +81,8 @@ export default function Login({setLoginTime}) {
                  type="password"/>
         </div>
         {
-          logState === "create" && <CanvasAPIKeyContainer keyVal={canvasAPIKey}
-                                                          setKey={setCanvasAPIKey}/>
+          logState === "create" && <CanvasAPIKeyContainer keyVal={apiKey}
+                                                          setKey={setApiKey}/>
         }
         <button type="submit">{logState === "login" ? "Login" : "Create Account"}</button>
       </form>
@@ -106,5 +113,8 @@ CanvasAPIKeyContainer.propTypes = {
   setKey: PropTypes.func
 }
 Login.propTypes = {
-  setLoginTime: PropTypes.func
+  setLoginTime: PropTypes.func,
+  apiKey: PropTypes.string,
+  setApiKey: PropTypes.func,
+  setUserData: PropTypes.func
 }
