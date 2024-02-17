@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import './App.css'
+import './css/App.css'
 import Login from "./Login"
 
 const API_URL = "http://localhost:3500"
@@ -12,6 +12,7 @@ function App() {
   const [loginTime, setLoginTime] = useState(null);
   const [apiKey, setApiKey] = useState(null)
   const [apiLoad, setApiLoad] = useState([0, 0])
+  const [overlay, setOverlay] = useState("login")
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -51,12 +52,12 @@ function App() {
   
     const handleClose = async (event) => {
       event.preventDefault();
-      console.log(loginTime, userData.u.username)
+      console.log(loginTime, userData.username)
       
       // TODO: check result?
       await axios.get(`${API_URL}/logout`, {
         params: {
-          "user_id": userData.u.username,
+          "user_id": userData.username,
           "login_time": loginTime
         }
       })
@@ -75,6 +76,7 @@ function App() {
     const getCourseData = async () => {
       if (!userId) {return}
 
+      setOverlay(null)
       setApiLoad([2, 0])
   
       const res = await axios.get(`${API_URL}/getCourses`, {
@@ -135,7 +137,7 @@ function App() {
 
   return (
     <div>
-      {!userData  ? 
+      {overlay == "login" ? 
       <Login setLoginTime={setLoginTime} apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData}/>
       : apiLoad[0] == 1 ? 
       <div>Loading Canvas user...</div>
@@ -145,6 +147,7 @@ function App() {
       <div>Loading assignments... {apiLoad[1].toFixed(2) * 100}%</div>
       :
         <div>
+          <h3>Your cash: {userData.gems}</h3>
           <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
           {courses && courses.message != "No courses available" ? 
             courses.map((c) => {

@@ -36,7 +36,7 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
         })
 
         setApiKey(localStorage.getItem("canvasAPIKey"))
-        setUserData(temp.data)
+        setUserData(temp.data.u)  //dont know why I need a u here
       } catch (e) {
         console.log("login failed");
       }
