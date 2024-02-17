@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
+import Rewards from "./Rewards"
 
 const API_URL = "http://localhost:3500"
 
@@ -25,10 +26,10 @@ function App() {
         assignment id
         assignment name
         due date
-        points possible
           submission id
           submission date
           submission points
+          points possible
       ],
       ...
     ]
@@ -52,7 +53,6 @@ function App() {
   
     const handleClose = async (event) => {
       event.preventDefault();
-      console.log(loginTime, userData.username)
       
       // TODO: check result?
       await axios.get(`${API_URL}/logout`, {
@@ -98,7 +98,8 @@ function App() {
           }   
         })
 
-        await Promise.all(assignments.data.map(async (a) => {          
+        await Promise.all(assignments.data.map(async (a) => {    
+          
 
           var assignmentArray = [a.id, a.name, a.due_at];
           if (a.has_submitted_submissions) { 
@@ -111,7 +112,7 @@ function App() {
               }   
             })
             submission = submission.data;
-  
+
             assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
           }
   
@@ -127,6 +128,7 @@ function App() {
   
   
       console.log(newCourses)
+      console.log(userData)
       setCourses(newCourses);
       setApiLoad([5, 0])
     }
@@ -148,14 +150,16 @@ function App() {
       :
         <div>
           <h3>Your cash: {userData.gems}</h3>
+          <Rewards courses={courses} userData={userData}/>
           <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
           {courses && courses.message != "No courses available" ? 
             courses.map((c) => {
               return <div key={c[0]}>
                 <h3>{c[1]} - {c[0]}</h3>
                 {c[2].map((a) => {
+
                   return <div key={a}>
-                    <h4 style={a.length > 3 ? (Date.parse(a[5]) > userData.lastLogout ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
+                    <h4 style={a.length > 3 ? (Date.parse(a[4]) > userData.lastLogin ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
                   </div>
                 })}
               </div>
