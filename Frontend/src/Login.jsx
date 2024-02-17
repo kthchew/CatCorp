@@ -6,7 +6,6 @@ import create_account from "./img/Create_Account.png"
 import new_user from "./img/New_User.png"
 import exist_user from "./img/Existing_User.png"
 import PropTypes from "prop-types";
-import leaderWindow from "./img/Leader.png"
 import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
@@ -20,7 +19,7 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     attemptLogin(logState);
-    alert("Username: " + username + " " + "Password: " + password);
+    // alert("Username: " + username + " " + "Password: " + password);
   };
 
 

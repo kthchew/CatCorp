@@ -130,14 +130,7 @@ app.get('/logout', limiter, async (req, res) => {
   res.status(200).json({ message: "Logged out!" });
 })
 
-// app.get('/login', limiter, async (req, res) => {
-//   const user_id = req.query.user_id;
-  
-//   let db = getDb();
-//   console.log("> logged in user " + user_id)
-//   let user = await db.findOne({ "canvasUser": { $eq: user_id } })
-//   res.status(200).json({ user });
-// })
+
 
 app.get('/loginUser', async (req, res) => {
   const u = req.query.username;
@@ -166,6 +159,7 @@ app.get('/loginUser', async (req, res) => {
     var correctPass = await bcrypt.compare(p, u.password);
 
     if (correctPass) {
+      console.log("> logged in user " + u.username)
       code = 200;
       json = {u};
     }

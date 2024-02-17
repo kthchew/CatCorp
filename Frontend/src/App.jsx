@@ -11,6 +11,7 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [loginTime, setLoginTime] = useState(null);
   const [apiKey, setApiKey] = useState(null)
+  const [apiLoad, setApiLoad] = useState([0, 0])
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -36,6 +37,8 @@ function App() {
 
 
   useEffect(() => {
+    setApiLoad([1, 0])
+
     const getUserData = async () => {
       const res = await axios.get(`${API_URL}/getUser`, {
         params: {
@@ -68,10 +71,11 @@ function App() {
 
 
   useEffect(() => {
-    console.log()
 
     const getCourseData = async () => {
       if (!userId) {return}
+
+      setApiLoad([2, 0])
   
       const res = await axios.get(`${API_URL}/getCourses`, {
         params: {
@@ -79,9 +83,11 @@ function App() {
         }   
       })
   
+      setApiLoad[3, 0]
+
       var newCourses = [];
       await Promise.all(res.data.map(async (c) => {
-  
+
         var newAssignments = [];
         const assignments = await axios.get(`${API_URL}/getAssignments`, {
           params: {
@@ -89,8 +95,9 @@ function App() {
             "course_id": c.id,
           }   
         })
-        
-        await Promise.all(assignments.data.map(async (a) => {
+
+        await Promise.all(assignments.data.map(async (a) => {          
+
           var assignmentArray = [a.id, a.name, a.due_at];
           if (a.has_submitted_submissions) { 
             var submission = await axios.get(`${API_URL}/getSubmission`, {
@@ -106,7 +113,8 @@ function App() {
             assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
           }
   
-  
+ 
+          setApiLoad([3, apiLoad[1] + 1/assignments.data.length/res.data.length]) //THIS CODE IS NOT WORKING PROPERLY
           newAssignments.push(assignmentArray)
         }))
   
@@ -118,6 +126,7 @@ function App() {
   
       console.log(newCourses)
       setCourses(newCourses);
+      setApiLoad([5, 0])
     }
 
     getCourseData();
@@ -125,26 +134,37 @@ function App() {
 
 
   return (
-    <>
+    <div>
+      {!userData  ? 
       <Login setLoginTime={setLoginTime} apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData}/>
-      <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
-      {courses && courses.message != "No courses available" ? 
-        courses.map((c) => {
-          return <div key={c[0]}>
-            <h3>{c[1]} - {c[0]}</h3>
-            {c[2].map((a) => {
-              return <div key={a}>
-                <h4 style={a.length > 3 ? (Date.parse(a[5]) > userData.lastLogout ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
+      : apiLoad[0] == 1 ? 
+      <div>Loading Canvas user...</div>
+      : apiLoad[0] == 2 ? 
+      <div>Loading courses...</div>
+      : apiLoad[0] == 3 ? 
+      <div>Loading assignments... {apiLoad[1].toFixed(2) * 100}%</div>
+      :
+        <div>
+          <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
+          {courses && courses.message != "No courses available" ? 
+            courses.map((c) => {
+              return <div key={c[0]}>
+                <h3>{c[1]} - {c[0]}</h3>
+                {c[2].map((a) => {
+                  return <div key={a}>
+                    <h4 style={a.length > 3 ? (Date.parse(a[5]) > userData.lastLogout ? {color:'orange'} : {color:'lightgreen'}) : {}}>{a[1]} - {a[0]}</h4>
+                  </div>
+                })}
               </div>
-            })}
-          </div>
-          
-          
-        })
-      : 
-        <h2>Loading...</h2>
+              
+              
+            })
+          : 
+            <h2>Finishing up...</h2>
+          }
+        </div>
       }
-    </>
+      </div>
   )
 }
 
