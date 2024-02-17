@@ -78,7 +78,7 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
     <div className="loginContainer">
       <div className="leader">
         <button>
-          <img src={leaderWindow}/>
+          {/* <img src={leaderWindow}/> */}
         </button>
       </div>
       <img src={logo} alt="Cat Corporate" className="loginLogo"/>

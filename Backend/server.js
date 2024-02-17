@@ -164,7 +164,6 @@ app.get('/loginUser', async (req, res) => {
 
   const evals = await user.map(async (u) => {
     var correctPass = await bcrypt.compare(p, u.password);
-    console.log("TEST", correctPass)
 
     if (correctPass) {
       code = 200;

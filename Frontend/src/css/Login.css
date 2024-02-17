@@ -16,13 +16,6 @@
     color: var(--darkColor);
 }
 
-.stretchedToMargin {
-    margin-top:0px;
-    margin-bottom:0px;
-    margin-right:0px;
-    margin-left:0px;
-    background-color: green;
-  }
 
 h2 {
     color: black;
@@ -45,7 +38,6 @@ h2 {
     align-items: center;
     flex-direction: column;
     border-radius: 15px;
-    padding-block: 2.5rem;
     margin-inline: auto;
     background-color: white;
 }
@@ -100,9 +92,9 @@ h2 {
 }
 
 .loginLogo {
-    margin: -35px 0px;
-    width: 95%;
-    height: 42%;
+    margin: calc(133/217 * 14/133 * -35vw) 0px;
+    width: 35vw;
+    height: calc(133/217 * 35vw);
 }
 
 .loginHeader {

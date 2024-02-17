@@ -92,7 +92,7 @@ function App() {
         
         await Promise.all(assignments.data.map(async (a) => {
           var assignmentArray = [a.id, a.name, a.due_at];
-          if (a.has_submitted_submissions) {
+          if (a.has_submitted_submissions) { 
             var submission = await axios.get(`${API_URL}/getSubmission`, {
               params: {
                 "canvas_api_token": apiKey,
