@@ -132,7 +132,7 @@ app.get('/logout', limiter, async (req, res) => {
 
 
 
-app.get('/loginUser', async (req, res) => {
+app.get('/loginUser', limiter, async (req, res) => {
   const u = req.query.username;
   const p = req.query.password;
   
@@ -170,7 +170,7 @@ app.get('/loginUser', async (req, res) => {
   return res.status(code).json(json);
 })
 
-app.get('/registerAccount', async (req, res) => {
+app.get('/registerAccount', limiter, async (req, res) => {
   const username = req.query.username;
   const password = req.query.password;
   
