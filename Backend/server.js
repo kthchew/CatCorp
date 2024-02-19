@@ -141,7 +141,7 @@ app.get('/loginUser', limiter, async (req, res) => {
   }
 
   let db = getDb();
-  let user = await db.find({"username" : u})
+  let user = await db.find({"username" : { $eq: u }})
   user = await user.toArray();
 
   var json;
@@ -179,7 +179,7 @@ app.get('/registerAccount', limiter, async (req, res) => {
   }
 
   let db = getDb();
-  let user = await db.find({"username" : username})
+  let user = await db.find({"username" : { $eq: username }})
   user = await user.toArray();
 
   if (user.length > 0) {
@@ -187,7 +187,7 @@ app.get('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), lastLogout: null})
+  db.insertOne({username: { $eq: username }, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), lastLogout: null})
   return res.status(200).json({message: "User registered"});
 });
 
