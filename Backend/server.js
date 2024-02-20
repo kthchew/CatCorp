@@ -12,6 +12,7 @@ const limiter = RateLimit({
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
@@ -132,9 +133,9 @@ app.get('/logout', limiter, async (req, res) => {
 
 
 
-app.get('/loginUser', limiter, async (req, res) => {
-  const u = req.query.username;
-  const p = req.query.password;
+app.post('/loginUser', limiter, async (req, res) => {
+  const u = req.body.username;
+  const p = req.body.password;
   
   if (!u || !p) {
     return res.status(400).json({message: "Username and password required!"});
@@ -170,9 +171,9 @@ app.get('/loginUser', limiter, async (req, res) => {
   return res.status(code).json(json);
 })
 
-app.get('/registerAccount', limiter, async (req, res) => {
-  const username = req.query.username;
-  const password = req.query.password;
+app.post('/registerAccount', limiter, async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
   
   if (!username || !password) {
     return res.status(400).json({message: "Input both a username and password"});

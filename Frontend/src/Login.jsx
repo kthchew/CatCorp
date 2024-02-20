@@ -28,11 +28,9 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
     if (method === "login") {
       try {
-        const temp = await axios.get(`${API_URL}/loginUser`, {
-          params: {
-            "username": username,
-            "password": password
-          }
+        const temp = await axios.post(`${API_URL}/loginUser`, {
+          username: username,
+          password: password
         })
 
         setApiKey(localStorage.getItem("canvasAPIKey"))
@@ -43,11 +41,9 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
     } else if (logState === "create") {
       try {
-        const temp = await axios.get(`${API_URL}/registerAccount`, {
-          params: {
-            "username": username,
-            "password": password
-          }
+        const temp = await axios.post(`${API_URL}/registerAccount`, {
+          username: username,
+          password: password
         })
         localStorage.setItem("canvasAPIKey", apiKey)
 

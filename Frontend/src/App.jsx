@@ -6,6 +6,8 @@ import Rewards from "./Rewards"
 
 const API_URL = "http://localhost:3500"
 
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 function App() {
   const [courses, setCourses] = useState(null);
   const [userId, setUserId] = useState(null); //canvas user id
