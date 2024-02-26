@@ -8,6 +8,7 @@ const limiter = RateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
+const API_URL = "http://localhost:3500"
 
 import { connectToServer, getDb } from './db/conn.js';
 import * as canvas from './canvas.js';
@@ -100,6 +101,7 @@ app.get('/logout', limiter, async (req, res) => {
 app.post('/loginUser', limiter, async (req, res) => {
   const u = req.body.username;
   const p = req.body.password;
+  const apiKey = req.body.apiKey;
   
   if (!u || !p) {
     return res.status(400).json({message: "Username and password required!"});
@@ -126,11 +128,57 @@ app.post('/loginUser', limiter, async (req, res) => {
     if (correctPass) {
       console.log("> logged in user " + u.username)
       code = 200;
-      json = {u};
+      json = {userData: u};
     }
   })
 
+
   await Promise.all(evals);
+  
+  if (json.userData) {
+    const getUserData = async () => {
+      const res = await canvas.getUser(apiKey)
+      return res.id;
+    }
+    var userId = await getUserData();
+    json[userId] = userId;
+
+    const res = await canvas.getCourses(apiKey)
+    
+    var newCourses = [];
+    await Promise.all(res.map(async (c) => {
+
+      var newAssignments = [];
+      const assignments = await canvas.getAssignments(apiKey, c.id)
+
+      await Promise.all(assignments.map(async (a) => {    
+        
+
+        var assignmentArray = [a.id, a.name, a.due_at];
+        if (a.has_submitted_submissions) { 
+          
+          try {
+          var submission = await canvas.getSubmissions(apiKey, c.id, a.id, userId)
+          await new Promise(r => setTimeout(r, 20));
+          } catch (e) {
+            throw new Error(e);
+          }
+
+          assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
+        }
+
+
+        newAssignments.push(assignmentArray)
+      }))
+
+
+      newCourses.push([c.id, c.name, newAssignments])
+      json["courses"] = newCourses;
+
+    }))
+
+  }
+
 
   return res.status(code).json(json);
 })

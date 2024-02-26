@@ -43,16 +43,7 @@ function App() {
   useEffect(() => {
     setApiLoad([1, 0])
 
-    const getUserData = async () => {
-      const res = await axios.get(`${API_URL}/getUser`, {
-        params: {
-          "canvas_api_token": apiKey
-        }   
-      })
-      await setUserId(res.data.id)
-      return res.data.id;
-    }
-  
+
     const handleClose = async (event) => {
       event.preventDefault();
       
@@ -68,75 +59,27 @@ function App() {
     }
 
     window.addEventListener('beforeunload', (ev) => {handleClose(ev)});
-    getUserData();
     return () => {window.removeEventListener('beforeunload', handleClose)} //unload
   }, [userData])
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const getCourseData = async () => {
-      if (!userId) {return}
+  //   const getCourseData = async () => {
+  //     if (!userId) {return}
 
-      setOverlay(null)
-      setApiLoad([2, 0])
+  //     setOverlay(null)
   
-      const res = await axios.get(`${API_URL}/getCourses`, {
-        params: {
-          "canvas_api_token": apiKey
-        }   
-      })
-  
-      setApiLoad[3, 0]
 
-      var newCourses = [];
-      await Promise.all(res.data.map(async (c) => {
-
-        var newAssignments = [];
-        const assignments = await axios.get(`${API_URL}/getAssignments`, {
-          params: {
-            "canvas_api_token": apiKey,
-            "course_id": c.id,
-          }   
-        })
-
-        await Promise.all(assignments.data.map(async (a) => {    
-          
-
-          var assignmentArray = [a.id, a.name, a.due_at];
-          if (a.has_submitted_submissions) { 
-            var submission = await axios.get(`${API_URL}/getSubmission`, {
-              params: {
-                "canvas_api_token": apiKey,
-                "course_id": c.id,
-                "assignment_id": a.id,
-                "user_id": userId
-              }   
-            })
-            submission = submission.data;
-
-            assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
-          }
-  
- 
-          setApiLoad([3, apiLoad[1] + 1/assignments.data.length/res.data.length]) //THIS CODE IS NOT WORKING PROPERLY
-          newAssignments.push(assignmentArray)
-        }))
   
   
-        newCourses.push([c.id, c.name, newAssignments])
-  
-      }))
-  
-  
-      console.log(newCourses)
-      console.log(userData)
-      setCourses(newCourses);
-      setApiLoad([5, 0])
-    }
+  //     console.log(newCourses)
+  //     console.log(userData)
+  //     setCourses(newCourses);
+  //   }
 
-    getCourseData();
-  }, [userId])
+  //   getCourseData();
+  // }, [userId])
 
 
   return (

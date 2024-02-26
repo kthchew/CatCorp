@@ -26,13 +26,19 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
     if (method === "login") {
       try {
-        const temp = await axios.post(`${API_URL}/loginUser`, {
-          username: username,
-          password: password
+        setApiKey(localStorage.getItem("canvasAPIKey"), async (key) => {
+          const temp = await axios.post(`${API_URL}/loginUser`, {
+            username: username,
+            password: password,
+            apiKey: {key}
+          })
+  
+          
+          setUserData(temp.data.u)  //dont know why I need a u here
+
         })
 
-        setApiKey(localStorage.getItem("canvasAPIKey"))
-        setUserData(temp.data.u)  //dont know why I need a u here
+        
       } catch (e) {
         console.log("login failed");
       }
