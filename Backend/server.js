@@ -1,90 +1,68 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const {connectToServer, getDb} = require('./db/conn.js')
+import express, { json as _json } from 'express';
+import cors from 'cors';
+import axios from 'axios';
 
-const RateLimit = require('express-rate-limit');
+import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
 
+import { connectToServer, getDb } from './db/conn.js';
+import * as canvas from './canvas.js';
+
 const app = express();
 app.use(cors());
+app.use(_json());
+
+axios.defaults.baseURL = 'https://canvas.instructure.com/api/v1';
+axios.defaults.headers.common['Accept'] = "application/json+canvas-string-ids";
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
 
-  if (!canvas_api_token) {
-    return res.status(400).json({ error: 'canvas_api_token is required' });
-  }
-
   try {
-    const response = await axios.get(`https://canvas.instructure.com/api/v1/users/self/`, {
-      params: {
-        'access_token': canvas_api_token,
-        "per_page": "100"
-      },
-      headers: {
-        'Accept': "application/json+canvas-string-ids"
-      }
-    });
-    return res.json(response.data);
+    const user = await canvas.getUser(canvas_api_token);
+    return res.json(user);
   } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(200).json({ message: "No user available" });
+    if (error instanceof canvas.InvalidInput) {
+      return res.status(400).json({ error: error.message });
+    } else if (error instanceof canvas.CanvasAPIError) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 });
 
 app.get('/getCourses', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
 
-  if (!canvas_api_token) {
-    return res.status(400).json({ error: 'canvas_api_token is required' });
-  }
-
   try {
-    const response = await axios.get(`https://canvas.instructure.com/api/v1/courses/`, {
-      params: {
-        'access_token': canvas_api_token,
-        "per_page": "100"
-      },
-      headers: {
-        'Accept': "application/json+canvas-string-ids"
-      }
-    });
-    var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active" 
-                                                        && (!course.end_at || Date.parse(course.end_at) > Date.now()));
-    return res.json(activeCourses);
+    const courses = await canvas.getCourses(canvas_api_token);
+    return res.json(courses);
   } catch (error) {
-    console.error('Error fetching courses:', error);
-    res.status(200).json({ message: "No courses available" });
+    if (error instanceof canvas.InvalidInput) {
+      return res.status(400).json({ error: error.message });
+    } else if (error instanceof canvas.CanvasAPIError) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 });
 
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
-  const is_num = /^\d+$/
-
-  if (!canvas_api_token || !course_id || !is_num.test(course_id)) {
-    return res.status(400).json({ error: 'canvas_api_token and course_id are required' });
-  }
-
+  
   try {
-    const response = await axios.get(`https://canvas.instructure.com/api/v1/courses/${course_id}/assignments`, {
-      params: {
-        'access_token': canvas_api_token,
-        "per_page": "100"
-      },
-      headers: {
-        'Accept': "application/json+canvas-string-ids"
-      }
-    });
-    return res.json(response.data);
+    const assignments = await canvas.getAssignments(canvas_api_token, course_id);
+    console.log("hello");
+    return res.json(assignments);
   } catch (error) {
-    console.error('Error fetching assignments:', error);
-    res.status(200).json({ message: "No assignments available" });
+    if (error instanceof canvas.InvalidInput) {
+      return res.status(400).json({ error: error.message });
+    } else if (error instanceof canvas.CanvasAPIError) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 });
 
@@ -93,30 +71,18 @@ app.get('/getSubmission', async (req, res) => {
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
-  const is_num = /^\d+$/
-
-  if (!canvas_api_token || !course_id || !assignment_id || !user_id ||
-    !is_num.test(course_id) || !is_num.test(assignment_id) || !is_num.test(user_id)) {
-    return res.status(400).json({ error: 'canvas_api_token, course_id, assignment_id, and user_id are required' });
-  }
-
+  
   try {
-    const response = await axios.get(`https://canvas.instructure.com/api/v1/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`, {
-      params: {
-        'access_token': canvas_api_token,
-        "per_page": "100"
-      },
-      headers: {
-        'Accept': "application/json+canvas-string-ids"
-      }
-    });
-    return res.json(response.data);
+    const submission = await canvas.getSubmissions(canvas_api_token, course_id, assignment_id, user_id);
+    return res.json(submission);
   } catch (error) {
-    console.error('Error fetching submission:', error);
-    res.status(200).json({ message: "No submissions available" });
+    if (error instanceof canvas.InvalidInput) {
+      return res.status(400).json({ error: error.message });
+    } else if (error instanceof canvas.CanvasAPIError) {
+      return res.status(500).json({ error: error.message });
+    }
   }
-})
-
+});
 
 app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
