@@ -90,7 +90,6 @@ export async function getSubmissions(canvas_api_token, course_id, assignment_id,
     });
     return response.data;
   } catch (error) {
-    console.log(course_id, assignment_id, user_id)
     throw new CanvasAPIError('Error fetching submissions:', error);
   }
 }

@@ -17,7 +17,7 @@ const app = express();
 app.use(cors());
 app.use(_json());
 
-axios.defaults.baseURL = 'https://canvas.instructure.com/api/v1';
+axios.defaults.baseURL = 'https://ufl.instructure.com/api/v1';
 axios.defaults.headers.common['Accept'] = "application/json+canvas-string-ids";
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -159,7 +159,6 @@ app.post('/loginUser', limiter, async (req, res) => {
           
           try {
           var submission = await canvas.getSubmissions(apiKey, c.id, a.id, userId)
-          await new Promise(r => setTimeout(r, 20));
           } catch (e) {
             throw new Error(e);
           }
