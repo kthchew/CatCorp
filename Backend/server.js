@@ -116,7 +116,7 @@ app.post('/loginUser', limiter, async (req, res) => {
     code = 401;
     json = {message: "Incorrect password!"}
   } else {
-    code = 404;
+    code = 401;
     json = {message: "No users found!"}
   }
 
