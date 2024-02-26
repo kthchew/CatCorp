@@ -38,6 +38,30 @@ function App() {
   ]
 */
 
+/*
+COURSE STORAGE - NEW MODEL
+  [
+    course id
+    course name
+    course assignments:
+    [
+      assignment id
+      assignment name
+      due date
+      points possible
+    ]
+    new  submissions:
+    [
+      assignment id
+      assignment name
+      due date
+      points possible
+      submission id
+      submission date
+      submission points
+    ]
+  ]
+*/
 
 
   useEffect(() => {

@@ -8,7 +8,6 @@ const limiter = RateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
-const API_URL = "http://localhost:3500"
 
 import { connectToServer, getDb } from './db/conn.js';
 import * as canvas from './canvas.js';
@@ -141,40 +140,20 @@ app.post('/loginUser', limiter, async (req, res) => {
       return res.id;
     }
     var userId = await getUserData();
-    json[userId] = userId;
+    json["userId"] = userId;
 
     const res = await canvas.getCourses(apiKey)
     
     var newCourses = [];
     await Promise.all(res.map(async (c) => {
 
-      var newAssignments = [];
-      const assignments = await canvas.getAssignments(apiKey, c.id)
+      const newAssignments = await canvas.getAssignments(apiKey, c.id)
+      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id)
 
-      await Promise.all(assignments.map(async (a) => {    
-        
-
-        var assignmentArray = [a.id, a.name, a.due_at];
-        if (a.has_submitted_submissions) { 
-          
-          try {
-          var submission = await canvas.getSubmissions(apiKey, c.id, a.id, userId)
-          } catch (e) {
-            throw new Error(e);
-          }
-
-          assignmentArray = assignmentArray.concat([submission.id, submission.submitted_at, submission.score, a.points_possible])
-        }
-
-
-        newAssignments.push(assignmentArray)
-      }))
-
-
-      newCourses.push([c.id, c.name, newAssignments])
+      newCourses.push([c.id, c.name, newAssignments, newSubmissions])
       json["courses"] = newCourses;
-
     }))
+
 
   }
 
