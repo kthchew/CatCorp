@@ -1,6 +1,7 @@
 import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import bcrypt from "bcrypt"
 
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
