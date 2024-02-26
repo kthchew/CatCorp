@@ -9,8 +9,6 @@ import PropTypes from "prop-types";
 import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
-var loginAcc = login_button
-var userState = new_user
 export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
@@ -59,13 +57,9 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
   const toggleLoginState = () => {
     if (logState === "login") {
-      setLogState("create")
-      loginAcc = create_account
-      userState = exist_user
+      setLogState("create");
     } else {
-      setLogState("login")
-      loginAcc = login_button
-      userState = new_user
+      setLogState("login");
     }
   }
 
@@ -97,14 +91,14 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
         }
         <div className="loginAccount">
           <button type="submit">
-            <img src={loginAcc}/>
+            <img src={logState == "login" ? login_button : create_account}/>
           </button>
         </div>
       </form>
       <div className="bottomForm">
         <div className="links">
-          <button onClick={toggleLoginState}>
-            <img src={userState}/>
+          <button onClick={() => toggleLoginState()}>
+            <img src={logState == "login" ? new_user : exist_user}/>
           </button>
         </div>
       </div>
