@@ -41,7 +41,7 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
     } else if (logState === "create") {
       try {
-        const temp = await axios.post(`${API_URL}/registerAccount`, {
+        await axios.post(`${API_URL}/registerAccount`, {
           username: username,
           password: password
         })

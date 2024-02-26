@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  } from "react";
 import PropTypes from "prop-types";
 
 export default function Rewards({courses, userData}) {
