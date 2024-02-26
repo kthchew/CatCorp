@@ -74,15 +74,15 @@ export async function getAssignments(canvas_api_token, course_id) {
     }
 }
 
-export async function getSubmissions(canvas_api_token, course_id, assignment_id) {
+export async function getSubmissions(canvas_api_token, course_id, assignment_id, user_id) {
   const is_num = /^\d+$/
 
-  if (!canvas_api_token || !course_id || !is_num.test(course_id) || !assignment_id || !is_num.test(assignment_id)) {
+  if (!canvas_api_token || !course_id || !is_num.test(course_id) || !assignment_id || !is_num.test(assignment_id) || !user_id || !is_num.test(user_id)) {
     throw new InvalidInput('canvas_api_token, course_id, and assignment_id are required');
   }
 
   try {
-    const response = await axios.get(`/courses/${course_id}/assignments/${assignment_id}/submissions`, {
+    const response = await axios.get(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`, {
       params: {
         'access_token': canvas_api_token,
         "per_page": "100"

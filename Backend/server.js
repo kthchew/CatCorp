@@ -56,7 +56,6 @@ app.get('/getAssignments', async (req, res) => {
   
   try {
     const assignments = await canvas.getAssignments(canvas_api_token, course_id);
-    console.log("hello");
     return res.json(assignments);
   } catch (error) {
     if (error instanceof canvas.InvalidInput) {
