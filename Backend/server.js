@@ -1,6 +1,7 @@
 import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import bcrypt from "bcrypt"
 
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
@@ -55,7 +56,6 @@ app.get('/getAssignments', async (req, res) => {
   
   try {
     const assignments = await canvas.getAssignments(canvas_api_token, course_id);
-    console.log("hello");
     return res.json(assignments);
   } catch (error) {
     if (error instanceof canvas.InvalidInput) {
@@ -86,21 +86,75 @@ app.get('/getSubmission', async (req, res) => {
 
 app.get('/logout', limiter, async (req, res) => {
   const user_id = req.query.user_id;
+  const login_time = req.query.login_time;  
+  console.log(login_time)
   
   let db = getDb();
-  db.updateOne({ "canvasUser": { $eq: user_id } }, { $set: { "lastLogout": Date.now() } })
+  db.updateOne({ "username": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
   console.log("< logged out user " + user_id)
   res.status(200).json({ message: "Logged out!" });
 })
 
-app.get('/login', limiter, async (req, res) => {
-  const user_id = req.query.user_id;
+
+
+app.post('/loginUser', limiter, async (req, res) => {
+  const u = req.body.username;
+  const p = req.body.password;
   
+  if (!u || !p) {
+    return res.status(400).json({message: "Username and password required!"});
+  }
+
   let db = getDb();
-  console.log("> logged in user " + user_id)
-  let user = await db.findOne({ "canvasUser": { $eq: user_id } })
-  res.status(200).json({ user });
+  let user = await db.find({"username" : { $eq: u }})
+  user = await user.toArray();
+
+  var json;
+  var code;
+
+  if (user.length > 0) {
+    code = 401;
+    json = {message: "Incorrect password!"}
+  } else {
+    code = 401;
+    json = {message: "No users found!"}
+  }
+
+  const evals = await user.map(async (u) => {
+    var correctPass = await bcrypt.compare(p, u.password);
+
+    if (correctPass) {
+      console.log("> logged in user " + u.username)
+      code = 200;
+      json = {u};
+    }
+  })
+
+  await Promise.all(evals);
+
+  return res.status(code).json(json);
 })
+
+app.post('/registerAccount', limiter, async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  
+  if (!username || !password) {
+    return res.status(400).json({message: "Input both a username and password"});
+  }
+
+  let db = getDb();
+  let user = await db.find({"username" : { $eq: username }})
+  user = await user.toArray();
+
+  if (user.length > 0) {
+    return res.status(400).json({message: "Username already taken"});
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  db.insertOne({username: { $eq: username }, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), lastLogout: null})
+  return res.status(200).json({message: "User registered"});
+});
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: "hello!" });

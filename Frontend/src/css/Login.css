@@ -1,19 +1,13 @@
-
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'Courier New', Courier, monospace;
-}
-
 :root {
     --primaryColor: blue;
     --accentColor: cyan;
     --darkColor: rgb(9, 9, 83);
 }
 
-body {
-    height: 100vh;
-    overflow: hidden;
+.loginBackground {
+    height: 100%;
+    width: 100%;
+    /* overflow: hidden; */
     background: var(--primaryColor);
     background: linear-gradient(
         0deg, 
@@ -22,10 +16,6 @@ body {
     color: var(--darkColor);
 }
 
-img {
-    max-width: 90;
-    margin-bottom: 1rem;
-}
 
 h2 {
     color: black;
@@ -33,53 +23,39 @@ h2 {
     font-weight: 450;
 }
 
-input {
-    color: var(--primaryColor);
-    background-color: transparent;
-    border: none;
-    border-width: 10px;
-    border-bottom: solid 2px var(--primaryColor);
-    padding-inline: 0.2rem;
-    padding-bottom: 0.2rem;
-    font-weight: bold;
-}
 
-button {
-    color: white;
-    background-color: var(--primaryColor);
-    border: lightblue;
-    border-radius: 12px;
-    padding: 0.3rem 0.7rem;
-    width: 56%;
-    font-size: 1.3rem;
-    box-shadow: 0 1px 4px 1px rgba(20, 29, 89, 0.2);
-    transition: 0.2s ease-in-out;
-}
+.loginContainer {
+    font-family: 'Courier New', Courier, monospace;
 
-button:active {
-    box-shadow: none;
-    transform: scale(0.9);
-}
-
-.container {
+    
+    position:absolute;
+    height:auto;
+    bottom:5%;
+    top:5%;
+    left:35%;
+    right:35%;
     display: flex;
     align-items: center;
     flex-direction: column;
-    border-radius: 14px;
-    padding-block: 3rem;
-    margin-top: 1.5rem;
+    border-radius: 15px;
     margin-inline: auto;
-    width: 105%;
-    max-width: 1250px;
-    box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5);
     background-color: white;
 }
 
 .inputContainer {
     display: flex;
     flex-direction: column;
-    margin-block: 1rem;
-    gap: 0.5rem;
+    margin-block: 1.1rem;
+    gap: 1rem;
+
+    color: var(--primaryColor);
+    background-color: transparent;
+    border: none;
+    border-width: 9px;
+    border-bottom: solid 2px var(--primaryColor);
+    padding-inline: 0.2rem;
+    padding-bottom: 0.1rem;
+    font-weight: bold;
 }
 
 :focus  {
@@ -93,16 +69,39 @@ button:active {
     align-items: center;
 }
 
+.loginAccount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:transparent;
+}
+
 .links {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 1rem;
-    gap: 1rem;  
 }
 
 .copyright {
     color: var(--primaryColor);
-    margin-top: 2rem;
     text-align: center;
+}
+
+.leader{
+    position:absolute; top:0; right:0;
+}
+
+.loginLogo {
+    margin: calc(133/217 * 14/133 * -35vw) 0px;
+    width: 35vw;
+    height: calc(133/217 * 35vw);
+}
+
+.loginHeader {
+    font-weight: bold;
+    margin: 65px 20px;
+}
+
+.loginLabel {
+    margin: -22px 0px;
 }
