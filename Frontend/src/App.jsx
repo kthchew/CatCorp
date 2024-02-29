@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-import Rewards from "./Rewards"
+// import Rewards from "./Rewards"
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
 
