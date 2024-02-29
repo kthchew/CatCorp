@@ -64,27 +64,27 @@ COURSE STORAGE - NEW MODEL
 */
 
 
-  useEffect(() => {
-    setApiLoad([1, 0])
+  // useEffect(() => {
+  //   setApiLoad([1, 0])
 
 
-    const handleClose = async (event) => {
-      event.preventDefault();
+  //   const handleClose = async (event) => {
+  //     event.preventDefault();
       
-      // TODO: check result?
-      await axios.get(`${API_URL}/logout`, {
-        params: {
-          "user_id": userData.username,
-          "login_time": loginTime
-        }
-      })
+  //     // TODO: check result?
+  //     await axios.get(`${API_URL}/logout`, {
+  //       params: {
+  //         "user_id": userData.username,
+  //         "login_time": loginTime
+  //       }
+  //     })
   
-      return event.returnValue = 'Are you sure you want to close?';
-    }
+  //     return event.returnValue = 'Are you sure you want to close?';
+  //   }
 
-    window.addEventListener('beforeunload', (ev) => {handleClose(ev)});
-    return () => {window.removeEventListener('beforeunload', handleClose)} //unload
-  }, [userData])
+  //   window.addEventListener('beforeunload', (ev) => {handleClose(ev)});
+  //   return () => {window.removeEventListener('beforeunload', handleClose)} //unload
+  // }, [userData])
 
 
   // useEffect(() => {

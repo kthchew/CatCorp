@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios"
 import logo from "./img/title.png"
 import login_button from "./img/Login_Button.png"
@@ -20,26 +20,32 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData, set
     // alert("Username: " + username + " " + "Password: " + password);
   };
 
+  useEffect(() => {
+    const login = async () => {
+      const temp = await axios.post(`${API_URL}/loginUser`, {
+        username: username,
+        password: password,
+        apiKey: apiKey
+      })
+  
+      console.log(temp)
+      
+      setUserData(temp.userData)  
+      setUserId(temp.userId)
+      setCourses(temp.courses)
+    }
+
+    login()
+
+  }, [apiKey])
+
 
   const attemptLogin = async (method) => {
     setLoginTime(Date.now());
 
     if (method === "login") {
       try {
-        setApiKey(localStorage.getItem("canvasAPIKey"), async (key) => {
-          const temp = await axios.post(`${API_URL}/loginUser`, {
-            username: username,
-            password: password,
-            apiKey: {key}
-          })
-  
-          
-          setUserData(temp.userData)  
-          setUserId(temp.userId)
-          setCourses(temp.courses)
-
-
-        })
+        setApiKey(localStorage.getItem("canvasAPIKey"))
         console.log("logged in")
 
         
@@ -56,8 +62,8 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData, set
         localStorage.setItem("canvasAPIKey", apiKey)
 
         //LOG IN THE USER AS WELL
-        await setLogState("login");
-        attemptLogin("login"); //logState doesn't update by func call for some reason
+        // await setLogState("login");
+        // attemptLogin("login"); //logState doesn't update by func call for some reason
 
       } catch (e) {
         console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
@@ -136,5 +142,7 @@ Login.propTypes = {
   setLoginTime: PropTypes.func,
   apiKey: PropTypes.string,
   setApiKey: PropTypes.func,
-  setUserData: PropTypes.func
+  setUserData: PropTypes.func,
+  setUserId: PropTypes.func,
+  setCourses: PropTypes.func
 }

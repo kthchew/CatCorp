@@ -84,16 +84,16 @@ app.get('/getSubmission', async (req, res) => {
   }
 });
 
-app.get('/logout', limiter, async (req, res) => {
-  const user_id = req.query.user_id;
-  const login_time = req.query.login_time;  
-  console.log(login_time)
+// app.get('/logout', limiter, async (req, res) => {
+//   const user_id = req.query.user_id;
+//   const login_time = req.query.login_time;  
+//   console.log(login_time)
   
-  let db = getDb();
-  db.updateOne({ "username": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
-  console.log("< logged out user " + user_id)
-  res.status(200).json({ message: "Logged out!" });
-})
+    //code swiped
+
+//   console.log("< logged out user " + user_id)
+//   res.status(200).json({ message: "Logged out!" });
+// })
 
 
 
@@ -154,7 +154,9 @@ app.post('/loginUser', limiter, async (req, res) => {
       json["courses"] = newCourses;
     }))
 
-
+    //UPDATE USER LAST LOGIN ON DB
+    let db = getDb();
+    db.updateOne({ "username": { $eq: json.userData.username } }, { $set: { "lastLogin": Date.now() } })
   }
 
 
