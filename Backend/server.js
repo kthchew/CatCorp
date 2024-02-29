@@ -84,18 +84,6 @@ app.get('/getSubmission', async (req, res) => {
   }
 });
 
-// app.get('/logout', limiter, async (req, res) => {
-//   const user_id = req.query.user_id;
-//   const login_time = req.query.login_time;  
-//   console.log(login_time)
-  
-    //code swiped
-
-//   console.log("< logged out user " + user_id)
-//   res.status(200).json({ message: "Logged out!" });
-// })
-
-
 
 app.post('/loginUser', limiter, async (req, res) => {
   const u = req.body.username;

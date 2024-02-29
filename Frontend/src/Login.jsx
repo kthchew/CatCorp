@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
-export default function Login({setLoginTime, apiKey, setApiKey, setUserData, setUserId, setCourses}) {
+export default function Login({apiKey, setApiKey, setUserData, setUserId, setCourses}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [logState, setLogState] = useState("login");
@@ -30,19 +30,19 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData, set
   
       console.log(temp)
       
-      setUserData(temp.userData)  
-      setUserId(temp.userId)
-      setCourses(temp.courses)
+      setUserData(temp.data.userData)  
+      setUserId(temp.data.userId)
+      setCourses(temp.data.courses)
     }
 
-    login()
+    if (apiKey) {
+      login()
+    }
 
   }, [apiKey])
 
 
   const attemptLogin = async (method) => {
-    setLoginTime(Date.now());
-
     if (method === "login") {
       try {
         setApiKey(localStorage.getItem("canvasAPIKey"))
@@ -139,7 +139,6 @@ CanvasAPIKeyContainer.propTypes = {
   setKey: PropTypes.func
 }
 Login.propTypes = {
-  setLoginTime: PropTypes.func,
   apiKey: PropTypes.string,
   setApiKey: PropTypes.func,
   setUserData: PropTypes.func,
