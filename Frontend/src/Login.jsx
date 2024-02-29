@@ -35,11 +35,11 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
       setCourses(temp.data.courses)
     }
 
-    if (apiKey) {
+    if (apiKey && logState == "login") {
       login()
     }
 
-  }, [apiKey])
+  }, [apiKey, logState])
 
 
   const attemptLogin = async (method) => {
@@ -59,12 +59,9 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
           username: username,
           password: password
         })
+
+        toggleLoginState();
         localStorage.setItem("canvasAPIKey", apiKey)
-
-        //LOG IN THE USER AS WELL
-        // await setLogState("login");
-        // attemptLogin("login"); //logState doesn't update by func call for some reason
-
       } catch (e) {
         console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
       }

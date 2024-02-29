@@ -168,7 +168,7 @@ app.post('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: { $eq: username }, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), lastLogout: null})
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
   return res.status(200).json({message: "User registered"});
 });
 
