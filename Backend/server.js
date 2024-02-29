@@ -144,7 +144,7 @@ app.post('/loginUser', limiter, async (req, res) => {
 
     //UPDATE USER LAST LOGIN ON DB
     let db = getDb();
-    db.updateOne({ "username": { $eq: json.userData.username } }, { $set: { "lastLogin": Date.now() } })
+    db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
   }
 
 
