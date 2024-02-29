@@ -71,12 +71,12 @@ export async function getAssignments(canvas_api_token, course_id) {
         }
       });
 
-      var res = [];
-      response.data.map((a) => {
-        var dueAt = new Date(a.due_at)
-
+      const res = response.data.flatMap((a) => {
+        const dueAt = new Date(a.due_at);
         if (a.due_at && dueAt > Date.now()) {
-          res.push([a.id, a.name, a.due_at, a.points_possible]);
+          return [[a.id, a.name, a.due_at, a.points_possible]];
+        } else {
+          return [];
         }
       })
       return res;
@@ -127,13 +127,11 @@ export async function getNewSubmissions(canvas_api_token, course_id, lastLogin) 
       }
     })
 
-    var newSubmissions = [];
-    var submissions = response.data[0].submissions;
-    submissions.map((temp) => {
-      newSubmissions.push([temp.assignment.id, temp.assignment.name, temp.assignment.due_at, temp.assignment.points_possible, 
-        temp.id, temp.submitted_at, temp.score])
+    const submissions = response.data[0].submissions;
+    const newSubmissions = submissions.map((temp) => {
+      return [temp.assignment.id, temp.assignment.name, temp.assignment.due_at, temp.assignment.points_possible, 
+        temp.id, temp.submitted_at, temp.score]
     })  
-
     return newSubmissions;
   } catch (error) {
     throw new CanvasAPIError('Error fetching new submissions:', error);
