@@ -109,7 +109,7 @@ COURSE STORAGE - NEW MODEL
   return (
     <div>
       {overlay == "login" ? 
-      <Login setLoginTime={setLoginTime} apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData}/>
+      <Login setLoginTime={setLoginTime} apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
       : apiLoad[0] == 1 ? 
       <div>Loading Canvas user...</div>
       : apiLoad[0] == 2 ? 

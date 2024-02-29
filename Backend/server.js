@@ -148,7 +148,7 @@ app.post('/loginUser', limiter, async (req, res) => {
     await Promise.all(res.map(async (c) => {
 
       const newAssignments = await canvas.getAssignments(apiKey, c.id)
-      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id)
+      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
 
       newCourses.push([c.id, c.name, newAssignments, newSubmissions])
       json["courses"] = newCourses;

@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
-export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
+export default function Login({setLoginTime, apiKey, setApiKey, setUserData, setUserId, setCourses}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [logState, setLogState] = useState("login");
@@ -34,9 +34,13 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
           })
   
           
-          setUserData(temp.data.u)  //dont know why I need a u here
+          setUserData(temp.userData)  
+          setUserId(temp.userId)
+          setCourses(temp.courses)
+
 
         })
+        console.log("logged in")
 
         
       } catch (e) {
