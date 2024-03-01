@@ -76,8 +76,6 @@ async function cashSubmissions(userId, courses) {
         var unlock;
         if (s[2]) { //unlock date given
           unlock = new Date(s[2]);
-          const frac = (due - sub) / (due - unlock);
-          multiplier *= (Math.pow(frac, 1/3) + .5)
         } else { // assume it unlocks 4 weeks before it's due
           unlock = due - 4 * 604800000;
         }
