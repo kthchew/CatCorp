@@ -2,6 +2,7 @@ import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import bcrypt from "bcrypt"
+import { ObjectId } from 'mongodb';
 
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
@@ -192,18 +193,18 @@ app.post('/registerAccount', limiter, async (req, res) => {
 
 app.post('/buyLootbox', limiter, async (req, res) => {
   const lootboxID = parseInt(req.body.lootboxID);
-  // TODO: This is not how we should get the current session. When sessions are implemented, this will likely be a token.
-  const session = req.body.username;
+  const session = req.body.session;
 
   if (!session) {
     return res.status(400).json({message: "Invalid session"});
   }
-  if (!lootboxID || isNaN(lootboxID)) {
+  if (isNaN(lootboxID)) {
     return res.status(400).json({message: "Invalid lootbox"});
   }
 
   const db = getDb();
-  const user = db.findOne({"username" : { $eq: session }});
+  // TODO: This is not how we should get the current session. When sessions are implemented, this will use a token.
+  const user = await db.findOne({"_id" : { $eq: new ObjectId(session) }});
   
   if (!user) {
     return res.status(400).json({message: "Invalid user"});

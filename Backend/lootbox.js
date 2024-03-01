@@ -58,7 +58,7 @@ export function buyLootbox(lootboxID, user) {
   if (!user) {
     throw new LootboxOpenError("Invalid user");
   }
-  if (!lootboxID || lootboxID < 0 || lootboxID > 3) {
+  if (lootboxID < 0 || lootboxID > 3) {
     throw new LootboxOpenError("Invalid lootbox");
   }
 
