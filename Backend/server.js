@@ -90,8 +90,8 @@ app.post('/loginUser', limiter, async (req, res) => {
   const p = req.body.password;
   const apiKey = req.body.apiKey;
   
-  if (!u || !p) {
-    return res.status(400).json({message: "Username and password required!"});
+  if (!u || !p || !apiKey) {
+    return res.status(400).json({message: "Username, password, and API key required!"});
   }
 
   let db = getDb();
