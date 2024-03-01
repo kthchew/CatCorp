@@ -61,21 +61,21 @@ app.get('/getCourses', async (req, res) => {
 async function cashSubmissions(userId, courses) {
   var gainz = 0;
 
-  courses.map((c) => {
-    c[3].map((s) => {
+  courses.map((course) => {
+    course[3].map((submission) => {
       var multiplier = 1;
       //multiplier *= WEIGHT_LOGIC
-      if (s[7]) { //score
-        multiplier *= (10*s[7] / 8 / s[4]);
+      if (submission[7] && submission[4]) { //score
+        multiplier *= (10*submission[7] / 8 / submission[4]);
       }
-      if (s[3] && s[6]) { //due date
-        var due = new Date(s[3]);
+      if (submission[3] && submission[6]) { //due date
+        var due = new Date(submission[3]);
         due = due.getTime();
-        var sub = new Date(s[6]);
+        var sub = new Date(submission[6]);
         sub = sub.getTime();
         var unlock;
-        if (s[2]) { //unlock date given
-          unlock = new Date(s[2]);
+        if (submission[2]) { //unlock date given
+          unlock = new Date(submission[2]);
         } else { // assume it unlocks 4 weeks before it's due
           unlock = due - 4 * 604800000;
         }
