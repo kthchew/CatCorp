@@ -11,6 +11,8 @@ const limiter = RateLimit({
 
 import { connectToServer, getDb } from './db/conn.js';
 import * as canvas from './canvas.js';
+import * as lootbox from './lootbox.js';
+import Cat from "./cat.js";
 
 const app = express();
 app.use(cors());
@@ -186,6 +188,46 @@ app.post('/registerAccount', limiter, async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
   return res.status(200).json({message: "User registered"});
+});
+
+app.post('/buyLootbox', limiter, async (req, res) => {
+  const lootboxID = parseInt(req.body.lootboxID);
+  // TODO: This is not how we should get the current session. When sessions are implemented, this will likely be a token.
+  const session = req.body.username;
+
+  if (!session) {
+    return res.status(400).json({message: "Invalid session"});
+  }
+  if (!lootboxID || isNaN(lootboxID)) {
+    return res.status(400).json({message: "Invalid lootbox"});
+  }
+
+  const db = getDb();
+  const user = db.findOne({"username" : { $eq: session }});
+  
+  if (!user) {
+    return res.status(400).json({message: "Invalid user"});
+  }
+
+  try {
+    const cat = lootbox.buyLootbox(lootboxID, user);
+    return res.status(200).json(cat);
+  } catch (error) {
+    if (error instanceof lootbox.LootboxOpenError) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+});
+
+app.get('/randomCat', async (req, res) => {
+  const cat1 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[0]);
+  const cat2 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[1]);
+  const cat3 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
+  return res.status(200).json({
+    cat1: cat1,
+    cat2: cat2,
+    cat3: cat3
+  });
 });
 
 app.get('/', async (req, res) => {
