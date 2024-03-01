@@ -23,6 +23,10 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
 
+  if (!canvas_api_token) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
+
   try {
     const user = await canvas.getUser(canvas_api_token);
     return res.json(user);
@@ -37,6 +41,10 @@ app.get('/getUser', async (req, res) => {
 
 app.get('/getCourses', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
+
+  if (!canvas_api_token) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
 
   try {
     const courses = await canvas.getCourses(canvas_api_token);
@@ -53,6 +61,10 @@ app.get('/getCourses', async (req, res) => {
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
+
+  if (!canvas_api_token || !course_id) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
   
   try {
     const assignments = await canvas.getAssignments(canvas_api_token, course_id);
@@ -71,6 +83,10 @@ app.get('/getSubmission', async (req, res) => {
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
+
+  if (!canvas_api_token || !course_id || !assignment_id || !user_id) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
   
   try {
     const submission = await canvas.getSubmissions(canvas_api_token, course_id, assignment_id, user_id);
