@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import "./css/Login.css"
 
 const API_URL = "http://localhost:3500"
-export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
+export default function Login({apiKey, setApiKey, setUserData, setUserId, setCourses}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [logState, setLogState] = useState("login");
@@ -22,17 +22,24 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
 
 
   const attemptLogin = async (method) => {
-    setLoginTime(Date.now());
-
     if (method === "login") {
       try {
-        const temp = await axios.post(`${API_URL}/loginUser`, {
+        const currentKey = localStorage.getItem("canvasAPIKey");
+        setApiKey(currentKey);
+        const result = await axios.post(`${API_URL}/loginUser`, {
           username: username,
-          password: password
-        })
+          password: password,
+          apiKey: currentKey
+        });
 
-        setApiKey(localStorage.getItem("canvasAPIKey"))
-        setUserData(temp.data.u)  //dont know why I need a u here
+        console.log(result);
+        
+        setUserData(result.data.userData);
+        setUserId(result.data.userId);
+        setCourses(result.data.courses);
+        console.log("logged in");
+
+        
       } catch (e) {
         console.log("login failed");
       }
@@ -43,12 +50,9 @@ export default function Login({setLoginTime, apiKey, setApiKey, setUserData}) {
           username: username,
           password: password
         })
+
+        toggleLoginState();
         localStorage.setItem("canvasAPIKey", apiKey)
-
-        //LOG IN THE USER AS WELL
-        await setLogState("login");
-        attemptLogin("login"); //logState doesn't update by func call for some reason
-
       } catch (e) {
         console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
       }
@@ -123,8 +127,9 @@ CanvasAPIKeyContainer.propTypes = {
   setKey: PropTypes.func
 }
 Login.propTypes = {
-  setLoginTime: PropTypes.func,
   apiKey: PropTypes.string,
   setApiKey: PropTypes.func,
-  setUserData: PropTypes.func
+  setUserData: PropTypes.func,
+  setUserId: PropTypes.func,
+  setCourses: PropTypes.func
 }

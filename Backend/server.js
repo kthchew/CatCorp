@@ -16,12 +16,16 @@ const app = express();
 app.use(cors());
 app.use(_json());
 
-axios.defaults.baseURL = 'https://canvas.instructure.com/api/v1';
+axios.defaults.baseURL = 'https://ufl.instructure.com/api/v1';
 axios.defaults.headers.common['Accept'] = "application/json+canvas-string-ids";
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 app.get('/getUser', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
+
+  if (!canvas_api_token) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
 
   try {
     const user = await canvas.getUser(canvas_api_token);
@@ -38,6 +42,10 @@ app.get('/getUser', async (req, res) => {
 app.get('/getCourses', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
 
+  if (!canvas_api_token) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
+
   try {
     const courses = await canvas.getCourses(canvas_api_token);
     return res.json(courses);
@@ -53,6 +61,10 @@ app.get('/getCourses', async (req, res) => {
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
+
+  if (!canvas_api_token || !course_id) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
   
   try {
     const assignments = await canvas.getAssignments(canvas_api_token, course_id);
@@ -71,6 +83,10 @@ app.get('/getSubmission', async (req, res) => {
   const course_id = req.query.course_id;
   const assignment_id = req.query.assignment_id;
   const user_id = req.query.user_id;
+
+  if (!canvas_api_token || !course_id || !assignment_id || !user_id) {
+    return res.status(400).json({message: "Invalid input!"});
+  }
   
   try {
     const submission = await canvas.getSubmissions(canvas_api_token, course_id, assignment_id, user_id);
@@ -84,25 +100,14 @@ app.get('/getSubmission', async (req, res) => {
   }
 });
 
-app.get('/logout', limiter, async (req, res) => {
-  const user_id = req.query.user_id;
-  const login_time = req.query.login_time;  
-  console.log(login_time)
-  
-  let db = getDb();
-  db.updateOne({ "username": { $eq: user_id } }, { $set: { "lastLogin": login_time } })
-  console.log("< logged out user " + user_id)
-  res.status(200).json({ message: "Logged out!" });
-})
-
-
 
 app.post('/loginUser', limiter, async (req, res) => {
   const u = req.body.username;
   const p = req.body.password;
+  const apiKey = req.body.apiKey;
   
-  if (!u || !p) {
-    return res.status(400).json({message: "Username and password required!"});
+  if (!u || !p || !apiKey) {
+    return res.status(400).json({message: "Username, password, and API key required!"});
   }
 
   let db = getDb();
@@ -126,11 +131,38 @@ app.post('/loginUser', limiter, async (req, res) => {
     if (correctPass) {
       console.log("> logged in user " + u.username)
       code = 200;
-      json = {u};
+      json = {userData: u};
     }
   })
 
+
   await Promise.all(evals);
+  
+  if (json.userData) {
+    const getUserData = async () => {
+      const res = await canvas.getUser(apiKey)
+      return res.id;
+    }
+    var userId = await getUserData();
+    json["userId"] = userId;
+
+    const res = await canvas.getCourses(apiKey)
+    
+    var newCourses = [];
+    await Promise.all(res.map(async (c) => {
+
+      const newAssignments = await canvas.getAssignments(apiKey, c.id)
+      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
+
+      newCourses.push([c.id, c.name, newAssignments, newSubmissions])
+      json["courses"] = newCourses;
+    }))
+
+    //UPDATE USER LAST LOGIN ON DB
+    let db = getDb();
+    db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
+  }
+
 
   return res.status(code).json(json);
 })
@@ -152,7 +184,7 @@ app.post('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: { $eq: username }, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), lastLogout: null})
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
   return res.status(200).json({message: "User registered"});
 });
 

@@ -49,6 +49,7 @@ export async function getCourses(canvas_api_token) {
     var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active" 
                                                         && (!course.end_at || Date.parse(course.end_at) > Date.now()));
     return activeCourses;
+    // return response.data; // we shouldn't really be filtering out old courses if there have been submissions?
   } catch (error) {
     throw new CanvasAPIError('Error fetching courses:', error);
   }
@@ -65,10 +66,22 @@ export async function getAssignments(canvas_api_token, course_id) {
       const response = await axios.get(`/courses/${course_id}/assignments`, {
         params: {
           'access_token': canvas_api_token,
-          "per_page": "100"
+          "per_page": "100",
+          "bucket": "unsubmitted",
+          "order_by": "due_at"
         }
       });
-      return response.data;
+
+      const res = response.data.flatMap((a) => {
+        const dueAt = new Date(a.due_at);
+        if (a.due_at && dueAt > Date.now()) {
+          return [[a.id, a.name, a.due_at, a.points_possible]];
+        } else {
+          return [];
+        }
+      })
+      return res;
+
     } catch (error) {
       throw new CanvasAPIError('Error fetching assignments:', error);
     }
@@ -91,5 +104,37 @@ export async function getSubmissions(canvas_api_token, course_id, assignment_id,
     return response.data;
   } catch (error) {
     throw new CanvasAPIError('Error fetching submissions:', error);
+  }
+}
+
+export async function getNewSubmissions(canvas_api_token, course_id, lastLogin) {
+  const is_num = /^\d+$/
+
+  if (!canvas_api_token || !course_id || !is_num.test(course_id)) {
+    throw new InvalidInput('canvas_api_token and course_id are required');
+  }
+
+  var iso = new Date(Number(lastLogin));
+  try {
+    const response = await axios.get(`/courses/${course_id}/students/submissions`, {
+      params: {
+        'access_token': canvas_api_token,
+        "per_page": "100",
+        "grouped": "true",
+        "include[]": "assignment",
+        "submitted_since": iso.toISOString(),
+        "order": "graded_at",
+        "order_direction": "descending"
+      }
+    })
+
+    const submissions = response.data[0].submissions;
+    const newSubmissions = submissions.map((temp) => {
+      return [temp.assignment.id, temp.assignment.name, temp.assignment.due_at, temp.assignment.points_possible, 
+        temp.id, temp.submitted_at, temp.score]
+    })  
+    return newSubmissions;
+  } catch (error) {
+    throw new CanvasAPIError('Error fetching new submissions:', error);
   }
 }
