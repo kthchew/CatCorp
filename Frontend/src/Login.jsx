@@ -20,33 +20,24 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
     // alert("Username: " + username + " " + "Password: " + password);
   };
 
-  useEffect(() => {
-    const login = async () => {
-      const temp = await axios.post(`${API_URL}/loginUser`, {
-        username: username,
-        password: password,
-        apiKey: apiKey
-      })
-  
-      console.log(temp)
-      
-      setUserData(temp.data.userData)  
-      setUserId(temp.data.userId)
-      setCourses(temp.data.courses)
-    }
-
-    if (apiKey && logState == "login") {
-      login()
-    }
-
-  }, [apiKey, logState])
-
 
   const attemptLogin = async (method) => {
     if (method === "login") {
       try {
-        setApiKey(localStorage.getItem("canvasAPIKey"))
-        console.log("logged in")
+        const currentKey = localStorage.getItem("canvasAPIKey");
+        setApiKey(currentKey);
+        const result = await axios.post(`${API_URL}/loginUser`, {
+          username: username,
+          password: password,
+          apiKey: currentKey
+        });
+
+        console.log(result);
+        
+        setUserData(result.data.userData);
+        setUserId(result.data.userId);
+        setCourses(result.data.courses);
+        console.log("logged in");
 
         
       } catch (e) {

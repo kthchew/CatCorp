@@ -49,6 +49,7 @@ export async function getCourses(canvas_api_token) {
     var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active" 
                                                         && (!course.end_at || Date.parse(course.end_at) > Date.now()));
     return activeCourses;
+    // return response.data; // we shouldn't really be filtering out old courses if there have been submissions?
   } catch (error) {
     throw new CanvasAPIError('Error fetching courses:', error);
   }
