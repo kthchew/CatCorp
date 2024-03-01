@@ -130,7 +130,7 @@ export async function getNewSubmissions(canvas_api_token, course_id, lastLogin) 
 
     const submissions = response.data[0].submissions;
     const newSubmissions = submissions.map((temp) => {
-      return [temp.assignment.id, temp.assignment.name, temp.assignment.due_at, temp.assignment.points_possible, 
+      return [temp.assignment.id, temp.assignment.name, temp.assignment.unlock_at, temp.assignment.due_at, temp.assignment.points_possible, 
         temp.id, temp.submitted_at, temp.score]
     })  
     return newSubmissions;

@@ -58,6 +58,42 @@ app.get('/getCourses', async (req, res) => {
   }
 });
 
+async function cashSubmissions(userId, courses) {
+  var gainz = 0;
+
+  courses.map((c) => {
+    c[3].map((s) => {
+      var multiplier = 1;
+      //multiplier *= WEIGHT_LOGIC
+      if (s[7]) { //score
+        multiplier *= (10*s[7] / 8 / s[4]);
+      }
+      if (s[3] && s[6]) { //due date
+        var due = new Date(s[3]);
+        due = due.getTime();
+        var sub = new Date(s[6]);
+        sub = sub.getTime();
+        var unlock;
+        if (s[2]) { //unlock date given
+          unlock = new Date(s[2]);
+          const frac = (due - sub) / (due - unlock);
+          multiplier *= (Math.pow(frac, 1/3) + .5)
+        } else { // assume it unlocks 4 weeks before it's due
+          unlock = due - 4 * 604800000;
+        }
+        const frac = (due - sub) / (due - unlock);
+        multiplier *= Math.min((Math.pow(frac, 1/3) + .5), 1.5);
+      }
+
+      gainz += Math.floor(multiplier * 100);
+    })
+  })
+
+  let db = getDb();
+  db.updateOne({ "_id": { $eq: userId } }, { $inc: { "gems": gainz } })  
+  return gainz;
+}
+
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
@@ -161,6 +197,9 @@ app.post('/loginUser', limiter, async (req, res) => {
     //UPDATE USER LAST LOGIN ON DB
     let db = getDb();
     db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
+
+    var gainz = await cashSubmissions(json.userData._id, json.courses);
+    json.userData.gems += gainz;
   }
 
 
@@ -184,7 +223,7 @@ app.post('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 1000})
   return res.status(200).json({message: "User registered"});
 });
 
