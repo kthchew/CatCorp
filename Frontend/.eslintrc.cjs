@@ -1,3 +1,7 @@
+const stylistic = require('@stylistic/eslint-plugin')
+
+const style = stylistic.configs.customize({})
+
 module.exports = {
   root: false,
   env: { browser: true, es2020: true },
@@ -14,11 +18,11 @@ module.exports = {
     ecmaFeatures: { jsx: true },
   },
   settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', '@stylistic'],
   rules: {
     'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
+      'warn', { allowConstantExport: true },
     ],
+    ...style.rules,
   },
 }
