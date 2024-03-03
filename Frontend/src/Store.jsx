@@ -7,7 +7,7 @@ import store_UI from "./img/store_window.png"
 import close_button from "./img/close_button.png"
 import adopt_button from "./img/Adopt.png"
 import display_frame from "./img/display_frame.png"
-
+import gem_count from "./img/gem_display.png"
 const Popup = ({ isOpen, onClose }) => (
   <div>
     {isOpen && (
@@ -25,6 +25,9 @@ const Popup = ({ isOpen, onClose }) => (
         <div className="lootbox">
           <img src={loot_box}/>
         </div>
+        <div className="gem_display">
+          <img src={gem_count}/>
+        </div> 
       </div>
     )}
   </div>

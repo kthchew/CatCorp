@@ -42,6 +42,19 @@
     background: none;
 }
 
+.gem_display {
+    position:absolute;
+    height:auto;
+    top:16%;
+    right: -20%;
+    display: flex;
+    flex-direction: column;
+    margin-inline: auto;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
 .lootbox {
     position:absolute;
     height:auto;
