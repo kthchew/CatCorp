@@ -1,0 +1,72 @@
+.store {
+    margin: auto;
+    width: 0;
+    height: 0;
+}
+
+.adopt {
+    position:relative;
+    height:auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    bottom: 24%;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.close_store {
+    position: relative;
+    bottom: 86%;
+    left: 86%;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.close_store img {
+    display: block;
+}
+
+.display_frame {
+    position:relative;
+    height:auto;
+    bottom:78%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-inline: auto;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.lootbox {
+    position:absolute;
+    height:auto;
+    top:36%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-inline: auto;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.store_container {
+    position:absolute;
+    height:auto;
+    bottom:5%;
+    top:5%;
+    left:35%;
+    right:35%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-inline: auto;
+    border: none;
+    padding: 0;
+    background: none;
+}

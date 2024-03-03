@@ -69,11 +69,6 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
   return (
     <div className="loginContainer">
-      <div className="leader">
-        <button>
-          {/* <img src={leaderWindow}/> */}
-        </button>
-      </div>
       <img src={logo} alt="Cat Corporate" className="loginLogo"/>
       <h2 className="loginHeader">Welcome to Cat Corporate!!!</h2>
       <form onSubmit={(e)=> handleSubmit(e)}>
