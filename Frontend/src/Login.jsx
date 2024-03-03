@@ -8,7 +8,6 @@ import exist_user from "./img/Existing_User.png"
 import PropTypes from "prop-types";
 import "./css/Login.css"
 
-const API_URL = "http://localhost:3500"
 export default function Login({apiKey, setApiKey, setUserData, setUserId, setCourses}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +29,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
         setLoginResponse(`Logging in user ${username}...`);
 
-        const result = await axios.post(`${API_URL}/loginUser`, {
+        const result = await axios.post(`/loginUser`, {
           username: username,
           password: password,
           apiKey: currentKey
@@ -58,7 +57,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
       setLoginResponse(`Registering user ${username}...`);
 
       try {
-        await axios.post(`${API_URL}/registerAccount`, {
+        await axios.post(`/registerAccount`, {
           username: username,
           password: password
         })

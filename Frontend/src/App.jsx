@@ -4,13 +4,30 @@ import './css/App.css'
 import Login from "./Login"
 // import Rewards from "./Rewards"
 
-axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
+axios.defaults.baseURL = 'http://localhost:3500';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.withCredentials = true;
+
+let initialUserData;
+let initialUserId;
+let initialCourses;
+try {
+  // TODO: Maybe this isn't the best place to put this; might move to an effect if we want to show loading indicators
+  const result = await axios.get(`/getAccountInfo`);
+  initialUserData = result.data.userData;
+  initialUserId = result.data.canvasUserId;
+  initialCourses = result.data.courses;
+} catch (e) {
+  initialUserData = null;
+  initialUserId = null;
+  initialCourses = null;
+}
 
 function App() {
-  const [courses, setCourses] = useState(null);
-  const [userId, setUserId] = useState(null); //canvas user id
-  const [userData, setUserData] = useState(null); //from db
-  const [apiKey, setApiKey] = useState(null)
+  const [courses, setCourses] = useState(initialCourses);
+  const [userId, setUserId] = useState(initialUserId); //canvas user id
+  const [userData, setUserData] = useState(initialUserData); //from db
+  const [apiKey, setApiKey] = useState("")
   const [overlay, setOverlay] = useState("login")
 
 //due_at, points_possible, has_submitted_submissions, name, 
@@ -47,7 +64,6 @@ COURSE STORAGE - NEW MODEL
       setOverlay("home")
     }
   }, [courses])
-
 
   return (
     <div>
