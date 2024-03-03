@@ -28,6 +28,11 @@ app.use(session({
   maxAge: 24 * 60 * 60 * 1000, // 1 day
 }))
 
+app.use((req, res, next) => {
+  CatCorpUser.renewSession(req.session);
+  next();
+})
+
 axios.defaults.baseURL = 'https://ufl.instructure.com/api/v1';
 axios.defaults.headers.common['Accept'] = "application/json+canvas-string-ids";
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -169,6 +174,7 @@ app.post('/loginUser', limiter, async (req, res) => {
 
     req.session.ccUserId = user._id
     req.session.canvasKey = apiKey
+    CatCorpUser.renewSession(req.session);
 
     var userId = await CatCorpUser.getCanvasUserId(req.session);
     if (userId && userId !== keyCanvasUser.id) {
@@ -235,6 +241,11 @@ app.post('/registerAccount', limiter, async (req, res) => {
   const userId = await CatCorpUser.registerAccount(username, password)
   return res.status(200).json({message: "User registered", userId: userId});
 });
+
+app.post('/logout', async (req, res) => {
+  req.session = null;
+  res.status(200).json({message: "Logged out"});
+})
 
 app.post('/buyLootbox', limiter, async (req, res) => {
   const lootboxID = parseInt(req.body.lootboxID);

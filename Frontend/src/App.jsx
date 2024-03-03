@@ -58,6 +58,18 @@ COURSE STORAGE - NEW MODEL
   ]
 */
 
+  async function logout() {
+    try {
+      await axios.post(`/logout`);
+      setUserData(null);
+      setUserId(null);
+      setCourses(null);
+      setOverlay("login")
+    } catch (e) {
+      console.log("logout failed");
+    }
+  }
+
 
   useEffect(() => {
     if (courses) {
@@ -95,6 +107,7 @@ COURSE STORAGE - NEW MODEL
           : 
             <h2>Finishing up...</h2>
           }
+          <button onClick={logout}>Logout</button>
         </div>
       }
       </div>

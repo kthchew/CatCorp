@@ -31,6 +31,10 @@ export async function verifyCredentials(username, password) {
   return matchedUser
 }
 
+export function renewSession(session) {
+  if (session && session.ccUserId) session.currentMinute = Math.floor(Date.now() / 60e3)
+}
+
 async function setUserProperty(session, property, value) {
   const userId = session.ccUserId
   if (!userId) return false
