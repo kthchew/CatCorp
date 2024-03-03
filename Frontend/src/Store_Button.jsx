@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios";
-import PropTypes from "prop-types";
+import { useState } from "react";
 import "./css/Store.css";
 import store_wid from "./img/store_button.png";
 import Store from './Store.jsx'; 
 
-const storeButton = () => {
+export default function StoreButton() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const openPopup = () => {
@@ -24,7 +22,6 @@ const storeButton = () => {
       <Store isOpen={isPopupOpen} onClose={closePopup} />
     </div>
   );
-};
+}
 
-export default storeButton;
 

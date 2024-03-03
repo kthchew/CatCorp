@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import axios from "axios"
-import PropTypes from "prop-types";
 import "./css/Store.css"
+import PropTypes from "prop-types";
 import loot_box from "./img/lootbox.png"
 import store_UI from "./img/store_window.png"
 import close_button from "./img/close_button.png"
 import adopt_button from "./img/Adopt.png"
 import display_frame from "./img/display_frame.png"
 import gem_count from "./img/gem_display.png"
-const Popup = ({ isOpen, onClose }) => (
+
+export default function Popup ({isOpen, onClose}) {
+  return(
   <div>
     {isOpen && (
       <div className="store_container">
@@ -31,6 +31,10 @@ const Popup = ({ isOpen, onClose }) => (
       </div>
     )}
   </div>
-);
+  );
+}
 
-export default Popup;
+Popup.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.bool.isRequired
+}
