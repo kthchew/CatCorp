@@ -7,7 +7,7 @@ import adopt_button from "./img/Adopt.png"
 import display_frame from "./img/display_frame.png"
 import gem_count from "./img/gem_display.png"
 
-export default function Popup ({isOpen, onClose}) {
+export default function Store ({isOpen, onClose}) {
   return(
   <div>
     {isOpen && (
@@ -34,7 +34,7 @@ export default function Popup ({isOpen, onClose}) {
   );
 }
 
-Popup.propTypes = {
+Store.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.bool.isRequired
 }

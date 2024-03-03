@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-import Store from "./Store_Button"
+import StoreButton from "./Store_Button"
 // import Rewards from "./Rewards"
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
@@ -81,7 +81,7 @@ COURSE STORAGE - NEW MODEL
           }
         </div>
       }
-      <Store/>
+      <StoreButton/>
     </div>
   )
 }
