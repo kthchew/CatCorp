@@ -1,11 +1,11 @@
 import "./css/Store.css"
 import PropTypes from "prop-types";
-import loot_box from "./img/lootbox.png"
-import store_UI from "./img/store_window.png"
-import close_button from "./img/close_button.png"
-import adopt_button from "./img/Adopt.png"
-import display_frame from "./img/display_frame.png"
-import gem_count from "./img/gem_display.png"
+import loot_box from "./img/UI/lootbox.png"
+import store_UI from "./img/UI/store_window.png"
+import close_button from "./img/UI/close_button.png"
+import adopt_button from "./img/UI/Adopt.png"
+import display_frame from "./img/UI/display_frame.png"
+import gem_count from "./img/UI/gem_display.png"
 
 export default function Store ({isOpen, onClose}) {
   return(

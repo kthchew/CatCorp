@@ -5,15 +5,15 @@
 }
 
 .adopt {
-    position:relative;
+    position:absolute;
     height:auto;
-    display: flex;
     align-items: center;
     flex-direction: column;
-    bottom: 24%;
+    bottom: 19%;
     border: none;
     padding: 0;
     background: none;
+    width: 35vw;
 }
 
 .close_store {
@@ -32,7 +32,7 @@
 .display_frame {
     position:relative;
     height:auto;
-    bottom:78%;
+    bottom:70%;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -43,10 +43,9 @@
 }
 
 .gem_display {
-    position:absolute;
-    height:auto;
-    top:16%;
-    right: -20%;
+    position: relative;
+    top: -120%;
+    left: 65%;
     display: flex;
     flex-direction: column;
     margin-inline: auto;
@@ -69,6 +68,8 @@
 }
 
 .store_container {
+    padding-inline: 0.2rem;
+    padding-bottom: 0.1rem;
     position:absolute;
     height:auto;
     bottom:5%;
