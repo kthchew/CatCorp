@@ -49,22 +49,26 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
           console.log(e.response.data.message);
           setLoginResponse(e.response.data.message);
         } else {
-          setLoginResponse(`Could not contact CatCorp servers!`);
-          console.log(`Could not contact CatCorp servers!`);
+          setLoginResponse(`Could not contact CatCorp/Canvas servers!`);
+          console.log(`Could not contact CatCorp/Canvas servers!`);
         }
       }
 
     } else if (logState === "create") {
+      setLoginResponse(`Registering user ${username}...`);
+
       try {
-        await axios.post(`${API_URL}/registerAccount`, {
+        const res = await axios.post(`${API_URL}/registerAccount`, {
           username: username,
           password: password
         })
 
         toggleLoginState();
+        setLoginResponse(`Registered user ${username}`)
         localStorage.setItem("canvasAPIKey", apiKey)
       } catch (e) {
-        console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
+        console.log(e.response.data.message) //TELL THE USER IF THE USERNAME IS TAKEN
+        setLoginResponse(e.response.data.message)
       }
     }
   }

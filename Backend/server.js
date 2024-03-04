@@ -146,7 +146,8 @@ app.post('/loginUser', limiter, async (req, res) => {
   const apiKey = req.body.apiKey;
   
   if (!u || !p || !apiKey) {
-    return res.status(400).json({message: "Username, password, and API key required!"});
+    //we just lie about the api key to make it look better on the frontend
+    return res.status(400).json({message: "Username and password required!"});
   }
 
   let db = getDb();
@@ -214,8 +215,9 @@ app.post('/registerAccount', limiter, async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   
-  if (!username || !password) {
-    return res.status(400).json({message: "Input both a username and password"});
+  if (!username || !password) {    
+    //we just lie about the api key to make it look better on the frontend
+    return res.status(400).json({message: "Input a username, password, and API key!"});
   }
 
   let db = getDb();
