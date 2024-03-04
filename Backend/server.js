@@ -59,33 +59,35 @@ app.get('/getCourses', async (req, res) => {
 });
 
 async function cashSubmissions(userId, courses) {
-  var gainz = 0;
-
-  courses.map((course) => {
-    course[3].map((submission) => {
+  const gainz = courses
+    .flatMap((course) => { return course[3]; })
+    .reduce((val, submission) => {
       var multiplier = 1;
       //multiplier *= WEIGHT_LOGIC
-      if (submission[7] && submission[4]) { //score
-        multiplier *= (10*submission[7] / 8 / submission[4]);
+      const studentScore = submission[7];
+      const maximumScore = submission[4];
+      if (studentScore && maximumScore) { //score
+        multiplier *= (10*studentScore / 8 / maximumScore);
       }
-      if (submission[3] && submission[6]) { //due date
-        var due = new Date(submission[3]);
+      const dueDate = submission[3];
+      const submissionDate = submission[6];
+      const unlockDate = submission[2];
+      if (dueDate && submissionDate) { //due date
+        var due = new Date(dueDate);
         due = due.getTime();
-        var sub = new Date(submission[6]);
+        var sub = new Date(submissionDate);
         sub = sub.getTime();
         var unlock;
-        if (submission[2]) { //unlock date given
-          unlock = new Date(submission[2]);
+        if (unlockDate) { //unlock date given
+          unlock = new Date(unlockDate);
         } else { // assume it unlocks 4 weeks before it's due
           unlock = due - 4 * 604800000;
         }
         const frac = (due - sub) / (due - unlock);
-        multiplier *= Math.min((Math.pow(frac, 1/3) + .5), 1.5);
+        multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
       }
-
-      gainz += Math.floor(multiplier * 100);
-    })
-  })
+      return val + Math.ceil(multiplier * 100);
+    }, 0);
 
   let db = getDb();
   db.updateOne({ "_id": { $eq: userId } }, { $inc: { "gems": gainz } })  
