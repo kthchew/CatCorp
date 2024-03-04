@@ -45,8 +45,13 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
         
       } catch (e) {
-        console.log(e.response.data.message);
-        setLoginResponse(e.response.data.message);
+        if (e.response) {
+          console.log(e.response.data.message);
+          setLoginResponse(e.response.data.message);
+        } else {
+          setLoginResponse(`Could not contact CatCorp servers!`);
+          console.log(`Could not contact CatCorp servers!`);
+        }
       }
 
     } else if (logState === "create") {
