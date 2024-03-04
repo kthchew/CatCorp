@@ -27,10 +27,11 @@ COURSE STORAGE - NEW MODEL
       due date
       points possible
     ]
-    new  submissions:
+    new submissions:
     [
       assignment id
       assignment name
+      unlock date
       due date
       points possible
       submission id

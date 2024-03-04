@@ -61,6 +61,42 @@ app.get('/getCourses', async (req, res) => {
   }
 });
 
+async function cashSubmissions(userId, courses) {
+  const gainz = courses
+    .flatMap((course) => { return course[3]; })
+    .reduce((val, submission) => {
+      var multiplier = 1;
+      //multiplier *= WEIGHT_LOGIC
+      const studentScore = submission[7];
+      const maximumScore = submission[4];
+      if (studentScore && maximumScore) { //score
+        multiplier *= (10*studentScore / 8 / maximumScore);
+      }
+      const dueDate = submission[3];
+      const submissionDate = submission[6];
+      const unlockDate = submission[2];
+      if (dueDate && submissionDate) { //due date
+        var due = new Date(dueDate);
+        due = due.getTime();
+        var sub = new Date(submissionDate);
+        sub = sub.getTime();
+        var unlock;
+        if (unlockDate) { //unlock date given
+          unlock = new Date(unlockDate);
+        } else { // assume it unlocks 4 weeks before it's due
+          unlock = due - 4 * 604800000;
+        }
+        const frac = (due - sub) / (due - unlock);
+        multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
+      }
+      return val + Math.ceil(multiplier * 100);
+    }, 0);
+
+  let db = getDb();
+  db.updateOne({ "_id": { $eq: userId } }, { $inc: { "gems": gainz } })  
+  return gainz;
+}
+
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
   const course_id = req.query.course_id;
@@ -164,6 +200,9 @@ app.post('/loginUser', limiter, async (req, res) => {
     //UPDATE USER LAST LOGIN ON DB
     let db = getDb();
     db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
+
+    var gainz = await cashSubmissions(json.userData._id, json.courses);
+    json.userData.gems += gainz;
   }
 
 
@@ -187,7 +226,7 @@ app.post('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 1000})
   return res.status(200).json({message: "User registered"});
 });
 
