@@ -171,6 +171,7 @@ app.post('/loginUser', limiter, async (req, res) => {
       console.log("> logged in user " + u.username)
       code = 200;
       json = {userData: u};
+      json["message"] = `Logged in user ${u.username}`
     }
   })
 
