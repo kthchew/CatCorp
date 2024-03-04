@@ -5,11 +5,11 @@
 }
 
 .adopt {
-    position:absolute;
+    position: relative;
     height:auto;
     align-items: center;
     flex-direction: column;
-    bottom: 19%;
+    bottom: 20%;
     border: none;
     padding: 0;
     background: none;
@@ -32,7 +32,7 @@
 .display_frame {
     position:relative;
     height:auto;
-    bottom:70%;
+    bottom:75%;
     display: flex;
     align-items: center;
     flex-direction: column;
