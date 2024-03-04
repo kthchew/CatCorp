@@ -180,31 +180,38 @@ app.post('/loginUser', limiter, async (req, res) => {
   await Promise.all(evals);
   
   if (json.userData) {
-    const getUserData = async () => {
-      const res = await canvas.getUser(apiKey)
-      return res.id;
-    }
+      const getUserData = async () => {
+        try {
+          const res = await canvas.getUser(apiKey)
+          return res.id;
+        } catch (e) {
+          return new Error(e.message); //would throwing here crash the db?
+        }
+      }
     var userId = await getUserData();
     json["userId"] = userId;
 
     const res = await canvas.getCourses(apiKey)
-    
-    var newCourses = [];
-    await Promise.all(res.map(async (c) => {
-
-      const newAssignments = await canvas.getAssignments(apiKey, c.id)
-      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
-
-      newCourses.push([c.id, c.name, newAssignments, newSubmissions])
-      json["courses"] = newCourses;
-    }))
-
-    //UPDATE USER LAST LOGIN ON DB
-    let db = getDb();
-    db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
-
-    var gainz = await cashSubmissions(json.userData._id, json.courses);
-    json.userData.gems += gainz;
+    if (res.error) {
+      code = 400;
+    } else {
+      var newCourses = [];
+      await Promise.all(res.map(async (c) => {
+  
+        const newAssignments = await canvas.getAssignments(apiKey, c.id)
+        const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
+  
+        newCourses.push([c.id, c.name, newAssignments, newSubmissions])
+        json["courses"] = newCourses;
+      }))
+  
+      //UPDATE USER LAST LOGIN ON DB
+      let db = getDb();
+      db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
+  
+      var gainz = await cashSubmissions(json.userData._id, json.courses);
+      json.userData.gems += gainz;
+    }
   }
 
 

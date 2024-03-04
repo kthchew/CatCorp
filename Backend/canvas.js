@@ -30,7 +30,7 @@ export async function getUser(canvas_api_token) {
     });
     return response.data;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching user:', error);
+    throw new CanvasAPIError('Error fetching user', error);
   }
 }
 
@@ -51,7 +51,7 @@ export async function getCourses(canvas_api_token) {
     return activeCourses;
     // return response.data; // we shouldn't really be filtering out old courses if there have been submissions?
   } catch (error) {
-    throw new CanvasAPIError('Error fetching courses:', error);
+    throw new CanvasAPIError('Error fetching courses', error);
   }
 }
 
@@ -83,7 +83,7 @@ export async function getAssignments(canvas_api_token, course_id) {
       return res;
 
     } catch (error) {
-      throw new CanvasAPIError('Error fetching assignments:', error);
+      throw new CanvasAPIError('Error fetching assignments', error);
     }
 }
 
@@ -103,7 +103,7 @@ export async function getSubmissions(canvas_api_token, course_id, assignment_id,
     });
     return response.data;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching submissions:', error);
+    throw new CanvasAPIError('Error fetching submissions', error);
   }
 }
 
@@ -135,6 +135,6 @@ export async function getNewSubmissions(canvas_api_token, course_id, lastLogin) 
     })  
     return newSubmissions;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching new submissions:', error);
+    throw new CanvasAPIError('Error fetching new submissions', error);
   }
 }
