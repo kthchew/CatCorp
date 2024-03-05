@@ -58,7 +58,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
       setLoginResponse(`Registering user ${username}...`);
 
       try {
-        const res = await axios.post(`${API_URL}/registerAccount`, {
+        await axios.post(`${API_URL}/registerAccount`, {
           username: username,
           password: password
         })
