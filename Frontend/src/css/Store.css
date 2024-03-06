@@ -1,86 +1,57 @@
-.store {
-    margin: auto;
-    width: 0;
-    height: 0;
-}
-
 .adopt {
-    position: relative;
-    height:auto;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    flex-direction: column;
+    position: relative;
     bottom: 20%;
-    border: none;
-    padding: 0;
-    background: none;
-    width: 35vw;
 }
 
 .close_store {
-    position: relative;
-    bottom: 86%;
-    left: 86%;
     border: none;
-    padding: 0;
     background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 20%;
 }
 
 .close_store img {
     display: block;
 }
 
-.display_frame {
-    position:relative;
-    height:auto;
-    bottom:75%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    margin-inline: auto;
-    border: none;
-    padding: 0;
-    background: none;
-}
-
 .gem_display {
-    position: relative;
-    top: -120%;
-    left: 65%;
     display: flex;
-    flex-direction: column;
-    margin-inline: auto;
-    border: none;
-    padding: 0;
-    background: none;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 95%;
+    left: 22%;
 }
 
-.lootbox {
-    position:absolute;
-    height:auto;
-    top:36%;
+.display_frame {
     display: flex;
+    justify-content: center;
     align-items: center;
-    flex-direction: column;
-    margin-inline: auto;
-    border: none;
-    padding: 0;
-    background: none;
+    position: relative;
+    bottom: 50%;
+}
+
+#display_frame {
+    position: absolute;
+}
+.lootbox {
+    position: absolute;
 }
 
 .store_container {
-    padding-inline: 0.2rem;
-    padding-bottom: 0.1rem;
-    position:absolute;
-    height:auto;
-    bottom:5%;
-    top:5%;
-    left:35%;
-    right:35%;
+    left: 5%;
+    right: 5%;
+    top: 15%;
+    bottom: 5%;
     display: flex;
-    align-items: center;
     flex-direction: column;
-    margin-inline: auto;
-    border: none;
-    padding: 0;
-    background: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
 }

@@ -12,22 +12,24 @@ export default function Store ({isOpen, onClose}) {
   <div>
     {isOpen && (
       <div className="store_container">
-        <img src={store_UI}/>
-        <button className="close_store" onClick={onClose}>
-          <img src={close_button}/>
-        </button>
+        <div className="store_image">
+          <img src={store_UI}/>
+        </div>
+        <div className="display_frame"> 
+          <img src={display_frame} id="display_frame"/>
+          <div className="lootbox">
+            <img src={loot_box}/>
+        </div>
+        </div>
         <button className="adopt">
           <img src={adopt_button}/>
         </button>
-        <div className="display_frame"> 
-          <img src={display_frame}/>
-        </div>
-        <div className="lootbox">
-          <img src={loot_box}/>
-        </div>
         <div className="gem_display">
           <img src={gem_count}/>
         </div> 
+        <button className="close_store" onClick={onClose}>
+          <img src={close_button}/>
+        </button>
       </div>
     )}
   </div>
