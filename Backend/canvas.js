@@ -43,7 +43,8 @@ export async function getCourses(canvas_api_token) {
     const response = await axios.get(`/courses/`, {
       params: {
         'access_token': canvas_api_token,
-        "per_page": "100"
+        "per_page": "100",
+        "enrollment_type": "student"
       }
     });
     var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active" 
