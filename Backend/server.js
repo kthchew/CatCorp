@@ -1,6 +1,7 @@
 import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import lusca from 'lusca';
 import { ObjectId } from 'mongodb';
 
 import RateLimit from 'express-rate-limit';
@@ -26,6 +27,13 @@ app.use(session({
   name: 'session',
   secret: SESSION_SECRET,
   maxAge: 24 * 60 * 60 * 1000, // 1 day
+}))
+app.use(lusca({
+  csrf: true,
+  xframe: 'SAMEORIGIN',
+  xssProtection: true,
+  nosniff: true,
+  referrerPolicy: 'same-origin'
 }))
 
 app.use((req, res, next) => {
