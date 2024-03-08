@@ -13,6 +13,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [logState, setLogState] = useState("login");
+  const [loginResponse, setLoginResponse] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,6 +27,9 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
       try {
         const currentKey = localStorage.getItem("canvasAPIKey");
         setApiKey(currentKey);
+
+        setLoginResponse(`Logging in user ${username}...`);
+
         const result = await axios.post(`${API_URL}/loginUser`, {
           username: username,
           password: password,
@@ -41,10 +45,18 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
         
       } catch (e) {
-        console.log("login failed");
+        if (e.response) {
+          console.log(e.response.data.message);
+          setLoginResponse(e.response.data.message);
+        } else {
+          setLoginResponse(`Could not contact CatCorp/Canvas servers!`);
+          console.log(`Could not contact CatCorp/Canvas servers!`);
+        }
       }
 
     } else if (logState === "create") {
+      setLoginResponse(`Registering user ${username}...`);
+
       try {
         await axios.post(`${API_URL}/registerAccount`, {
           username: username,
@@ -52,9 +64,11 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
         })
 
         toggleLoginState();
+        setLoginResponse(`Registered user ${username}`)
         localStorage.setItem("canvasAPIKey", apiKey)
       } catch (e) {
-        console.log("account creation failed") //TELL THE USER IF THE USERNAME IS TAKEN
+        console.log(e.response.data.message) //TELL THE USER IF THE USERNAME IS TAKEN
+        setLoginResponse(e.response.data.message)
       }
     }
   }
@@ -98,6 +112,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
             <img src={logState == "login" ? login_button : create_account}/>
           </button>
         </div>
+        <div className="copyright" style={{color: "red"}}>{loginResponse}</div>
       </form>
       <div className="bottomForm">
         <div className="links">

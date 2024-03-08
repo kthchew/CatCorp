@@ -34,11 +34,7 @@ app.get('/getUser', async (req, res) => {
     const user = await canvas.getUser(canvas_api_token);
     return res.json(user);
   } catch (error) {
-    if (error instanceof canvas.InvalidInput) {
-      return res.status(400).json({ error: error.message });
-    } else if (error instanceof canvas.CanvasAPIError) {
-      return res.status(500).json({ error: error.message });
-    }
+    return res.status(error.status).json({ error: error.message });
   }
 });
 
@@ -53,11 +49,7 @@ app.get('/getCourses', async (req, res) => {
     const courses = await canvas.getCourses(canvas_api_token);
     return res.json(courses);
   } catch (error) {
-    if (error instanceof canvas.InvalidInput) {
-      return res.status(400).json({ error: error.message });
-    } else if (error instanceof canvas.CanvasAPIError) {
-      return res.status(500).json({ error: error.message });
-    }
+    return res.status(error.status).json({ error: error.message });
   }
 });
 
@@ -109,11 +101,7 @@ app.get('/getAssignments', async (req, res) => {
     const assignments = await canvas.getAssignments(canvas_api_token, course_id);
     return res.json(assignments);
   } catch (error) {
-    if (error instanceof canvas.InvalidInput) {
-      return res.status(400).json({ error: error.message });
-    } else if (error instanceof canvas.CanvasAPIError) {
-      return res.status(500).json({ error: error.message });
-    }
+    return res.status(error.status).json({ error: error.message });
   }
 });
 
@@ -131,11 +119,7 @@ app.get('/getSubmission', async (req, res) => {
     const submission = await canvas.getSubmissions(canvas_api_token, course_id, assignment_id, user_id);
     return res.json(submission);
   } catch (error) {
-    if (error instanceof canvas.InvalidInput) {
-      return res.status(400).json({ error: error.message });
-    } else if (error instanceof canvas.CanvasAPIError) {
-      return res.status(500).json({ error: error.message });
-    }
+    return res.status(error.status).json({ error: error.message });
   }
 });
 
@@ -146,7 +130,8 @@ app.post('/loginUser', limiter, async (req, res) => {
   const apiKey = req.body.apiKey;
   
   if (!u || !p || !apiKey) {
-    return res.status(400).json({message: "Username, password, and API key required!"});
+    //we just lie about the api key to make it look better on the frontend
+    return res.status(400).json({message: "Username and password required!"});
   }
 
   let db = getDb();
@@ -171,6 +156,7 @@ app.post('/loginUser', limiter, async (req, res) => {
       console.log("> logged in user " + u.username)
       code = 200;
       json = {userData: u};
+      json["message"] = `Logged in user ${u.username}`
     }
   })
 
@@ -178,24 +164,24 @@ app.post('/loginUser', limiter, async (req, res) => {
   await Promise.all(evals);
   
   if (json.userData) {
-    const getUserData = async () => {
-      const res = await canvas.getUser(apiKey)
-      return res.id;
+    try {
+      const user = await canvas.getUser(apiKey);
+      json["userId"] = user.id;
+
+      const courses = await canvas.getCourses(apiKey)
+
+      var newCourses = [];
+      await Promise.all(courses.map(async (c) => {
+
+        const newAssignments = await canvas.getAssignments(apiKey, c.id)
+        const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
+
+        newCourses.push([c.id, c.name, newAssignments, newSubmissions])
+        json["courses"] = newCourses;
+      }))
+    } catch (error) {
+      return res.status(error.status).json({ error: error.message });
     }
-    var userId = await getUserData();
-    json["userId"] = userId;
-
-    const res = await canvas.getCourses(apiKey)
-    
-    var newCourses = [];
-    await Promise.all(res.map(async (c) => {
-
-      const newAssignments = await canvas.getAssignments(apiKey, c.id)
-      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
-
-      newCourses.push([c.id, c.name, newAssignments, newSubmissions])
-      json["courses"] = newCourses;
-    }))
 
     //UPDATE USER LAST LOGIN ON DB
     let db = getDb();
@@ -214,7 +200,8 @@ app.post('/registerAccount', limiter, async (req, res) => {
   const password = req.body.password;
   
   if (!username || !password) {
-    return res.status(400).json({message: "Input both a username and password"});
+    //we just lie about the api key to make it look better on the frontend
+    return res.status(400).json({message: "Input a username, password, and API key!"});
   }
 
   let db = getDb();

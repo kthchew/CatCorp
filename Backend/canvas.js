@@ -4,15 +4,29 @@ export class InvalidInput extends Error {
   constructor(message) {
     super(message);
     this.message = message;
+    this.status = 400;
     this.name = "InvalidInput";
   }
 }
 
 export class CanvasAPIError extends Error {
-  constructor(message) {
+  constructor(message, status) {
     super(message);
     this.message = message;
+    this.status = status
     this.name = "CanvasAPIError";
+  }
+}
+
+function inspectAPIErrorAndThrow(error) {
+  if (error.response && error.response.data === "403 Forbidden (Rate Limit Exceeded)") {
+    throw new CanvasAPIError("Canvas rate limit exceeded", 429);
+  } else if (error.response && error.response.status === 401) {
+    throw new CanvasAPIError("API key not present or invalid", 401);
+  } else if (error.response && error.response.status === 403) {
+    throw new CanvasAPIError("Canvas user unauthorized", 403);
+  } else {
+    throw new CanvasAPIError('Unknown error, please try again later', 502);
   }
 }
 
@@ -30,7 +44,7 @@ export async function getUser(canvas_api_token) {
     });
     return response.data;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching user:', error);
+    inspectAPIErrorAndThrow(error);
   }
 }
 
@@ -52,7 +66,7 @@ export async function getCourses(canvas_api_token) {
     return activeCourses;
     // return response.data; // we shouldn't really be filtering out old courses if there have been submissions?
   } catch (error) {
-    throw new CanvasAPIError('Error fetching courses:', error);
+    inspectAPIErrorAndThrow(error);
   }
 }
 
@@ -84,7 +98,7 @@ export async function getAssignments(canvas_api_token, course_id) {
       return res;
 
     } catch (error) {
-      throw new CanvasAPIError('Error fetching assignments:', error);
+      inspectAPIErrorAndThrow(error);
     }
 }
 
@@ -104,7 +118,7 @@ export async function getSubmissions(canvas_api_token, course_id, assignment_id,
     });
     return response.data;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching submissions:', error);
+    inspectAPIErrorAndThrow(error);
   }
 }
 
@@ -136,6 +150,6 @@ export async function getNewSubmissions(canvas_api_token, course_id, lastLogin) 
     })  
     return newSubmissions;
   } catch (error) {
-    throw new CanvasAPIError('Error fetching new submissions:', error);
+    inspectAPIErrorAndThrow(error);
   }
 }
