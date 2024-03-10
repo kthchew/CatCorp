@@ -46,6 +46,17 @@ async function setUserProperty(session, property, value) {
   return updated.modifiedCount === 1
 }
 
+async function incrementUserProperty(session, property, value) {
+  const userId = session.ccUserId
+  if (!userId) return false
+  const objId = new ObjectId(String(userId))
+
+  const updates = {}
+  updates[property] = value
+  const updated = await getDb().updateOne({ "_id": { $eq: objId } }, { $inc: updates })
+  return updated.modifiedCount === 1
+}
+
 export async function getUserDataFromSession(session) {
   const userId = session.ccUserId
   if (!userId) return false
@@ -83,6 +94,42 @@ export async function getCanvasUserId(session) {
   const canvasUserId = canvasUser.id
   if (!canvasUserId) return null
 
-  setCanvasUserId(session, canvasUserId, true)
+  await setCanvasUserId(session, canvasUserId, true)
   return canvasUserId
+}
+
+export async function cashSubmissions(session, courses) {
+  const gainz = courses
+      .flatMap((course) => { return course[3]; })
+      .reduce((val, submission) => {
+        let multiplier = 1;
+        //multiplier *= WEIGHT_LOGIC
+        const studentScore = submission[7];
+        const maximumScore = submission[4];
+        if (studentScore && maximumScore) { //score
+          multiplier *= (10*studentScore / 8 / maximumScore);
+        }
+        const dueDate = submission[3];
+        const submissionDate = submission[6];
+        const unlockDate = submission[2];
+        if (dueDate && submissionDate) { //due date
+          let due = new Date(dueDate);
+          due = due.getTime();
+          let sub = new Date(submissionDate);
+          sub = sub.getTime();
+          let unlock;
+          if (unlockDate) { //unlock date given
+            unlock = new Date(unlockDate);
+          } else { // assume it unlocks 4 weeks before it's due
+            unlock = due - 4 * 604800000;
+          }
+          const frac = (due - sub) / (due - unlock);
+          multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
+        }
+        return val + Math.ceil(multiplier * 100);
+      }, 0);
+
+  await incrementUserProperty(session, "gems", gainz);
+  await updateLastLogin(session);
+  return gainz;
 }

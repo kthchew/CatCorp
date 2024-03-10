@@ -29,20 +29,18 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
         setLoginResponse(`Logging in user ${username}...`);
 
-        const result = await axios.post(`/loginUser`, {
+        await axios.post(`/loginUser`, {
           username: username,
           password: password,
           apiKey: currentKey
         });
-
-        console.log(result);
+        const cashResp = await axios.post(`/cashNewSubmissions`);
+        const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        setUserData(result.data.userData);
-        setUserId(result.data.userId);
-        setCourses(result.data.courses);
+        setUserData(accInfoResp.data.userData);
+        setUserId(accInfoResp.data.userId);
+        setCourses(cashResp.data.courses);
         console.log("logged in");
-
-        
       } catch (e) {
         if (e.response) {
           console.log(e.response.data.message);

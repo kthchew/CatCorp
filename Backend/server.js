@@ -76,42 +76,6 @@ app.get('/getCourses', async (req, res) => {
   }
 });
 
-async function cashSubmissions(userId, courses) {
-  const gainz = courses
-    .flatMap((course) => { return course[3]; })
-    .reduce((val, submission) => {
-      var multiplier = 1;
-      //multiplier *= WEIGHT_LOGIC
-      const studentScore = submission[7];
-      const maximumScore = submission[4];
-      if (studentScore && maximumScore) { //score
-        multiplier *= (10*studentScore / 8 / maximumScore);
-      }
-      const dueDate = submission[3];
-      const submissionDate = submission[6];
-      const unlockDate = submission[2];
-      if (dueDate && submissionDate) { //due date
-        var due = new Date(dueDate);
-        due = due.getTime();
-        var sub = new Date(submissionDate);
-        sub = sub.getTime();
-        var unlock;
-        if (unlockDate) { //unlock date given
-          unlock = new Date(unlockDate);
-        } else { // assume it unlocks 4 weeks before it's due
-          unlock = due - 4 * 604800000;
-        }
-        const frac = (due - sub) / (due - unlock);
-        multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
-      }
-      return val + Math.ceil(multiplier * 100);
-    }, 0);
-
-  let db = getDb();
-  db.updateOne({ "_id": { $eq: userId } }, { $inc: { "gems": gainz } })  
-  return gainz;
-}
-
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.session.canvasKey;
   const course_id = req.query.course_id;
@@ -163,10 +127,28 @@ app.post('/loginUser', limiter, async (req, res) => {
     return res.status(400).json({message: "Username and password required!"});
   }
 
-  var json;
-  var code;
+  let json;
+  let code;
 
-  if (CatCorpUser.checkUsernameAvailable(u)) {
+  const user = await CatCorpUser.verifyCredentials(u, p);
+  if (user) {
+    const keyCanvasUser = await canvas.getUser(apiKey);
+
+    console.log("> logged in user " + user.username)
+    code = 200;
+    json = {message: `Logged in as "${user.username}"`};
+
+    req.session.ccUserId = user._id
+    req.session.canvasKey = apiKey
+    CatCorpUser.renewSession(req.session);
+
+    let userId = await CatCorpUser.getCanvasUserId(req.session);
+    if (userId && userId !== keyCanvasUser.id) {
+      req.session = null
+      return res.status(401).json({message: "Canvas user mismatch!"});
+    }
+    req.session.canvasUserId = userId
+  } else if (await CatCorpUser.checkUsernameAvailable(u)) {
     code = 401;
     json = {message: "No users found!"}
   } else {
@@ -174,45 +156,24 @@ app.post('/loginUser', limiter, async (req, res) => {
     json = {message: "Incorrect password!"}
   }
 
-  const user = await CatCorpUser.verifyCredentials(u, p);
-  const keyCanvasUser = await canvas.getUser(apiKey);
-  if (user) {
-    console.log("> logged in user " + user.username)
-    code = 200;
-    json = {userData: user};
-
-    req.session.ccUserId = user._id
-    req.session.canvasKey = apiKey
-    CatCorpUser.renewSession(req.session);
-
-    var userId = await CatCorpUser.getCanvasUserId(req.session);
-    if (userId && userId !== keyCanvasUser.id) {
-      req.session = null
-      return res.status(401).json({message: "Canvas user mismatch!"});
-    }
-    json["userId"] = userId;
-    req.session.canvasUserId = userId
-
-    const courses = await canvas.getCourses(apiKey)
-
-    const newCourses = await Promise.all(courses.map(async (c) => {
-      const newAssignments = await canvas.getAssignments(apiKey, c.id)
-      const newSubmissions = await canvas.getNewSubmissions(apiKey, c.id, json.userData.lastLogin)
-
-      return [c.id, c.name, newAssignments, newSubmissions]
-    }))
-    json["courses"] = newCourses;
-
-    CatCorpUser.updateLastLogin(req.session);
-
-    var gainz = await cashSubmissions(json.userData._id, json.courses);
-    json.userData.gems += gainz;
-  }
-
   return res.status(code).json(json);
 })
 
 app.get('/getAccountInfo', limiter, async (req, res) => {
+  const userId = req.session.ccUserId;
+  const canvasKey = req.session.canvasKey;
+  const canvasUserId = req.session.canvasUserId;
+  if (!userId || !canvasKey || !canvasUserId) {
+    return res.status(401).json({message: "Invalid session!"});
+  }
+
+  const userData = await CatCorpUser.getUserDataFromSession(req.session);
+  delete userData.password;
+
+  return res.status(200).json({userData: userData, userId: userData.canvasUserId});
+})
+
+app.post('/cashNewSubmissions', limiter, async (req, res) => {
   const userId = req.session.ccUserId;
   const canvasKey = req.session.canvasKey;
   const canvasUserId = req.session.canvasUserId;
@@ -228,10 +189,9 @@ app.get('/getAccountInfo', limiter, async (req, res) => {
 
     return [c.id, c.name, newAssignments, newSubmissions]
   }))
+  const gainz = await CatCorpUser.cashSubmissions(userId, newCourses);
 
-  CatCorpUser.updateLastLogin(req.session);
-
-  return res.status(200).json({userData: userData, userId: canvasUserId, courses: newCourses});
+  return res.status(200).json({courses: newCourses, gainedGems: gainz});
 })
 
 app.post('/registerAccount', limiter, async (req, res) => {
