@@ -28,16 +28,15 @@ h2 {
     font-family: 'Courier New', Courier, monospace;
 
     position:absolute;
-    height:auto;
     bottom:5%;
     top:5%;
     left:35%;
     right:35%;
     display: flex;
+    height:auto;
     align-items: center;
     flex-direction: column;
     border-radius: 15px;
-    margin-inline: auto;
     background-color: white;
 }
 

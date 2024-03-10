@@ -3,17 +3,18 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    bottom: 20%;
+    bottom: 23%;
+    max-width: 20vw;
+    height: auto;
 }
 
 .close_store {
-    border: none;
     background: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
-    bottom: 20%;
+    left: 28%;
+    top: 5%;
+    margin: auto;
+    z-index: 2;
 }
 
 .close_store img {
@@ -21,27 +22,17 @@
 }
 
 .gem_display {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
-    bottom: 95%;
-    left: 22%;
-}
-
-.display_frame {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    bottom: 50%;
+    bottom: 75vh;
 }
 
 #display_frame {
     position: absolute;
+    max-width: 16vw;;
 }
 .lootbox {
     position: absolute;
+    max-width: 11vw;
 }
 
 .store_container {
@@ -54,4 +45,13 @@
     justify-content: center;
     align-items: center;
     position: absolute;
+    margin-block: 1rem;
+    height: 65vh;
+}
+
+.store_container img{
+    max-width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
 }
