@@ -188,7 +188,7 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
 
     return [c.id, c.name, newAssignments, newSubmissions]
   }))
-  const gainz = await CatCorpUser.cashSubmissions(userId, newCourses);
+  const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
 
   return res.status(200).json({courses: newCourses, gainedGems: gainz});
 })
