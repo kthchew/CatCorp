@@ -8,29 +8,10 @@ axios.defaults.baseURL = 'http://localhost:3500';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.withCredentials = true;
 
-let initialUserData;
-let initialUserId;
-let initialCourses;
-try {
-  // TODO: Maybe this isn't the best place to put this; might move to an effect if we want to show loading indicators
-  const initialResp = await axios.get(`/`);
-  axios.defaults.headers.common['X-CSRF-Token'] = initialResp.data.csrfToken;
-
-  const cashResp = await axios.post(`/cashNewSubmissions`);
-  const accInfoResp = await axios.get(`/getAccountInfo`);
-  initialUserData = accInfoResp.data.userData;
-  initialUserId = accInfoResp.data.userId;
-  initialCourses = cashResp.data.courses;
-} catch (e) {
-  initialUserData = null;
-  initialUserId = null;
-  initialCourses = null;
-}
-
 function App() {
-  const [courses, setCourses] = useState(initialCourses);
-  const [userId, setUserId] = useState(initialUserId); //canvas user id
-  const [userData, setUserData] = useState(initialUserData); //from db
+  const [courses, setCourses] = useState(null);
+  const [userId, setUserId] = useState(null); //canvas user id
+  const [userData, setUserData] = useState(null); //from db
   const [apiKey, setApiKey] = useState("")
   const [overlay, setOverlay] = useState("login")
 
@@ -61,6 +42,36 @@ COURSE STORAGE - NEW MODEL
     ]
   ]
 */
+
+  useEffect(() => {
+    async function getCsrfToken() {
+      try {
+        const resp = await axios.get(`/`);
+        axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
+      } catch (e) {
+        console.error("Failed to get CSRF token");
+      }
+    }
+
+    async function tryLoginAndCash() {
+      try {
+        const initialResp = await axios.get(`/`);
+        axios.defaults.headers.common['X-CSRF-Token'] = initialResp.data.csrfToken;
+
+        const cashResp = await axios.post(`/cashNewSubmissions`);
+        const accInfoResp = await axios.get(`/getAccountInfo`);
+        setUserData(accInfoResp.data.userData);
+        setUserId(accInfoResp.data.userId);
+        setCourses(cashResp.data.courses);
+        setOverlay("home");
+      } catch (e) {
+        // no session yet - just ignore
+      }
+    }
+
+    getCsrfToken();
+    tryLoginAndCash();
+  }, []);
 
   async function logout() {
     try {
