@@ -2,7 +2,6 @@ import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import lusca from 'lusca';
-import { ObjectId } from 'mongodb';
 
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
@@ -12,7 +11,7 @@ const limiter = RateLimit({
 
 import session from 'cookie-session'
 
-import { getDb, connectToServer } from './db/conn.js';
+import { connectToServer } from './db/conn.js';
 import * as canvas from './canvas.js';
 import * as lootbox from './lootbox.js';
 import Cat from "./cat.js";
@@ -218,26 +217,13 @@ app.post('/logout', async (req, res) => {
 
 app.post('/buyLootbox', limiter, async (req, res) => {
   const lootboxID = parseInt(req.body.lootboxID);
-  const session = req.body.session;
-
-  if (!session) {
-    return res.status(400).json({message: "Invalid session"});
-  }
   if (isNaN(lootboxID)) {
     return res.status(400).json({message: "Invalid lootbox"});
   }
 
-  const db = getDb();
-  // TODO: This is not how we should get the current session. When sessions are implemented, this will use a token.
-  const user = await db.findOne({"_id" : { $eq: new ObjectId(session) }});
-  
-  if (!user) {
-    return res.status(400).json({message: "Invalid user"});
-  }
-
   try {
-    const cat = lootbox.buyLootbox(lootboxID, user);
-    return res.status(200).json(cat);
+    const purchased = CatCorpUser.buyLootbox(session, lootboxID);
+    return res.status(200).json(purchased);
   } catch (error) {
     if (error instanceof lootbox.LootboxOpenError) {
       return res.status(400).json({ message: error.message });

@@ -1,4 +1,3 @@
-import Cat from './cat.js';
 import random from "random";
 
 // Cached random distributions
@@ -38,7 +37,7 @@ export const LOOTBOX_RARITY_FUNCTIONS = [
 ]
 
 // TODO: set appropriate costs
-const LOOTBOX_COSTS = [
+export const LOOTBOX_COSTS = [
   1,
   2,
   3,
@@ -51,25 +50,4 @@ export class LootboxOpenError extends Error {
     this.message = message;
     this.name = "LootboxOpenError";
   }
-}
-
-// Buy and open a lootbox with the given ID, returning the cat gained. Box IDs go from 0-3, and 3 is most rare.
-export function buyLootbox(lootboxID, user) {
-  if (!user) {
-    throw new LootboxOpenError("Invalid user");
-  }
-  if (lootboxID < 0 || lootboxID > 3) {
-    throw new LootboxOpenError("Invalid lootbox");
-  }
-
-  // get user gems
-  const gems = user.gems;
-  if (gems < LOOTBOX_COSTS[lootboxID]) {
-    throw new LootboxOpenError("Not enough gems");
-  }
-
-  // TODO: needs to actually subtract gems from user in db
-  user.gems -= LOOTBOX_COSTS[lootboxID];
-
-  return new Cat(LOOTBOX_RARITY_FUNCTIONS[lootboxID]);
 }

@@ -1,7 +1,9 @@
-import { ObjectId } from 'mongodb'
+import {ObjectId} from 'mongodb'
 import bcrypt from 'bcrypt'
-import { getDb } from './db/conn.js'
+import {getDb} from './db/conn.js'
 import * as canvas from './canvas.js'
+import * as lootbox from "./lootbox.js";
+import Cat from "./cat.js";
 
 export async function checkUsernameAvailable(username) {
   const user = await getDb().findOne({ "username": { $eq: username } })
@@ -61,8 +63,7 @@ export async function getUserDataFromSession(session) {
   const userId = session.ccUserId
   if (!userId) return false
   const objId = new ObjectId(String(userId))
-  const user = await getDb().findOne({ "_id": { $eq: objId } })
-  return user
+  return await getDb().findOne({"_id": {$eq: objId}})
 }
 
 export async function updateLastLogin(session) {
@@ -132,4 +133,28 @@ export async function cashSubmissions(session, courses) {
   await incrementUserProperty(session, "gems", gainz);
   await updateLastLogin(session);
   return gainz;
+}
+
+// Buy and open a lootbox with the given ID, returning the cat gained. Box IDs go from 0-3, and 3 is most rare.
+export async function buyLootbox(session, lootboxID) {
+  const user = await getUserDataFromSession(session);
+  if (!user) {
+    throw new lootbox.LootboxOpenError("Invalid user");
+  }
+  if (lootboxID < 0 || lootboxID > 3) {
+    throw new lootbox.LootboxOpenError("Invalid lootbox");
+  }
+
+  // get user gems
+  const gems = user.gems;
+  if (gems < lootbox.LOOTBOX_COSTS[lootboxID]) {
+    throw new lootbox.LootboxOpenError("Not enough gems");
+  }
+
+  await incrementUserProperty(session, "gems", -lootbox.LOOTBOX_COSTS[lootboxID]);
+
+  return {
+    cat: new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[lootboxID]),
+    spent: lootbox.LOOTBOX_COSTS[lootboxID]
+  };
 }
