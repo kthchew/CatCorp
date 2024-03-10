@@ -21,7 +21,8 @@ import * as CatCorpUser from './user.js';
 const SESSION_SECRET = process.env.SESSION_SECRET
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+const httpLocalhost = /^http:\/\/localhost:[0-9]{1,5}$/;
+app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost], credentials: true }));
 app.use(_json());
 app.use(session({
   name: 'session',
@@ -296,7 +297,7 @@ app.get('/randomCat', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-  res.status(200).json({ message: "hello!" });
+  res.json({ csrfToken: req.csrfToken() });
 });
 
 

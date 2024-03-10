@@ -13,10 +13,12 @@ let initialUserId;
 let initialCourses;
 try {
   // TODO: Maybe this isn't the best place to put this; might move to an effect if we want to show loading indicators
-  const result = await axios.get(`/getAccountInfo`);
-  initialUserData = result.data.userData;
-  initialUserId = result.data.canvasUserId;
-  initialCourses = result.data.courses;
+  const csrfTokenResp = await axios.get(`/`);
+  axios.defaults.headers.common['X-CSRF-Token'] = csrfTokenResp.data.csrfToken;
+  const accInfoResp = await axios.get(`/getAccountInfo`);
+  initialUserData = accInfoResp.data.userData;
+  initialUserId = accInfoResp.data.canvasUserId;
+  initialCourses = accInfoResp.data.courses;
 } catch (e) {
   initialUserData = null;
   initialUserId = null;
