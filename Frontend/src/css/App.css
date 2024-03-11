@@ -6,3 +6,38 @@ h1 {
 h3 {
   color: aqua;
 }
+
+.floor {
+  position: absolute;
+  top: 25%;
+  bottom: 0;
+  left: 0%;
+  right: 0%;
+  background-color: #858585;
+  z-index: -2;
+}
+
+.back {
+  position:absolute;
+  top: 0;
+  left: 0;
+  right: calc(14.036%);
+  bottom: 75%;
+  background-color: #717171;
+  z-index: -1;
+}
+
+.wall {
+  position:absolute;
+  right: 0;
+  top: 0;
+
+  width: 0;
+  height: 0;
+
+  border-bottom: 19.6vh solid transparent;
+  border-left: 19.6vw solid transparent;
+  border-right: 19.6vw solid #7A7A7A;
+  border-top: 19.6vh solid #7A7A7A;
+  z-index: -2;
+}
