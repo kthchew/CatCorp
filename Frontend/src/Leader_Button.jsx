@@ -1,8 +1,8 @@
 import { useState } from "react";
-import store_wid from "./img/UI/store_button.png";
-import Store from './Store.jsx'; 
+import leader_wid from "./img/UI/Leader.png";
+import Leader from './Leader.jsx'; 
 
-export default function StoreButton() {
+export default function LeaderButton() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const openPopup = () => {
@@ -16,11 +16,9 @@ export default function StoreButton() {
   return (
     <div>
       <button onClick={openPopup} disabled={isPopupOpen}>
-        <img src={store_wid}/>
+        <img src={leader_wid}/>
       </button>
-      <Store isOpen={isPopupOpen} onClose={closePopup} />
+      <Leader isOpen={isPopupOpen} onClose={closePopup} />
     </div>
   );
 }
-
-

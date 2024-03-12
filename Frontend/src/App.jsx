@@ -3,6 +3,7 @@ import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
 import StoreButton from "./Store_Button"
+import LeaderButton from "./Leader_Button"
 // import Rewards from "./Rewards"
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
@@ -82,6 +83,7 @@ COURSE STORAGE - NEW MODEL
         </div>
       }
       <StoreButton/>
+      <LeaderButton/>
     </div>
   )
 }
