@@ -5,6 +5,7 @@ import Login from "./Login"
 // import Rewards from "./Rewards"
 import Cat from "./Cat"
 
+
 axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
 
 function App() {
@@ -68,7 +69,11 @@ COURSE STORAGE - NEW MODEL
               var cols = window.innerWidth / 64;
               console.log(window.innerWidth)
 
-              return <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={(64*i) % window.innerWidth} y={64 + 64*Math.floor((64*i) / window.innerWidth)} key={i}/>  
+              return (
+              <div key={i}>
+                <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={(132*i) % window.innerWidth} y={96*Math.floor((132*i) / window.innerWidth)}/>  
+              </div>
+              )
             })}
           </div>
 
