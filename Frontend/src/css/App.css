@@ -7,6 +7,12 @@ h3 {
   color: aqua;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .floor {
   position: absolute;
   top: 25%;

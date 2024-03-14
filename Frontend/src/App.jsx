@@ -63,8 +63,12 @@ COURSE STORAGE - NEW MODEL
           </div>
 
           <div>
-            {userData.cats.map((cat, i) => {
-              return <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={10} y={10 + 10*i} key={i}/>  
+            {
+            userData.cats.toReversed().map((cat, i) => {
+              var cols = window.innerWidth / 64;
+              console.log(window.innerWidth)
+
+              return <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={(64*i) % window.innerWidth} y={64 + 64*Math.floor((64*i) / window.innerWidth)} key={i}/>  
             })}
           </div>
 
