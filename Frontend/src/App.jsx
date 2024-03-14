@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-import StoreButton from "./Store_Button"
-import LeaderButton from "./Leader_Button"
+import OptionButton from "./Option_Button"
 // import Rewards from "./Rewards"
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
@@ -12,9 +11,8 @@ function App() {
   const [courses, setCourses] = useState(null);
   const [userId, setUserId] = useState(null); //canvas user id
   const [userData, setUserData] = useState(null); //from db
-  const [apiKey, setApiKey] = useState(null)
-  const [overlay, setOverlay] = useState("login")
-
+  const [apiKey, setApiKey] = useState(null);
+  const [overlay, setOverlay] = useState("login");
 //due_at, points_possible, has_submitted_submissions, name, 
 
 /*
@@ -82,8 +80,7 @@ COURSE STORAGE - NEW MODEL
           }
         </div>
       }
-      <StoreButton/>
-      <LeaderButton/>
+      <OptionButton/>
     </div>
   )
 }

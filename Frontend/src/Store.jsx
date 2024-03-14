@@ -15,15 +15,21 @@ export default function Store ({isOpen, onClose}) {
         <button className="close_store" onClick={onClose}>
           <img src={close_button}/>
         </button>
+        <div className="gem_display">
+          <img src={gem_count}/>
+        </div>
         <img src={store_UI}/>
-        <img src={display_frame} id="display_frame"/>
+        <div className="display">
+          <img src={display_frame} id="display_frame"/>
           <div className="lootbox">
             <img src={loot_box}/>
           </div>
-        <button className="adopt">
-          <img src={adopt_button}/>
-        </button>
-        <img src={gem_count} className="gem_display"/>
+        </div>  
+        <div className="adopt">
+          <button className="adopt_button">
+            <img src={adopt_button}/>
+          </button>
+        </div>
       </div>
     )}
   </div>
