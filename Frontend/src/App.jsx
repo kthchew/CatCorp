@@ -14,6 +14,8 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [apiKey, setApiKey] = useState(null)
   const [overlay, setOverlay] = useState("login")
+  const [width, setWidth] = useState(null);
+  const [height, setHeight] = useState(null)
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -50,6 +52,17 @@ COURSE STORAGE - NEW MODEL
     }
   }, [courses])
 
+  useEffect(() => {
+    const setDimensions = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    }
+
+    setDimensions()
+
+    window.addEventListener('resize', setDimensions)
+  }, [])
+
 
   return (
     <div>
@@ -65,13 +78,21 @@ COURSE STORAGE - NEW MODEL
 
           <div>
             {
-            userData.cats.toReversed().map((cat, i) => {
-              var cols = window.innerWidth / 64;
-              console.log(window.innerWidth)
+            userData.cats.map((cat, i) => {
+              //note - we may want to make the page refresh on window resize
+              const deskWidth = 132;
+              const deskHeight = 96;
+
+              var desksPerRow = Math.floor((width * .86) / deskWidth)
+              var desksPerCol = (Math.ceil(userData.cats.length / desksPerRow));
+              
+              var yCoord = deskHeight + height * .75 * (Math.floor(i / desksPerRow) / desksPerCol);
+              var xCoord = (i % desksPerRow) * deskWidth
+              var offset = ((width / height) * (yCoord - deskHeight)) % deskWidth - deskWidth
 
               return (
-              <div key={i}>
-                <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={(132*i) % window.innerWidth} y={96*Math.floor((132*i) / window.innerWidth)}/>  
+              <div key={i} style={{zIndex: 100000-i}}>
+                <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>  
               </div>
               )
             })}

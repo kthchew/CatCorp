@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 import catTemplate from './img/CatTemplate.png'
 import deskImg from "./img/Cat_desk/desk.png"
 
-function Cat({eyes, hat, pattern, patX, patY, x, y}) {
+function Cat({eyes, hat, pattern, patX, patY, x, y, z}) {
   return (
-    <div className='cat' style={{bottom: y, left: x}}>
+    <div className='cat' style={{bottom: y, left: x, zIndex: z}}>
       <img className='catPelt' 
         src={`pelts/${pattern}.jpg`} 
         style={{
