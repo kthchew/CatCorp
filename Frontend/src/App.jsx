@@ -10,6 +10,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this need
 
 function App() {
   const [courses, setCourses] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(null); //canvas user id
   const [userData, setUserData] = useState(null); //from db
   const [apiKey, setApiKey] = useState(null)

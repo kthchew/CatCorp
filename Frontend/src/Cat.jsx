@@ -32,4 +32,5 @@ Cat.propTypes = {
   patY: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
+  z: PropTypes.number
 }
