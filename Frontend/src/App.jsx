@@ -43,20 +43,19 @@ COURSE STORAGE - NEW MODEL
   ]
 */
 
-  useEffect(() => {
-    async function getCsrfToken() {
-      try {
-        const resp = await axios.get(`/`);
-        axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
-      } catch (e) {
-        console.error("Failed to get CSRF token");
-      }
+  async function getCsrfToken() {
+    try {
+      const resp = await axios.get(`/`);
+      axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
+    } catch (e) {
+      console.error("Failed to get CSRF token");
     }
+  }
 
+  useEffect(() => {
     async function tryLoginAndCash() {
       try {
-        const initialResp = await axios.get(`/`);
-        axios.defaults.headers.common['X-CSRF-Token'] = initialResp.data.csrfToken;
+        await getCsrfToken();
 
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
@@ -69,13 +68,13 @@ COURSE STORAGE - NEW MODEL
       }
     }
 
-    getCsrfToken();
     tryLoginAndCash();
   }, []);
 
   async function logout() {
     try {
       await axios.post(`/logout`);
+      await getCsrfToken();
       setUserData(null);
       setUserId(null);
       setCourses(null);
