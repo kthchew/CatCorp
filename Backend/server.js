@@ -222,7 +222,7 @@ app.post('/buyLootbox', limiter, async (req, res) => {
   }
 
   try {
-    const purchased = CatCorpUser.buyLootbox(session, lootboxID);
+    const purchased = await CatCorpUser.buyLootbox(req.session, lootboxID);
     return res.status(200).json(purchased);
   } catch (error) {
     if (error instanceof lootbox.LootboxOpenError) {
