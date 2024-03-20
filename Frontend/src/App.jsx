@@ -112,10 +112,13 @@ COURSE STORAGE - NEW MODEL
         <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
       :
         <div>
+          <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
           <div>
             <div className='floor'></div>
-            <div className='back'></div>
-            <div className='wall'></div>
+            <div className='back'>
+            </div>
+            <div className='wall'>
+            </div>
           </div>
 
           <div>
@@ -162,9 +165,6 @@ COURSE STORAGE - NEW MODEL
           : 
             <h2>Finishing up...</h2>
           } */}
-
-      
-          <button onClick={logout}>Logout</button>
         </div>
       }
       </div>
