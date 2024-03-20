@@ -15,8 +15,8 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [apiKey, setApiKey] = useState(null)
   const [overlay, setOverlay] = useState("login")
-  const [width, setWidth] = useState(null);
-  const [height, setHeight] = useState(null)
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight)
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
