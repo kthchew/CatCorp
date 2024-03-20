@@ -3,6 +3,8 @@ import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
 // import Rewards from "./Rewards"
+import Cat from "./Cat"
+
 
 axios.defaults.baseURL = 'http://localhost:3500';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -10,10 +12,13 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [courses, setCourses] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(null); //canvas user id
   const [userData, setUserData] = useState(null); //from db
   const [apiKey, setApiKey] = useState("")
   const [overlay, setOverlay] = useState("login")
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight)
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -43,20 +48,19 @@ COURSE STORAGE - NEW MODEL
   ]
 */
 
-  useEffect(() => {
-    async function getCsrfToken() {
-      try {
-        const resp = await axios.get(`/`);
-        axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
-      } catch (e) {
-        console.error("Failed to get CSRF token");
-      }
+  async function getCsrfToken() {
+    try {
+      const resp = await axios.get(`/`);
+      axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
+    } catch (e) {
+      console.error("Failed to get CSRF token");
     }
+  }
 
+  useEffect(() => {
     async function tryLoginAndCash() {
       try {
-        const initialResp = await axios.get(`/`);
-        axios.defaults.headers.common['X-CSRF-Token'] = initialResp.data.csrfToken;
+        await getCsrfToken();
 
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
@@ -69,13 +73,13 @@ COURSE STORAGE - NEW MODEL
       }
     }
 
-    getCsrfToken();
     tryLoginAndCash();
   }, []);
 
   async function logout() {
     try {
       await axios.post(`/logout`);
+      await getCsrfToken();
       setUserData(null);
       setUserId(null);
       setCourses(null);
@@ -92,16 +96,56 @@ COURSE STORAGE - NEW MODEL
     }
   }, [courses])
 
+  useEffect(() => {
+    const setDimensions = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    }
+    window.addEventListener('resize', setDimensions)
+  }, [])
+
+
   return (
     <div>
       {overlay == "login" ? 
-      <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
+        <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
       :
         <div>
-          <h3>Your cash: {userData.gems}</h3>
+          <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
+          <div>
+            <div className='floor'></div>
+            <div className='back'>
+            </div>
+            <div className='wall'>
+            </div>
+          </div>
+
+          <div>
+            {
+            userData.cats.map((cat, i) => {
+              //note - we may want to make the page refresh on window resize
+              const deskWidth = 132;
+              const deskHeight = 96;
+
+              var desksPerRow = Math.floor((width * .86) / deskWidth)
+              var desksPerCol = (Math.ceil(userData.cats.length / desksPerRow));
+              
+              var yCoord = deskHeight + height * .75 * (Math.floor(i / desksPerRow) / desksPerCol);
+              var xCoord = (i % desksPerRow) * deskWidth
+              var offset = ((width / height) * (yCoord - deskHeight)) % deskWidth - deskWidth
+
+              return (
+              <div key={i} style={{zIndex: 100000-i}}>
+                <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>  
+              </div>
+              )
+            })}
+          </div>
+
+          {/* <h3>Your cash: {userData.gems}</h3> */}
           {/* <Rewards courses={courses} userData={userData}/> */}
-          <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1>
-          {courses && courses.message != "No courses available" ? 
+          {/* <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1> */}
+          {/* {courses && courses.message != "No courses available" ? 
             courses.map((c) => {
               return <div key={c[0]}>
                 <h3>{c[1]} - {c[0]}</h3>
@@ -116,16 +160,14 @@ COURSE STORAGE - NEW MODEL
                   </div>
                 })}
               </div>
-              
-        
             })
           : 
             <h2>Finishing up...</h2>
-          }
-          <button onClick={logout}>Logout</button>
+          } */}
         </div>
       }
       </div>
+
   )
 }
 

@@ -1,0 +1,16 @@
+.cat {
+  position: absolute;
+}
+
+.catTemplate {
+  position: absolute;
+}
+
+.catPelt {
+  position: absolute;
+
+  -webkit-mask-image: url(../img/CatMask.png);
+  mask-image: url(../img/CatMask.png);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat; 
+}
