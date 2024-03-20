@@ -6,14 +6,16 @@ import Login from "./Login"
 import Cat from "./Cat"
 
 
-axios.defaults.headers.post['Content-Type'] = 'application/json'; //is this needed in this file?
+axios.defaults.baseURL = 'http://localhost:3500';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.withCredentials = true;
 
 function App() {
   const [courses, setCourses] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(null); //canvas user id
   const [userData, setUserData] = useState(null); //from db
-  const [apiKey, setApiKey] = useState(null)
+  const [apiKey, setApiKey] = useState("")
   const [overlay, setOverlay] = useState("login")
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
@@ -45,6 +47,48 @@ COURSE STORAGE - NEW MODEL
     ]
   ]
 */
+
+  useEffect(() => {
+    async function getCsrfToken() {
+      try {
+        const resp = await axios.get(`/`);
+        axios.defaults.headers.common['X-CSRF-Token'] = resp.data.csrfToken;
+      } catch (e) {
+        console.error("Failed to get CSRF token");
+      }
+    }
+
+    async function tryLoginAndCash() {
+      try {
+        const initialResp = await axios.get(`/`);
+        axios.defaults.headers.common['X-CSRF-Token'] = initialResp.data.csrfToken;
+
+        const cashResp = await axios.post(`/cashNewSubmissions`);
+        const accInfoResp = await axios.get(`/getAccountInfo`);
+        setUserData(accInfoResp.data.userData);
+        setUserId(accInfoResp.data.userId);
+        setCourses(cashResp.data.courses);
+        setOverlay("home");
+      } catch (e) {
+        // no session yet - just ignore
+      }
+    }
+
+    getCsrfToken();
+    tryLoginAndCash();
+  }, []);
+
+  async function logout() {
+    try {
+      await axios.post(`/logout`);
+      setUserData(null);
+      setUserId(null);
+      setCourses(null);
+      setOverlay("login")
+    } catch (e) {
+      console.log("logout failed");
+    }
+  }
 
 
   useEffect(() => {
@@ -120,6 +164,7 @@ COURSE STORAGE - NEW MODEL
           } */}
 
       
+          <button onClick={logout}>Logout</button>
         </div>
       }
       </div>
