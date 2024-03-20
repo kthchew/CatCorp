@@ -17,7 +17,8 @@ export default class Cat {
     this.hat = CAT_HATS[hatIndex];
     this.rarity = eyeIndex + colorIndex + hatIndex;
     this.name = "Placeholder until we can get the cat name randomizer working (string)";
-    this.imageXY = "Placeholder until we get the pixel coordinate randomizer working (pair)";
+    this.x = Math.random();
+    this.y = Math.random();
     this.alive = true;
   }
 }
