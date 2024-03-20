@@ -58,9 +58,6 @@ COURSE STORAGE - NEW MODEL
       setWidth(window.innerWidth);
       setHeight(window.innerHeight);
     }
-
-    setDimensions()
-
     window.addEventListener('resize', setDimensions)
   }, [])
 
