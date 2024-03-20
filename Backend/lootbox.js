@@ -38,10 +38,10 @@ export const LOOTBOX_RARITY_FUNCTIONS = [
 
 // TODO: set appropriate costs
 export const LOOTBOX_COSTS = [
-  1,
-  2,
-  3,
-  4
+  300,
+  600,
+  1200,
+  2400
 ];
 
 export class LootboxOpenError extends Error {
