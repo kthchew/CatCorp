@@ -1,3 +1,5 @@
+import words from './generic-food.js'
+
 // Ordered by rarity. Least rare first.
 const CAT_EYES = ["orange", "green", "blue", "gold"];
 const CAT_COLORS = ["orange", "brown", "white", "tabby", "tshell", "calico", "black"];
@@ -16,7 +18,7 @@ export default class Cat {
     this.pattern = CAT_COLORS[colorIndex];
     this.hat = CAT_HATS[hatIndex];
     this.rarity = eyeIndex + colorIndex + hatIndex;
-    this.name = "Placeholder until we can get the cat name randomizer working (string)";
+    this.name = words[Math.floor(Math.random() * words.length)];
     this.x = Math.random();
     this.y = Math.random();
     this.alive = true;
