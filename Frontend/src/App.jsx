@@ -89,6 +89,15 @@ COURSE STORAGE - NEW MODEL
     }
   }
 
+  async function buyLootboxTest() {
+    try {
+      const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: "1"});
+      setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
+    } catch (e) {
+      console.error("Purchase failed");
+    }
+  }
+
 
   useEffect(() => {
     if (courses) {
@@ -112,6 +121,7 @@ COURSE STORAGE - NEW MODEL
       :
         <div>
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
+          <button onClick={buyLootboxTest} style={{zIndex: 99999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button>
           <div>
             <div className='floor'></div>
             <div className='back'>
