@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-// import Rewards from "./Rewards"
+import Rewards from "./Rewards"
 import Cat from "./Cat"
 
 
@@ -67,7 +67,6 @@ COURSE STORAGE - NEW MODEL
         setUserData(accInfoResp.data.userData);
         setUserId(accInfoResp.data.userId);
         setCourses(cashResp.data.courses);
-        setOverlay("home");
       } catch (e) {
         // no session yet - just ignore
       }
@@ -101,7 +100,8 @@ COURSE STORAGE - NEW MODEL
 
   useEffect(() => {
     if (courses) {
-      setOverlay("home")
+      console.log(courses)
+      setOverlay("rewards")
     }
   }, [courses])
 
@@ -118,8 +118,15 @@ COURSE STORAGE - NEW MODEL
     <div>
       {overlay == "login" ? 
         <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
-      :
+      : 
         <div>
+
+          {
+            overlay == "rewards" ? 
+              <Rewards courses={courses} setOverlay={setOverlay} />
+            : <></>
+          }
+
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
           <button onClick={buyLootboxTest} style={{zIndex: 99999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button>
           <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p>

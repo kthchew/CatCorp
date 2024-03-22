@@ -190,7 +190,7 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
   }))
   const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
 
-  return res.status(200).json({courses: newCourses, gainedGems: gainz});
+  return res.status(200).json({courses: gainz[0], gainedGems: gainz[1]});
 })
 
 app.post('/registerAccount', limiter, async (req, res) => {

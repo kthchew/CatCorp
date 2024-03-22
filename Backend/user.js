@@ -67,7 +67,7 @@ export async function getUserDataFromSession(session) {
 }
 
 export async function updateLastLogin(session) {
-  return setUserProperty(session, "lastLogin", Date.now())
+  // return setUserProperty(session, "lastLogin", Date.now())  REMEMBER TO UNCOMMENT THIS
 }
 
 // Sets the Canvas user ID for the user in the database.
@@ -100,9 +100,10 @@ export async function getCanvasUserId(session) {
 }
 
 export async function cashSubmissions(session, courses) {
-  const gainz = courses
-      .flatMap((course) => { return course[3]; })
-      .reduce((val, submission) => {
+    var sum = 0
+    courses.forEach((course, i) => { 
+      var temp = course[3];
+      temp.forEach((submission, j) => {
         let multiplier = 1;
         //multiplier *= WEIGHT_LOGIC
         const studentScore = submission[7];
@@ -127,12 +128,17 @@ export async function cashSubmissions(session, courses) {
           const frac = (due - sub) / (due - unlock);
           multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
         }
-        return val + Math.ceil(multiplier * 100);
-      }, 0);
+        // submission.push(Math.ceil(multiplier * 100)) this works too???
+        sum += Math.ceil(multiplier * 100);
+        courses[i][3][j].push(Math.ceil(multiplier * 100))
+      })
 
-  await incrementUserProperty(session, "gems", gainz);
+      })
+      
+
+  await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
-  return gainz;
+  return [courses, sum];
 }
 
 async function addCat(session, cat) {
