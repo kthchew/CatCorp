@@ -149,10 +149,10 @@ app.post('/loginUser', limiter, async (req, res) => {
     req.session.canvasUserId = userId
   } else if (await CatCorpUser.checkUsernameAvailable(u)) {
     code = 401;
-    json = {message: "No users found!"}
+    json = {message: "Incorrect username/password!"}
   } else {
     code = 401;
-    json = {message: "Incorrect password!"}
+    json = {message: "Incorrect username/password!"}
   }
 
   return res.status(code).json(json);
@@ -222,7 +222,7 @@ app.post('/buyLootbox', limiter, async (req, res) => {
   }
 
   try {
-    const purchased = CatCorpUser.buyLootbox(session, lootboxID);
+    const purchased = await CatCorpUser.buyLootbox(req.session, lootboxID);
     return res.status(200).json(purchased);
   } catch (error) {
     if (error instanceof lootbox.LootboxOpenError) {

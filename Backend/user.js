@@ -13,7 +13,7 @@ export async function checkUsernameAvailable(username) {
 // This function does NOT do any checks for unique usernames, etc.
 export async function registerAccount(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await getDb().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0 })
+  const user = await getDb().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [] })
   return user.insertedId
 }
 
@@ -135,6 +135,15 @@ export async function cashSubmissions(session, courses) {
   return gainz;
 }
 
+async function addCat(session, cat) {
+    const userId = session.ccUserId
+    if (!userId) return false
+    const objId = new ObjectId(String(userId))
+
+    const updated = await getDb().updateOne({ "_id": { $eq: objId } }, { $push: { "cats": cat } })
+    return updated.modifiedCount === 1
+}
+
 // Buy and open a lootbox with the given ID, returning the cat gained. Box IDs go from 0-3, and 3 is most rare.
 export async function buyLootbox(session, lootboxID) {
   const user = await getUserDataFromSession(session);
@@ -151,10 +160,14 @@ export async function buyLootbox(session, lootboxID) {
     throw new lootbox.LootboxOpenError("Not enough gems");
   }
 
-  await incrementUserProperty(session, "gems", -lootbox.LOOTBOX_COSTS[lootboxID]);
-
-  return {
-    cat: new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[lootboxID]),
-    spent: lootbox.LOOTBOX_COSTS[lootboxID]
-  };
+  if (await incrementUserProperty(session, "gems", -lootbox.LOOTBOX_COSTS[lootboxID])) {
+    let newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[lootboxID]);
+    await addCat(session, newCat);
+    return {
+      cat: newCat,
+      spent: lootbox.LOOTBOX_COSTS[lootboxID]
+    };
+  } else {
+    throw new lootbox.LootboxOpenError("Database issue, try again later");
+  }
 }

@@ -1,7 +1,9 @@
+import words from './generic-food.js'
+
 // Ordered by rarity. Least rare first.
-const CAT_EYES = ["OrangeEyes", "GreenEyes", "Blue Eyes", "GoldEyes"];
-const CAT_COLORS = ["OrangePix", "BrownPix", "whitePix", "TabbyPixel", "TShellPixel", "CalicoPix", "BlackPix"];
-const CAT_HATS = ["BluePinkParty", "Bowler", "CowboyHat", "PurpPinkParty", "BlueWiz", "Goggles", "PinkCowboayHat", "PurpWiz", "EarthParty", "Crown"];
+const CAT_EYES = ["orange", "green", "blue", "gold"];
+const CAT_COLORS = ["orange", "brown", "white", "tabby", "tshell", "calico", "black"];
+const CAT_HATS = ["partyBlue", "bowler", "cowboy", "partyPurple", "wizardBlue", "goggles", "cowboyPink", "wizardPurple", "partyEarth", "crown"];
 
 export default class Cat {
   // Generate a random cat.
@@ -12,12 +14,13 @@ export default class Cat {
     const colorIndex = rarityGenerator(CAT_COLORS.length - 1);
     const hatIndex = rarityGenerator(CAT_HATS.length - 1);
 
-    this.eye = CAT_EYES[eyeIndex];
-    this.color = CAT_COLORS[colorIndex];
+    this.eyes = CAT_EYES[eyeIndex];
+    this.pattern = CAT_COLORS[colorIndex];
     this.hat = CAT_HATS[hatIndex];
     this.rarity = eyeIndex + colorIndex + hatIndex;
-    this.name = "Placeholder until we can get the cat name randomizer working (string)";
-    this.imageXY = "Placeholder until we get the pixel coordinate randomizer working (pair)";
+    this.name = words[Math.floor(Math.random() * words.length)];
+    this.x = Math.random();
+    this.y = Math.random();
     this.alive = true;
   }
 }
