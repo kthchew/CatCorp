@@ -24,11 +24,11 @@ export async function verifyCredentials(username, password) {
   if (usersArr.length === 0) return null
 
   let matchedUser = null
-  usersArr.forEach(user => {
-    if (bcrypt.compare(password, user.password)) {
+  for (const user of usersArr) {
+    if (await bcrypt.compare(password, user.password)) {
       matchedUser = user
     }
-  })
+  }
 
   return matchedUser
 }
