@@ -131,22 +131,27 @@ app.post('/loginUser', limiter, async (req, res) => {
 
   const user = await CatCorpUser.verifyCredentials(u, p);
   if (user) {
-    const keyCanvasUser = await canvas.getUser(apiKey);
+    try {
+      const keyCanvasUser = await canvas.getUser(apiKey);
 
-    console.log("> logged in user " + user.username)
-    code = 200;
-    json = {message: `Logged in as "${user.username}"`};
+      console.log("> logged in user " + user.username)
+      code = 200;
+      json = {message: `Logged in as "${user.username}"`};
 
-    req.session.ccUserId = user._id
-    req.session.canvasKey = apiKey
-    CatCorpUser.renewSession(req.session);
+      req.session.ccUserId = user._id
+      req.session.canvasKey = apiKey
+      CatCorpUser.renewSession(req.session);
 
-    let userId = await CatCorpUser.getCanvasUserId(req.session);
-    if (userId && userId !== keyCanvasUser.id) {
-      req.session = null
-      return res.status(401).json({message: "Canvas user mismatch!"});
+      let userId = await CatCorpUser.getCanvasUserId(req.session);
+      if (userId && userId !== keyCanvasUser.id) {
+        req.session = null
+        return res.status(401).json({message: "Canvas user mismatch!"});
+      }
+      req.session.canvasUserId = userId
+    } catch (error) {
+      code = error.status;
+      json = {message: error.message};
     }
-    req.session.canvasUserId = userId
   } else if (await CatCorpUser.checkUsernameAvailable(u)) {
     code = 401;
     json = {message: "Incorrect username/password!"}
@@ -180,17 +185,21 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
     return res.status(401).json({message: "Invalid session!"});
   }
 
-  const userData = await CatCorpUser.getUserDataFromSession(req.session);
-  const courses = await canvas.getCourses(canvasKey);
-  const newCourses = await Promise.all(courses.map(async (c) => {
-    const newAssignments = await canvas.getAssignments(canvasKey, c.id)
-    const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
+  try {
+    const userData = await CatCorpUser.getUserDataFromSession(req.session);
+    const courses = await canvas.getCourses(canvasKey);
+    const newCourses = await Promise.all(courses.map(async (c) => {
+      const newAssignments = await canvas.getAssignments(canvasKey, c.id)
+      const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
 
-    return [c.id, c.name, newAssignments, newSubmissions]
-  }))
-  const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
+      return [c.id, c.name, newAssignments, newSubmissions]
+    }))
+    const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
+    return res.status(200).json({courses: newCourses, gainedGems: gainz});
+  } catch (error) {
+    return res.status(error.status).json({ error: error.message });
+  }
 
-  return res.status(200).json({courses: newCourses, gainedGems: gainz});
 })
 
 app.post('/registerAccount', limiter, async (req, res) => {
