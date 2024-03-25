@@ -67,7 +67,7 @@ export async function getUserDataFromSession(session) {
 }
 
 export async function updateLastLogin(session) {
-  // return setUserProperty(session, "lastLogin", Date.now())  REMEMBER TO UNCOMMENT THIS
+  return setUserProperty(session, "lastLogin", Date.now())  
 }
 
 // Sets the Canvas user ID for the user in the database.
