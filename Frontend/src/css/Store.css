@@ -1,0 +1,73 @@
+.adopt {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    bottom: -95%;
+    max-height: 5%;
+}
+
+.adopt_button {
+    max-width: 19vw;
+}
+
+.close_store {
+    background: none;
+    position: relative;
+    left: 26%;
+    top: 50%;
+    margin: auto;
+    z-index: 2;
+}
+
+.close_store img {
+    display: block;
+}
+
+.gem_display {
+    position: relative;
+    top: 90%;
+    z-index: 5;
+}
+
+.display {
+    top: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+}
+
+#display_frame {
+    position: absolute;
+    max-width: 24vw;
+}
+.lootbox {
+    position: absolute;
+    max-width: 19vw;
+}
+
+.store_container {
+    height: 250px;
+    width: 1000px;
+    bottom: 5%;
+    top: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    max-height: 25%;
+}
+
+.store_container img{
+    max-width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+}

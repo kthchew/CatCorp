@@ -1,10 +1,10 @@
 import { useState } from "react";
 import axios from "axios"
-import logo from "./img/title.png"
-import login_button from "./img/Login_Button.png"
-import create_account from "./img/Create_Account.png"
-import new_user from "./img/New_User.png"
-import exist_user from "./img/Existing_User.png"
+import logo from "./img/UI/title.png"
+import login_button from "./img/UI/Login_Button.png"
+import create_account from "./img/UI/Create_Account.png"
+import new_user from "./img/UI/New_User.png"
+import exist_user from "./img/UI/Existing_User.png"
 import PropTypes from "prop-types";
 import "./css/Login.css"
 
@@ -80,11 +80,6 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
 
   return (
     <div className="loginContainer">
-      <div className="leader">
-        <button>
-          {/* <img src={leaderWindow}/> */}
-        </button>
-      </div>
       <img src={logo} alt="Cat Corporate" className="loginLogo"/>
       <h2 className="loginHeader">Welcome to Cat Corporate!!!</h2>
       <form onSubmit={(e)=> handleSubmit(e)}>

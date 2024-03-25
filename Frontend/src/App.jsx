@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
+import OptionButton from "./Option_Button"
 // import Rewards from "./Rewards"
 import Cat from "./Cat"
 
@@ -177,8 +178,8 @@ COURSE STORAGE - NEW MODEL
           } */}
         </div>
       }
-      </div>
-
+      <OptionButton/>
+    </div>
   )
 }
 
