@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import "./css/Rewards.css"
+import gem from "../src/img/gem.png"
 
 export default function Rewards({courses, setOverlay}) {
   const [subArr, setSubArr] = useState([])
@@ -27,7 +28,7 @@ export default function Rewards({courses, setOverlay}) {
   return (
     <div>
       {subArr.length > 0 ? <div className="rewardsBackground">
-        <h1>Gems earned:</h1>
+        <h1 className="rewardsHeader">Gems earned:</h1>
         <div style={{display: "flex"}}>
           {index != 0 ? 
             <button className="rewardsIndexButton" onClick={() => {setIndex(index - 1)}}>&lt;</button> 
@@ -42,9 +43,12 @@ export default function Rewards({courses, setOverlay}) {
             return (
               <div key={i} style={{display:"flex", justifyContent:"center"}}>
 
-                <div style={{color: 'black', textAlign: "center"}}>{s[1]}</div>
+                <div style={{color: 'black', textAlign: "center"}}>{s[1]} -&nbsp;</div>
     
-                <div  style={{color: 'black'}}>{ - s[8]}</div>
+                <div  style={{color: 'blue', fontWeight: 'bold'}}>{s[8]}
+                  <img src={gem} className="rewardsGem"></img>
+                </div>
+                
               </div>
             )
           })}

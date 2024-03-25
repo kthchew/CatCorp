@@ -17,17 +17,25 @@
   border: 1px black solid;
   width: 20%;
   color: black;
+  margin: 5% 0;
 }
 
 .rewardsIndexButton {
   color: black;
 }
 
-h1 {
+.rewardsHeader {
   color: black;
+  margin-top: 5%; 
 }
 
 .rewardsList {
-  overflow-y: scroll;
+  overflow-y: auto;
   align-items: center;
+}
+
+.rewardsGem {
+  width: 30%;
+  align-self: center;
+  margin: 0 5%;
 }
