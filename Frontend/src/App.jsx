@@ -44,6 +44,7 @@ COURSE STORAGE - NEW MODEL
       submission id
       submission date
       submission points
+      gems earned
     ]
   ]
 */
