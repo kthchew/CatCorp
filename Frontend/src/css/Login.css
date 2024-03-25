@@ -7,7 +7,6 @@
 .loginBackground {
     height: 100%;
     width: 100%;
-    /* overflow: hidden; */
     background: var(--primaryColor);
     background: linear-gradient(
         0deg, 
@@ -27,13 +26,14 @@ h2 {
 .loginContainer {
     font-family: 'Courier New', Courier, monospace;
 
-    
-    position:absolute;
-    height:auto;
+
+    position: absolute;
+    height:fit-content;
+    width:fit-content;
     bottom:5%;
     top:5%;
-    left:35%;
-    right:35%;
+    left:0;
+    right:0;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -85,6 +85,12 @@ h2 {
 .copyright {
     color: var(--primaryColor);
     text-align: center;
+    margin-top: 2rem;
+}
+
+.loginError {
+    color: var(--primaryColor);
+    text-align: center;
 }
 
 .leader{
@@ -92,16 +98,20 @@ h2 {
 }
 
 .loginLogo {
-    margin: calc(133/217 * 14/133 * -35vw) 0px;
-    width: 35vw;
-    height: calc(133/217 * 35vw);
+    object-fit: contain;
+    margin: -103px;
+    width: 400px;
+    height: 400px;
 }
 
 .loginHeader {
+    object-fit: fill;
     font-weight: bold;
-    margin: 65px 20px;
+    margin: 65px;
+    white-space: nowrap;
+    margin-bottom: 6rem;
 }
 
 .loginLabel {
-    margin: -22px 0px;
+    margin: -22px 0;
 }
