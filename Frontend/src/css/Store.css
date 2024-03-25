@@ -28,6 +28,8 @@
 
 .gem_display {
     position: relative;
+    top: 90%;
+    z-index: 5;
 }
 
 .display {
@@ -50,6 +52,8 @@
 }
 
 .store_container {
+    height: 250px;
+    width: 1000px;
     bottom: 5%;
     top: 30%;
     display: flex;
