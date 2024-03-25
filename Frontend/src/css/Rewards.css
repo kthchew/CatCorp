@@ -32,6 +32,7 @@
 .rewardsList {
   overflow-y: auto;
   align-items: center;
+  width: 100%;
 }
 
 .rewardsGem {

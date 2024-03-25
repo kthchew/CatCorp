@@ -41,7 +41,7 @@ export default function Rewards({courses, setOverlay}) {
         <div className="rewardsList">
           {subArr[index][1].map((s, i) => {
             return (
-              <div key={i} style={{display:"flex", justifyContent:"center"}}>
+              <div key={i} style={{display:"flex", justifyContent:"center", width: "100%"}}>
 
                 <div style={{color: 'black', textAlign: "center"}}>{s[1]} -&nbsp;</div>
     
