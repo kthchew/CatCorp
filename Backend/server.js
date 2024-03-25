@@ -2,6 +2,7 @@ import express, { json as _json } from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import bcrypt from "bcrypt"
+import { ObjectId } from 'mongodb';
 
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
@@ -11,6 +12,8 @@ const limiter = RateLimit({
 
 import { connectToServer, getDb } from './db/conn.js';
 import * as canvas from './canvas.js';
+import * as lootbox from './lootbox.js';
+import Cat from "./cat.js";
 
 const app = express();
 app.use(cors());
@@ -57,6 +60,42 @@ app.get('/getCourses', async (req, res) => {
     }
   }
 });
+
+async function cashSubmissions(userId, courses) {
+  const gainz = courses
+    .flatMap((course) => { return course[3]; })
+    .reduce((val, submission) => {
+      var multiplier = 1;
+      //multiplier *= WEIGHT_LOGIC
+      const studentScore = submission[7];
+      const maximumScore = submission[4];
+      if (studentScore && maximumScore) { //score
+        multiplier *= (10*studentScore / 8 / maximumScore);
+      }
+      const dueDate = submission[3];
+      const submissionDate = submission[6];
+      const unlockDate = submission[2];
+      if (dueDate && submissionDate) { //due date
+        var due = new Date(dueDate);
+        due = due.getTime();
+        var sub = new Date(submissionDate);
+        sub = sub.getTime();
+        var unlock;
+        if (unlockDate) { //unlock date given
+          unlock = new Date(unlockDate);
+        } else { // assume it unlocks 4 weeks before it's due
+          unlock = due - 4 * 604800000;
+        }
+        const frac = (due - sub) / (due - unlock);
+        multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
+      }
+      return val + Math.ceil(multiplier * 100);
+    }, 0);
+
+  let db = getDb();
+  db.updateOne({ "_id": { $eq: userId } }, { $inc: { "gems": gainz } })  
+  return gainz;
+}
 
 app.get('/getAssignments', async (req, res) => {
   const canvas_api_token = req.query.canvas_api_token;
@@ -161,6 +200,9 @@ app.post('/loginUser', limiter, async (req, res) => {
     //UPDATE USER LAST LOGIN ON DB
     let db = getDb();
     db.updateOne({ "_id": { $eq: json.userData._id } }, { $set: { "lastLogin": Date.now() } })
+
+    var gainz = await cashSubmissions(json.userData._id, json.courses);
+    json.userData.gems += gainz;
   }
 
 
@@ -184,8 +226,48 @@ app.post('/registerAccount', limiter, async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 0})
+  db.insertOne({username: username, password: hashedPassword, canvasUser: null, lastLogin: Date.now(), gems: 1000})
   return res.status(200).json({message: "User registered"});
+});
+
+app.post('/buyLootbox', limiter, async (req, res) => {
+  const lootboxID = parseInt(req.body.lootboxID);
+  const session = req.body.session;
+
+  if (!session) {
+    return res.status(400).json({message: "Invalid session"});
+  }
+  if (isNaN(lootboxID)) {
+    return res.status(400).json({message: "Invalid lootbox"});
+  }
+
+  const db = getDb();
+  // TODO: This is not how we should get the current session. When sessions are implemented, this will use a token.
+  const user = await db.findOne({"_id" : { $eq: new ObjectId(session) }});
+  
+  if (!user) {
+    return res.status(400).json({message: "Invalid user"});
+  }
+
+  try {
+    const cat = lootbox.buyLootbox(lootboxID, user);
+    return res.status(200).json(cat);
+  } catch (error) {
+    if (error instanceof lootbox.LootboxOpenError) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+});
+
+app.get('/randomCat', async (req, res) => {
+  const cat1 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[0]);
+  const cat2 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[1]);
+  const cat3 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
+  return res.status(200).json({
+    cat1: cat1,
+    cat2: cat2,
+    cat3: cat3
+  });
 });
 
 app.get('/', async (req, res) => {
