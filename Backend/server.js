@@ -21,7 +21,8 @@ const SESSION_SECRET = process.env.SESSION_SECRET
 
 const app = express();
 const httpLocalhost = /^http:\/\/localhost:[0-9]{1,5}$/;
-app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost], credentials: true }));
+const stagingVercelDeployments = /^https:\/\/catcorp-frontend-.*-kenneths-projects-[a-z0-9]{8}\.vercel\.app$/;
+app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost, stagingVercelDeployments], credentials: true }));
 app.use(_json());
 app.use(session({
   name: 'session',
