@@ -7,19 +7,19 @@ import adopt_button from "./img/UI/Adopt.png"
 import display_frame from "./img/UI/display_frame.png"
 import gem_count from "./img/UI/gem_display.png"
 
-export default function Store ({buyLootboxTest, setOverlay}) {
+export default function Store ({buyLootboxTest, setOverlay, userData}) {
   return(
       <div className="store_container">
-        <button className="close_store" onClick={setOverlay("home")}>
+        <button className="close_store" onClick={() => setOverlay("home")}>
           <img src={close_button}/>
         </button>
         <div className="gem_display">
           <img src={gem_count}/>
         </div>
         <img src={store_UI}/>
-        <div>
+        <div className="display">
           <img src={display_frame} id="display_frame"/>
-          <div>
+          <div className="lootbox">
             <img src={loot_box}/>
           </div>
         </div>  
@@ -34,5 +34,6 @@ export default function Store ({buyLootboxTest, setOverlay}) {
 
 Store.propTypes = {
   buyLootboxTest: PropTypes.func,
-  setOverlay: PropTypes.func
+  setOverlay: PropTypes.func,
+  userData: PropTypes.object
 }

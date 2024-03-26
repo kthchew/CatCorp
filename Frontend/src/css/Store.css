@@ -32,6 +32,10 @@
     z-index: 5;
 }
 
+.gemBox {
+    position: absolute;
+}
+
 .display {
     top: 90%;
     display: flex;
@@ -63,6 +67,7 @@
     position: absolute;
     width: 100%;
     max-height: 25%;
+    z-index: 9999999;
 }
 
 .store_container img{
