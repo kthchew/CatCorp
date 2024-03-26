@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-import OptionButton from "./Option_Button"
+// import OptionButton from "./Option_Button"
+import Store from './Store.jsx'; 
+import StoreButton from "./img/UI/store_button.png";
 import Rewards from "./Rewards"
 import Cat from "./Cat"
 
@@ -126,11 +128,16 @@ COURSE STORAGE - NEW MODEL
           {
             overlay == "rewards" ? 
               <Rewards courses={courses} setOverlay={setOverlay} />
+            : overlay == "store" ? 
+              <Store buyLootboxTest={buyLootboxTest} setOverlay={setOverlay}/>
             : <></>
           }
 
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
           <button onClick={buyLootboxTest} style={{zIndex: 99999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button>
+          <img onClick={() => setOverlay('store')} src={StoreButton} style={{zIndex: 99999999, position:'absolute',  top:'10%', left:'75%'}}></img>
+          <button onClick={() => setOverlay("store")} src={StoreButton} style={{zIndex: 99999999, position:'absolute',  top:'10%', left:'75%'}}></button>
+
           <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p>
           <div>
             <div className='floor'></div>
@@ -186,7 +193,6 @@ COURSE STORAGE - NEW MODEL
           } */}
         </div>
       }
-      <OptionButton/>
     </div>
   )
 }

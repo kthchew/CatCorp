@@ -7,21 +7,19 @@ import adopt_button from "./img/UI/Adopt.png"
 import display_frame from "./img/UI/display_frame.png"
 import gem_count from "./img/UI/gem_display.png"
 
-export default function Store ({isOpen, onClose}) {
+export default function Store ({buyLootboxTest, setOverlay}) {
   return(
-  <div>
-    {isOpen && (
       <div className="store_container">
-        <button className="close_store" onClick={onClose}>
+        <button className="close_store" onClick={setOverlay("home")}>
           <img src={close_button}/>
         </button>
         <div className="gem_display">
           <img src={gem_count}/>
         </div>
         <img src={store_UI}/>
-        <div className="display">
+        <div>
           <img src={display_frame} id="display_frame"/>
-          <div className="lootbox">
+          <div>
             <img src={loot_box}/>
           </div>
         </div>  
@@ -31,12 +29,10 @@ export default function Store ({isOpen, onClose}) {
           </button>
         </div>
       </div>
-    )}
-  </div>
   );
 }
 
 Store.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.bool.isRequired
+  buyLootboxTest: PropTypes.func,
+  setOverlay: PropTypes.func
 }
