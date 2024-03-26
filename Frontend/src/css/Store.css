@@ -4,9 +4,8 @@
     justify-content: center;
     align-items: center;
     position: absolute;
-    width: 100%;
-    bottom: -95%;
-    max-height: 5%;
+    bottom: -100%;
+    z-index: 10;
 }
 
 .adopt_button {
@@ -30,6 +29,9 @@
     position: relative;
     top: 90%;
     z-index: 5;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .gemBox {

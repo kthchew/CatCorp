@@ -92,15 +92,6 @@ COURSE STORAGE - NEW MODEL
     }
   }
 
-  async function buyLootboxTest() {
-    try {
-      const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: "1"});
-      setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
-    } catch (e) {
-      console.error("Purchase failed");
-    }
-  }
-
 
   useEffect(() => {
     if (courses) {
@@ -129,16 +120,15 @@ COURSE STORAGE - NEW MODEL
             overlay == "rewards" ? 
               <Rewards courses={courses} setOverlay={setOverlay} />
             : overlay == "store" ? 
-              <Store buyLootboxTest={buyLootboxTest} setOverlay={setOverlay} userData={userData}/>
+              <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
             : <></>
           }
 
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
-          <button onClick={buyLootboxTest} style={{zIndex: 999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button>
+          {/* <button onClick={buyLootboxTest} style={{zIndex: 999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button> */}
           <img onClick={() => setOverlay('store')} src={StoreButton} style={{zIndex: 999999, position:'absolute',  top:'10%', left:'75%'}}></img>
-          <button onClick={() => setOverlay("store")} src={StoreButton} style={{zIndex: 999999, position:'absolute',  top:'10%', left:'75%'}}></button>
-
-          <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p>
+          {/* <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p> */}
+          
           <div>
             <div className='floor'></div>
             <div className='back'>
@@ -150,7 +140,6 @@ COURSE STORAGE - NEW MODEL
           <div>
             {
             userData.cats.map((cat, i) => {
-              //note - we may want to make the page refresh on window resize
               const deskWidth = 132;
               const deskHeight = 96;
 
