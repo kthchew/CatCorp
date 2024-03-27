@@ -36,7 +36,6 @@ export const LOOTBOX_RARITY_FUNCTIONS = [
   },
 ]
 
-// TODO: set appropriate costs
 export const LOOTBOX_COSTS = [
   300,
   600,

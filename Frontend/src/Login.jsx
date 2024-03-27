@@ -81,7 +81,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
   return (
     <div className="loginContainer">
       <img src={logo} alt="Cat Corporate" className="loginLogo"/>
-      <h2 className="loginHeader">Welcome to Cat Corporate!!!</h2>
+      <h2 className="loginHeader">Welcome to Cat Corp!</h2>
       <form onSubmit={(e)=> handleSubmit(e)}>
         <div className="inputContainer">
           <p className="loginLabel">Username</p>
@@ -104,7 +104,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
             <img src={logState == "login" ? login_button : create_account}/>
           </button>
         </div>
-        <div className="copyright" style={{color: "red"}}>{loginResponse}</div>
+        <div className="loginError" style={{color: "red"}}>{loginResponse}</div>
       </form>
       <div className="bottomForm">
         <div className="links">
