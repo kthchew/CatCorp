@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
-import OptionButton from "./Option_Button"
-// import Rewards from "./Rewards"
+// import OptionButton from "./Option_Button"
+import Store from './Store.jsx'; 
+import StoreButton from "./img/UI/store_button.png";
+import Rewards from "./Rewards"
 import Cat from "./Cat"
 
 
@@ -45,6 +47,7 @@ COURSE STORAGE - NEW MODEL
       submission id
       submission date
       submission points
+      gems earned
     ]
   ]
 */
@@ -68,7 +71,6 @@ COURSE STORAGE - NEW MODEL
         setUserData(accInfoResp.data.userData);
         setUserId(accInfoResp.data.userId);
         setCourses(cashResp.data.courses);
-        setOverlay("home");
       } catch (e) {
         // no session yet - just ignore
       }
@@ -90,19 +92,11 @@ COURSE STORAGE - NEW MODEL
     }
   }
 
-  async function buyLootboxTest() {
-    try {
-      const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: "1"});
-      setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
-    } catch (e) {
-      console.error("Purchase failed");
-    }
-  }
-
 
   useEffect(() => {
     if (courses) {
-      setOverlay("home")
+      console.log(courses)
+      setOverlay("rewards")
     }
   }, [courses])
 
@@ -119,11 +113,22 @@ COURSE STORAGE - NEW MODEL
     <div>
       {overlay == "login" ? 
         <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setUserId={setUserId} setCourses={setCourses}/>
-      :
+      : 
         <div>
+
+          {
+            overlay == "rewards" ? 
+              <Rewards courses={courses} setOverlay={setOverlay} />
+            : overlay == "store" ? 
+              <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
+            : <></>
+          }
+
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
-          <button onClick={buyLootboxTest} style={{zIndex: 99999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button>
-          <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p>
+          {/* <button onClick={buyLootboxTest} style={{zIndex: 999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button> */}
+          <img onClick={() => setOverlay('store')} src={StoreButton} style={{zIndex: 999999, position:'absolute',  top:'10%', left:'75%'}}></img>
+          {/* <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p> */}
+          
           <div>
             <div className='floor'></div>
             <div className='back'>
@@ -135,7 +140,6 @@ COURSE STORAGE - NEW MODEL
           <div>
             {
             userData.cats.map((cat, i) => {
-              //note - we may want to make the page refresh on window resize
               const deskWidth = 132;
               const deskHeight = 96;
 
@@ -178,7 +182,6 @@ COURSE STORAGE - NEW MODEL
           } */}
         </div>
       }
-      <OptionButton/>
     </div>
   )
 }

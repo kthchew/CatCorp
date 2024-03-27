@@ -6,17 +6,30 @@ import close_button from "./img/UI/close_button.png"
 import adopt_button from "./img/UI/Adopt.png"
 import display_frame from "./img/UI/display_frame.png"
 import gem_count from "./img/UI/gem_display.png"
+import axios from "axios"
 
-export default function Store ({isOpen, onClose}) {
-  return(
-  <div>
-    {isOpen && (
+
+
+export default function Store ({setOverlay, userData, setUserData}) {
+
+  async function buyLootboxTest() {
+    try {
+      const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: "1"});
+      setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
+    } catch (e) {
+      console.error("Purchase failed");
+    }
+  }
+
+  return (
       <div className="store_container">
-        <button className="close_store" onClick={onClose}>
+        <button className="close_store" onClick={() => setOverlay("home")}>
           <img src={close_button}/>
         </button>
-        <div className="gem_display">
-          <img src={gem_count}/>
+        <div className="gem_display" >
+          <img src={gem_count} style={{marginRight: "-55px"}}/>
+
+          <div style={{zIndex: 10, width:"55px", fontWeight:"bold"}}>{userData.gems}</div>
         </div>
         <img src={store_UI}/>
         <div className="display">
@@ -25,18 +38,17 @@ export default function Store ({isOpen, onClose}) {
             <img src={loot_box}/>
           </div>
         </div>  
-        <div className="adopt">
-          <button className="adopt_button">
+        <div className="adopt" onClick={() => buyLootboxTest()}>
+          <button className="adopt_button" >
             <img src={adopt_button}/>
           </button>
         </div>
       </div>
-    )}
-  </div>
   );
 }
 
 Store.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.bool.isRequired
+  setOverlay: PropTypes.func,
+  userData: PropTypes.object,
+  setUserData: PropTypes.func
 }
