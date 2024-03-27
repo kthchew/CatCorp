@@ -8,7 +8,6 @@ import gem_count from "./img/UI/gem_display.png"
 
 export default function Store ({setOverlay, userData, setUserData}) {
   async function buyLootbox(id) {
-    // TODO: modify based on reply `cats` and `spent`
     try {
       const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: id});
       setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
