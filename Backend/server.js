@@ -21,7 +21,8 @@ const SESSION_SECRET = process.env.SESSION_SECRET
 
 const app = express();
 const httpLocalhost = /^http:\/\/localhost:[0-9]{1,5}$/;
-app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost], credentials: true }));
+const stagingVercelDeployments = /^https:\/\/catcorp-frontend-.*-kenneths-projects-[a-z0-9]{8}\.vercel\.app$/;
+app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost, stagingVercelDeployments], credentials: true }));
 app.use(_json());
 app.use(session({
   name: 'session',
@@ -131,28 +132,33 @@ app.post('/loginUser', limiter, async (req, res) => {
 
   const user = await CatCorpUser.verifyCredentials(u, p);
   if (user) {
-    const keyCanvasUser = await canvas.getUser(apiKey);
+    try {
+      const keyCanvasUser = await canvas.getUser(apiKey);
 
-    console.log("> logged in user " + user.username)
-    code = 200;
-    json = {message: `Logged in as "${user.username}"`};
+      console.log("> logged in user " + user.username)
+      code = 200;
+      json = {message: `Logged in as "${user.username}"`};
 
-    req.session.ccUserId = user._id
-    req.session.canvasKey = apiKey
-    CatCorpUser.renewSession(req.session);
+      req.session.ccUserId = user._id
+      req.session.canvasKey = apiKey
+      CatCorpUser.renewSession(req.session);
 
-    let userId = await CatCorpUser.getCanvasUserId(req.session);
-    if (userId && userId !== keyCanvasUser.id) {
-      req.session = null
-      return res.status(401).json({message: "Canvas user mismatch!"});
+      let userId = await CatCorpUser.getCanvasUserId(req.session);
+      if (userId && userId !== keyCanvasUser.id) {
+        req.session = null
+        return res.status(401).json({message: "Canvas user mismatch!"});
+      }
+      req.session.canvasUserId = userId
+    } catch (error) {
+      code = error.status;
+      json = {message: error.message};
     }
-    req.session.canvasUserId = userId
   } else if (await CatCorpUser.checkUsernameAvailable(u)) {
     code = 401;
-    json = {message: "No users found!"}
+    json = {message: "Incorrect username/password!"}
   } else {
     code = 401;
-    json = {message: "Incorrect password!"}
+    json = {message: "Incorrect username/password!"}
   }
 
   return res.status(code).json(json);
@@ -180,17 +186,20 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
     return res.status(401).json({message: "Invalid session!"});
   }
 
-  const userData = await CatCorpUser.getUserDataFromSession(req.session);
-  const courses = await canvas.getCourses(canvasKey);
-  const newCourses = await Promise.all(courses.map(async (c) => {
-    const newAssignments = await canvas.getAssignments(canvasKey, c.id)
-    const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
+  try {
+    const userData = await CatCorpUser.getUserDataFromSession(req.session);
+    const courses = await canvas.getCourses(canvasKey);
+    const newCourses = await Promise.all(courses.map(async (c) => {
+      const newAssignments = await canvas.getAssignments(canvasKey, c.id)
+      const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
 
-    return [c.id, c.name, newAssignments, newSubmissions]
-  }))
-  const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
-
-  return res.status(200).json({courses: newCourses, gainedGems: gainz});
+      return [c.id, c.name, newAssignments, newSubmissions]
+    }))
+    const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
+    return res.status(200).json({courses: gainz[0], gainedGems: gainz[1]});
+  } catch (error) {
+    return res.status(error.status).json({ error: error.message });
+  }
 })
 
 app.post('/registerAccount', limiter, async (req, res) => {
@@ -222,7 +231,7 @@ app.post('/buyLootbox', limiter, async (req, res) => {
   }
 
   try {
-    const purchased = CatCorpUser.buyLootbox(session, lootboxID);
+    const purchased = await CatCorpUser.buyLootbox(req.session, lootboxID);
     return res.status(200).json(purchased);
   } catch (error) {
     if (error instanceof lootbox.LootboxOpenError) {
