@@ -35,10 +35,10 @@ h2 {
     left:0;
     right:0;
     display: flex;
-    height:auto;
     align-items: center;
     flex-direction: column;
     border-radius: 15px;
+    margin-inline: auto;
     background-color: white;
 }
 
