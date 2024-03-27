@@ -36,7 +36,8 @@ export default function Store ({setOverlay, userData, setUserData}) {
               <div className="lootbox_container">
                 <div className="display">
                   <img className="lootbox" src={loot_box}/>
-                  <p>Cost: ???</p>
+                  {/* TODO: this info should come from the server, not hardcoded here */}
+                  <p>Cost: 600</p>
                 </div>
                 <button className="adopt_button" onClick={() => buyLootbox("1")}>
                   <img src={adopt_button}/>

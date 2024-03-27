@@ -9,6 +9,7 @@
     width: 56rem;
     font-family: 'Silkscreen', 'Courier New', Courier, monospace;
     font-weight: 600;
+    z-index: 9999999;
 }
 
 .store_ears {
