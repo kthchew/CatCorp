@@ -5,6 +5,7 @@ import Login from "./Login"
 // import OptionButton from "./Option_Button"
 import Store from './Store.jsx'; 
 import StoreButton from "./img/UI/store_button.png";
+import Rage from "./img/UI/Rage.png";
 import Rewards from "./Rewards"
 import Cat from "./Cat"
 
@@ -22,6 +23,15 @@ function App() {
   const [overlay, setOverlay] = useState("login")
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
+
+  const [randomNum, setRandomNum] = useState(Math.random())
+  useEffect(() => {
+    setTimeout(() => {
+      if (randomNum < 0.001) {
+        setRandomNum(1)
+      }
+    }, 400)
+  }, [randomNum])
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -107,6 +117,35 @@ COURSE STORAGE - NEW MODEL
     }
     window.addEventListener('resize', setDimensions)
   }, [])
+
+  if (randomNum < 0.001) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'black',
+        zIndex: 99999
+      }}>
+        <img src={Rage} style={
+          {
+            // center on page
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            imageRendering: 'pixelated',
+            zIndex: 100000
+          }
+        
+        }></img>
+      </div>
+    )
+  }
 
 
   return (
