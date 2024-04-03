@@ -56,7 +56,7 @@ export default function Rewards({courses, setOverlay, skip}) {
               })}
             </div>
           </div>
-          : <h2>No assignments submitted since last login!</h2>
+          : <></>
         }
         <button onClick={() => setOverlay("home")} className="rewardsConfirm">OK</button>
       </div> : <></>}

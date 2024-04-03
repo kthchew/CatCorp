@@ -6,6 +6,7 @@ import Login from "./Login"
 import Store from './Store.jsx'; 
 import StoreButton from "./img/UI/store_button.png";
 import Rewards from "./Rewards"
+import Checklist from "./Checklist.jsx"
 import Cat from "./Cat"
 
 
@@ -96,7 +97,7 @@ COURSE STORAGE - NEW MODEL
   useEffect(() => {
     if (courses) {
       console.log(courses)
-      setOverlay("rewards")
+      setOverlay("rewardsLogin")
     }
   }, [courses])
 
@@ -117,8 +118,12 @@ COURSE STORAGE - NEW MODEL
         <div>
 
           {
-            overlay == "rewards" ? 
-              <Rewards courses={courses} setOverlay={setOverlay} />
+            overlay == "rewardsLogin" ? 
+              <Rewards courses={courses} setOverlay={setOverlay} skip={true}/>
+            : overlay == "rewards" ? 
+              <Rewards courses={courses} setOverlay={setOverlay} skip={false}/>
+            : overlay == "checklist" ? 
+              <Checklist courses={courses} setOverlay={setOverlay} skip={false}/>
             : overlay == "store" ? 
               <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
             : <></>
@@ -127,6 +132,7 @@ COURSE STORAGE - NEW MODEL
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
           {/* <button onClick={buyLootboxTest} style={{zIndex: 999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button> */}
           <img onClick={() => setOverlay('store')} src={StoreButton} style={{zIndex: 110000, position:'absolute',  top:'10%', left:'75%'}}></img>
+          <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{zIndex: 110000, position:'absolute',  top:'10%', left:'55%'}}></img>
           {/* <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p> */}
           
           <div>
