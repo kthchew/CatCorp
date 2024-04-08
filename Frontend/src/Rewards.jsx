@@ -30,15 +30,15 @@ export default function Rewards({courses, setOverlay, skip}) {
       {subArr ? <div className="rewardsBackground">
         <h1 className="rewardsHeader">Gems earned:</h1>
         { subArr.length != 0 ?
-          <div>
-            <div style={{display: "flex"}}>
+          <div style={{height: "100%"}}>
+            <div style={{display: "flex", justifyContent: "center"}}>
               {index != 0 ? 
                 <button className="rewardsIndexButton" onClick={() => {setIndex(index - 1)}}>&lt;</button> 
-              : <button>&lt;</button>}
+              : <button className="rewardsFakeButton">&lt;</button>}
               <h2>{subArr[index][0]}</h2>
               {index != subArr.length-1 ? 
                 <button className="rewardsIndexButton" onClick={() => {setIndex(index + 1)}}>&gt;</button> 
-              : <button>&gt;</button>}
+              : <button className="rewardsFakeButton">&gt;</button>}
             </div>
             <div className="rewardsList">
               {subArr[index][1].map((s, i) => {
