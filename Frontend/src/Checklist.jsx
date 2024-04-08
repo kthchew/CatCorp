@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import "./css/Rewards.css"
-import gem from "../src/img/gem.png"
 
 export default function Rewards({courses, setOverlay}) {
   const [subArr, setSubArr] = useState([])
