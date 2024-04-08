@@ -130,15 +130,18 @@ COURSE STORAGE - NEW MODEL
           }
 
           <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
-          {/* <button onClick={buyLootboxTest} style={{zIndex: 999999, position:'absolute',bottom:0, right:'10%'}}>Buy Lootbox 1</button> */}
-          <img onClick={() => setOverlay('store')} src={StoreButton} style={{zIndex: 110000, position:'absolute',  top:'10%', left:'75%'}}></img>
-          <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{zIndex: 110000, position:'absolute',  top:'10%', left:'65%'}}></img>
-          <img onClick={() => setOverlay('checklist')} src={StoreButton} style={{zIndex: 110000, position:'absolute',  top:'10%', left:'55%'}}></img>
-          {/* <p style={{zIndex: 99999999, position:'absolute',bottom:'10%', right:0}}>Gems: {userData.gems}</p> */}
           
           <div>
             <div className='floor'></div>
             <div className='back'>
+              <img src={StoreButton}></img>
+              <img src={StoreButton} ></img>
+              <img src={StoreButton} ></img>
+            </div>
+            <div className='backOverlay'>
+              <img onClick={() => setOverlay('store')} src={StoreButton} style={{opacity:0}}></img>
+              <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{opacity:0}}></img>
+              <img onClick={() => setOverlay('checklist')} src={StoreButton} style={{opacity:0}}></img>
             </div>
             <div className='wall'>
             </div>
