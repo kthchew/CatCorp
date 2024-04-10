@@ -153,6 +153,7 @@ app.post('/loginUser', limiter, async (req, res) => {
       code = error.status;
       json = {message: error.message};
     }
+    //this code is no longer needed
   } else if (await CatCorpUser.checkUsernameAvailable(u)) {
     code = 401;
     json = {message: "Incorrect username/password!"}

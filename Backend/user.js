@@ -1,25 +1,25 @@
 import {ObjectId} from 'mongodb'
 import bcrypt from 'bcrypt'
-import {getDb} from './db/conn.js'
+import {getUserDB} from './db/conn.js'
 import * as canvas from './canvas.js'
 import * as lootbox from "./lootbox.js";
 import Cat from "./cat.js";
 
 export async function checkUsernameAvailable(username) {
-  const user = await getDb().findOne({ "username": { $eq: username } })
+  const user = await getUserDB().findOne({ "username": { $eq: username } })
   return user === null
 }
 
 // This function does NOT do any checks for unique usernames, etc.
 export async function registerAccount(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await getDb().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [] })
+  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [] })
   return user.insertedId
 }
 
 // Returns the user object if the credentials are valid, or null if they are not.
 export async function verifyCredentials(username, password) {
-  const users = await getDb().find({ "username": { $eq: username } })
+  const users = await getUserDB().find({ "username": { $eq: username } })
   const usersArr = await users.toArray()
   if (usersArr.length === 0) return null
 
@@ -44,7 +44,7 @@ async function setUserProperty(session, property, value) {
 
   const updates = {}
   updates[property] = value
-  const updated = await getDb().updateOne({ "_id": { $eq: objId } }, { $set: updates })
+  const updated = await getUserDB().updateOne({ "_id": { $eq: objId } }, { $set: updates })
   return updated.modifiedCount === 1
 }
 
@@ -55,7 +55,7 @@ async function incrementUserProperty(session, property, value) {
 
   const updates = {}
   updates[property] = value
-  const updated = await getDb().updateOne({ "_id": { $eq: objId } }, { $inc: updates })
+  const updated = await getUserDB().updateOne({ "_id": { $eq: objId } }, { $inc: updates })
   return updated.modifiedCount === 1
 }
 
@@ -63,7 +63,7 @@ export async function getUserDataFromSession(session) {
   const userId = session.ccUserId
   if (!userId) return false
   const objId = new ObjectId(String(userId))
-  return await getDb().findOne({"_id": {$eq: objId}})
+  return await getUserDB().findOne({"_id": {$eq: objId}})
 }
 
 export async function updateLastLogin(session) {
@@ -146,7 +146,7 @@ async function addCat(session, cat) {
     if (!userId) return false
     const objId = new ObjectId(String(userId))
 
-    const updated = await getDb().updateOne({ "_id": { $eq: objId } }, { $push: { "cats": cat } })
+    const updated = await getUserDB().updateOne({ "_id": { $eq: objId } }, { $push: { "cats": cat } })
     return updated.modifiedCount === 1
 }
 
