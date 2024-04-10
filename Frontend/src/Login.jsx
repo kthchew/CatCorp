@@ -11,9 +11,10 @@ import "./css/Login.css"
 
 import { getCsrfToken } from './utils';
 
-export default function Login({apiKey, setApiKey, setUserData, setOverlay, setCourses}) {
+export default function Login({onLoginDataReceived}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [apiKey, setApiKey] = useState("")
   const [logState, setLogState] = useState("login");
   const [loginResponse, setLoginResponse] = useState("");
   const [usingSession, setUsingSession] = useState(true)
@@ -25,9 +26,7 @@ export default function Login({apiKey, setApiKey, setUserData, setOverlay, setCo
 
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
-        setCourses(cashResp.data.courses);
-        setUserData(accInfoResp.data.userData);
-        setOverlay("home");
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
       } catch (e) {
         // no session yet - just ignore
       } finally {
@@ -36,7 +35,7 @@ export default function Login({apiKey, setApiKey, setUserData, setOverlay, setCo
     }
 
     tryLogin();
-  }, [setUserData, setOverlay, setCourses]);
+  }, [onLoginDataReceived]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,9 +60,7 @@ export default function Login({apiKey, setApiKey, setUserData, setOverlay, setCo
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        setCourses(cashResp.data.courses);
-        setUserData(accInfoResp.data.userData);
-        setOverlay("home")
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
         console.log("logged in");
       } catch (e) {
         if (e.response) {
@@ -175,10 +172,5 @@ CanvasAPIKeyContainer.propTypes = {
   setKey: PropTypes.func
 }
 Login.propTypes = {
-  apiKey: PropTypes.string,
-  setApiKey: PropTypes.func,
-  setUserData: PropTypes.func,
-  getCsrfToken: PropTypes.func,
-  setOverlay: PropTypes.func,
-  setCourses: PropTypes.func
+  onLoginDataReceived: PropTypes.func
 }

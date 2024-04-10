@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import './css/App.css'
 import Login from "./Login"
 // import Rewards from "./Rewards"
 import Home from "./Home";
-import Assignments from './Assignments';
 
 axios.defaults.baseURL = 'http://localhost:3500';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -13,8 +12,24 @@ axios.defaults.withCredentials = true;
 function App() {
   const [courses, setCourses] = useState(null);
   const [userData, setUserData] = useState(null); //from db
-  const [apiKey, setApiKey] = useState("")
   const [overlay, setOverlay] = useState("login")
+
+  function onLoginDataReceived(newCourses, newUserData) {
+    setCourses(newCourses)
+    setUserData(newUserData)
+    let newSubmissionsExist = false
+    for (let course of newCourses) {
+      if (course[3].length > 0) {
+        newSubmissionsExist = true
+        break
+      }
+    }
+    if (newSubmissionsExist) {
+      setOverlay("rewards")
+    } else {
+      setOverlay("home")
+    }
+  }
 
 //due_at, points_possible, has_submitted_submissions, name, 
 
@@ -44,16 +59,9 @@ COURSE STORAGE - NEW MODEL
   ]
 */
 
-  useEffect(() => {
-    if (courses) {
-      console.log(courses)
-      setOverlay("rewardsLogin")
-    }
-  }, [courses])
-
   switch (overlay) {
     case "login":
-      return <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setOverlay={setOverlay} setCourses={setCourses}/>
+      return <Login onLoginDataReceived={onLoginDataReceived}/>
     default:
       return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} overlay={overlay} setOverlay={setOverlay} />
   }

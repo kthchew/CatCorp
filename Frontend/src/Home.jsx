@@ -40,10 +40,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
   return (
     <div>
       {
-      overlay == "rewardsLogin" ? 
-        <Rewards courses={courses} setOverlay={setOverlay} skip={true}/>
-      : overlay == "rewards" ? 
-        <Rewards courses={courses} setOverlay={setOverlay} skip={false}/>
+      overlay == "rewards" ? 
+        <Rewards courses={courses} setOverlay={setOverlay}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
