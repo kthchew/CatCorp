@@ -27,7 +27,7 @@ export default function Rewards({courses, setOverlay, skip}) {
 
   return (
     <div>
-      {subArr ? <div className="rewardsBackground">
+      {subArr && (subArr.length > 0 || !skip) ? <div className="rewardsBackground">
         <h1 className="rewardsHeader">Gems earned:</h1>
         { subArr.length != 0 ?
           <div style={{height: "100%"}}>
