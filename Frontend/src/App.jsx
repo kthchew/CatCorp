@@ -54,8 +54,6 @@ COURSE STORAGE - NEW MODEL
   switch (overlay) {
     case "login":
       return <Login apiKey={apiKey} setApiKey={setApiKey} setUserData={setUserData} setOverlay={setOverlay} setCourses={setCourses}/>
-    case "assignments":
-      return <Assignments userData={userData} courses={courses} setOverlay={setOverlay} />
     default:
       return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} overlay={overlay} setOverlay={setOverlay} />
   }
