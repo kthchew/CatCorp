@@ -48,7 +48,7 @@ export async function getUser(canvas_api_token) {
   }
 }
 
-export async function getCourses(canvas_api_token) {
+export async function getCourses(canvas_api_token, after_date = Date.now()) {
   if (!canvas_api_token) {
     throw new InvalidInput('canvas_api_token is required');
   }
@@ -62,7 +62,7 @@ export async function getCourses(canvas_api_token) {
       }
     });
     var activeCourses = response.data.filter(course => course.enrollments && course.enrollments[0].enrollment_state == "active" 
-                                                        && (!course.end_at || Date.parse(course.end_at) > Date.now()));
+                                                        && (!course.end_at || Date.parse(course.end_at) > after_date));
     return activeCourses;
     // return response.data; // we shouldn't really be filtering out old courses if there have been submissions?
   } catch (error) {
@@ -70,7 +70,7 @@ export async function getCourses(canvas_api_token) {
   }
 }
 
-export async function getAssignments(canvas_api_token, course_id) {
+export async function getAssignments(canvas_api_token, course_id, after_date = Date.now()) {
     const is_num = /^\d+$/
 
     if (!canvas_api_token || !course_id || !is_num.test(course_id)) {
@@ -89,7 +89,7 @@ export async function getAssignments(canvas_api_token, course_id) {
 
       const res = response.data.flatMap((a) => {
         const dueAt = new Date(a.due_at);
-        if (a.due_at && dueAt > Date.now()) {
+        if (a.due_at && dueAt > after_date) {
           return [[a.id, a.name, a.due_at, a.points_possible]];
         } else {
           return [];

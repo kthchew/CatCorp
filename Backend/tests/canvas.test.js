@@ -866,7 +866,7 @@ describe('Canvas file', () => {
     ]
 
     axios.get.mockResolvedValue({ data: mockAssignments })
-    const result = await canvas.getAssignments("token", "123")
+    const result = await canvas.getAssignments("token", "123", Date.parse("2024-03-22T22:10:39Z"))
     expect(result).toEqual(transformed)
   })
 
