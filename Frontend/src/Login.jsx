@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Blocks } from "react-loader-spinner"
 import axios from "axios"
 import logo from "./img/UI/title.png"
 import login_button from "./img/UI/Login_Button.png"
@@ -8,11 +9,33 @@ import exist_user from "./img/UI/Existing_User.png"
 import PropTypes from "prop-types";
 import "./css/Login.css"
 
-export default function Login({apiKey, setApiKey, setUserData, setUserId, setCourses}) {
+import { getCsrfToken } from './utils';
+
+export default function Login({onLoginDataReceived}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [apiKey, setApiKey] = useState("")
   const [logState, setLogState] = useState("login");
   const [loginResponse, setLoginResponse] = useState("");
+  const [usingSession, setUsingSession] = useState(true)
+
+  useEffect(() => {
+    async function tryLogin() {
+      try {
+        await getCsrfToken();
+
+        const cashResp = await axios.post(`/cashNewSubmissions`);
+        const accInfoResp = await axios.get(`/getAccountInfo`);
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
+      } catch (e) {
+        // no session yet - just ignore
+      } finally {
+        setUsingSession(false)
+      }
+    }
+
+    tryLogin();
+  }, [onLoginDataReceived]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,9 +60,7 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        setUserData(accInfoResp.data.userData);
-        setUserId(accInfoResp.data.userId);
-        setCourses(cashResp.data.courses);
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
         console.log("logged in");
       } catch (e) {
         if (e.response) {
@@ -76,6 +97,23 @@ export default function Login({apiKey, setApiKey, setUserData, setUserId, setCou
     } else {
       setLogState("login");
     }
+  }
+
+  if (usingSession) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+      }}>
+        <Blocks />
+        <h1>Please wait...</h1>
+      </div>
+    )
   }
 
   return (
@@ -134,9 +172,5 @@ CanvasAPIKeyContainer.propTypes = {
   setKey: PropTypes.func
 }
 Login.propTypes = {
-  apiKey: PropTypes.string,
-  setApiKey: PropTypes.func,
-  setUserData: PropTypes.func,
-  setUserId: PropTypes.func,
-  setCourses: PropTypes.func
+  onLoginDataReceived: PropTypes.func
 }
