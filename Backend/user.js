@@ -146,7 +146,7 @@ export async function cashSubmissions(session, courses) {
       
   
   const temp = await getUserProperty(session, "lastLogin")
-  await updateClasses(session, courses)
+  // await updateClasses(session, courses)
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
   return [courses, sum];

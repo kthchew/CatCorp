@@ -193,8 +193,9 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
     const newCourses = await Promise.all(courses.map(async (c) => {
       const newAssignments = await canvas.getAssignments(canvasKey, c.id)
       const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
+      const weeklySubmissions = await canvas.getNewSubmissions(canvasKey, c.id, getLastSundayNight(Date.now()))
 
-      return [c.id, c.name, newAssignments, newSubmissions]
+      return [c.id, c.name, newAssignments, newSubmissions, weeklySubmissions]
     }))
     const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
     return res.status(200).json({courses: gainz[0], gainedGems: gainz[1]});
@@ -202,6 +203,12 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
     return res.status(error.status).json({ error: error.message });
   }
 })
+
+function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
+  date = new Date(date)
+  date.setDate(date.getDate() - (date.getDay() == 0 ? 7 : date.getDay()));
+  return Math.floor(date.getTime() / 86400000 + 1) * 86400000;
+}
 
 app.post('/registerAccount', limiter, async (req, res) => {
   const username = req.body.username;
