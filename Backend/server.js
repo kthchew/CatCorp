@@ -95,6 +95,7 @@ app.get('/getAssignments', async (req, res) => {
   }
 });
 
+//DEPRECATED AND UNUSED :P
 app.get('/getSubmission', async (req, res) => {
   const canvas_api_token = req.session.canvasKey;
   const course_id = req.query.course_id;
