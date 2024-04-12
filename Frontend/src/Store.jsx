@@ -31,18 +31,49 @@ export default function Store ({setOverlay, userData, setUserData}) {
             </div>
           </div>
           <div className="lootbox_collection">
-            {
-              <div className="lootbox_container">
-                <div className="display">
-                  <img className="lootbox" src={loot_box}/>
-                  {/* TODO: this info should come from the server, not hardcoded here */}
-                  <p>Cost: 600</p>
-                </div>
-                <button className="adopt_button" onClick={() => buyLootbox("1")}>
-                  <img src={adopt_button}/>
-                </button>
+            <div className="lootbox_container">
+              <div className="display">
+                <img className="lootbox" src={loot_box}/>
+                {/* TODO: this info should come from the server, not hardcoded here */}
+                <p>Cost: 300</p>
               </div>
-            }
+              <button className="adopt_button" onClick={() => buyLootbox("0")}>
+                <img src={adopt_button}/>
+              </button>
+            </div>
+
+            <div className="lootbox_container">
+              <div className="display">
+                <img className="lootbox" src={loot_box}/>
+                {/* TODO: this info should come from the server, not hardcoded here */}
+                <p>Cost: 600</p>
+              </div>
+              <button className="adopt_button" onClick={() => buyLootbox("1")}>
+                <img src={adopt_button}/>
+              </button>
+            </div>
+
+            <div className="lootbox_container">
+              <div className="display">
+                <img className="lootbox" src={loot_box}/>
+                {/* TODO: this info should come from the server, not hardcoded here */}
+                <p>Cost: 1200</p>
+              </div>
+              <button className="adopt_button" onClick={() => buyLootbox("2")}>
+                <img src={adopt_button}/>
+              </button>
+            </div>
+
+            <div className="lootbox_container">
+              <div className="display">
+                <img className="lootbox" src={loot_box}/>
+                {/* TODO: this info should come from the server, not hardcoded here */}
+                <p>Cost: 2400</p>
+              </div>
+              <button className="adopt_button" onClick={() => buyLootbox("3")}>
+                <img src={adopt_button}/>
+              </button>
+            </div>
           </div>
         </div>
       </div>
