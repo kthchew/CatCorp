@@ -146,22 +146,40 @@ export async function cashSubmissions(session, courses) {
       
   
   const temp = await getUserProperty(session, "lastLogin")
-  // await updateClasses(session, courses)
+  await updateClasses(session, courses)
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
   return [courses, sum];
 }
 
 async function updateClasses(session, courses) {
-  const lastLogin = await getUserProperty(session, "lastLogin")
+  var lastLogin = await getUserProperty(session, "lastLogin")
+  lastLogin = Number(lastLogin)
   const username = await getUserProperty(session, "username")
-  const now = Date.now();
   
-  await Promise.all(courses.forEach(async (c) => {
+  await Promise.all(courses.map(async (c) => { //forEach breaks
     const data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
-    if (!data) {
-      const classObj = await getClassDB().insertOne({ "courseId": c[0], "endDate": getLastSundayNight(Date.now()) + 86400000*7, "lastLogin": Date.now(), "gems": 0, "cats": [] })
-    } else {
+    if (!data) {  
+      const endDate = getLastSundayNight(Date.now()) + 86400000*7 + 3600000 * 4 + 100;
+
+      var numUnsubmitted = 0
+      c[2].forEach((a) => {
+        var due = new Date(a[2]);
+        if (due < endDate) {
+          numUnsubmitted++;
+        } //else break (assignments sorted by end date?)
+      })
+      
+      if (c[4].length + numUnsubmitted) {
+        var users = {}
+        users[username] = c[4].length / (c[4].length + numUnsubmitted);
+        await getClassDB().insertOne({ "courseId": c[0], "endDate": endDate, "users": users, "prevUsers": {} }) //make sure to check if users actually participated
+      }
+      } else {
+      // const endDate = data.endDate
+      // if (Date.now() > endDate) {
+      console.log("found a course and attempting to update??")
+      // }
 
     }
   }))
@@ -169,7 +187,6 @@ async function updateClasses(session, courses) {
 
 function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
   date = new Date(date)
-  console.log(date.getDay(), (date.getDay()) % 7)
   date.setDate(date.getDate() - (date.getDay() == 0 ? 7 : date.getDay()));
   return Math.floor(date.getTime() / 86400000 + 1) * 86400000;
 }
