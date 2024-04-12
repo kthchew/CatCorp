@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb'
 import bcrypt from 'bcrypt'
-import {getUserDB} from './db/conn.js'
+import {getUserDB, getClassDB} from './db/conn.js'
 import * as canvas from './canvas.js'
 import * as lootbox from "./lootbox.js";
 import Cat from "./cat.js";
@@ -46,6 +46,15 @@ async function setUserProperty(session, property, value) {
   updates[property] = value
   const updated = await getUserDB().updateOne({ "_id": { $eq: objId } }, { $set: updates })
   return updated.modifiedCount === 1
+}
+
+async function getUserProperty(session, property) {
+  const userId = session.ccUserId
+  if (!userId) return false
+  const objId = new ObjectId(String(userId))
+
+  const user = await getUserDB().findOne({ "_id": { $eq: objId } })
+  return user[property]; 
 }
 
 async function incrementUserProperty(session, property, value) {
@@ -135,10 +144,34 @@ export async function cashSubmissions(session, courses) {
 
       })
       
-
+  
+  const temp = await getUserProperty(session, "lastLogin")
+  await updateClasses(session, courses)
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
   return [courses, sum];
+}
+
+async function updateClasses(session, courses) {
+  const lastLogin = await getUserProperty(session, "lastLogin")
+  const username = await getUserProperty(session, "username")
+  const now = Date.now();
+  
+  await Promise.all(courses.forEach(async (c) => {
+    const data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
+    if (!data) {
+      const classObj = await getClassDB().insertOne({ "courseId": c[0], "endDate": getLastSundayNight(Date.now()) + 86400000*7, "lastLogin": Date.now(), "gems": 0, "cats": [] })
+    } else {
+
+    }
+  }))
+}
+
+function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
+  date = new Date(date)
+  console.log(date.getDay(), (date.getDay()) % 7)
+  date.setDate(date.getDate() - (date.getDay() == 0 ? 7 : date.getDay()));
+  return Math.floor(date.getTime() / 86400000 + 1) * 86400000;
 }
 
 async function addCat(session, cat) {
