@@ -145,17 +145,18 @@ export async function cashSubmissions(session, courses) {
       })
       
   
-  const temp = await getUserProperty(session, "lastLogin")
-  await updateClasses(session, courses)
+  const results = await updateClasses(session, courses)
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
-  return [courses, sum];
+  return [courses, sum, results];
 }
 
 async function updateClasses(session, courses) {
   var lastLogin = await getUserProperty(session, "lastLogin")
   lastLogin = Number(lastLogin)
   const username = await getUserProperty(session, "username")
+
+  const effects = []
   
   await Promise.all(courses.map(async (c) => { //forEach breaks
     let data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
@@ -210,21 +211,94 @@ async function updateClasses(session, courses) {
         data.users[username] = c[4].length / (c[4].length + numUnsubmitted);
         await getClassDB().updateOne({"courseId": c[0]}, {$set: {"users": data.users}});
       }
-  
+
+      const effect = {}
+
       if (lastLogin <= endDate - 86400000*7) { //has not already logged in this week
         let indexA = data.prevWinners.indexOf(username);
         let indexB = data.prevLosers.indexOf(username)
         if (indexA >= 0) {
           data.prevWinners.splice(indexA, 0);
-          //CODE FOR REWARDING A USER
+          
+          effect.result = "win";
+          effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
         } else if (indexB >= 0) {
           data.prevLosers.splice(indexB, 0);
-          //CODE FOR PUNISHING A USER
+          
+          effect.result = "lose";
+          // TODO: properly decide disaster type
+          effect.disasterType = "earthquake";
+          const disasterEffect = await applyBossDisaster(session, effect.disasterType)
+          if (disasterEffect === false) {
+            effect.result = "error";
+          }
+          effect.lostCats = disasterEffect
         }
-      } 
+      }
+
+      effects.push(effect)
     }
-    
+    return effects
   }))
+}
+
+async function applyBossDisaster(session, disasterType) {
+  const user = await getUserDataFromSession(session)
+  if (!user) return false
+
+  if (disasterType === "earthquake") {
+    const cats = user.cats
+    const catIndex = Math.floor(Math.random() * cats.length)
+    cats[catIndex].alive = false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
+    return result ? [catIndex] : false
+  } else if (disasterType === "plague") {
+    // oldest cat
+    const cats = user.cats
+    const catIndex = cats.findIndex(cat => cat.alive)
+    if (catIndex === -1) return false
+    cats[catIndex].alive = false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
+    return result ? [catIndex] : false
+  } else if (disasterType === "war") {
+    // youngest cat
+    const cats = user.cats
+    const catIndex = cats.reverse().findIndex(cat => cat.alive)
+    if (catIndex === -1) return false
+    cats[catIndex].alive = false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${cats.length - catIndex - 1}.alive`]: false } })
+    return result ? [cats.length - catIndex - 1] : false
+  } else if (disasterType === "death") {
+    // highest rarity cat
+    const cats = user.cats
+    let highestRarity = -1
+    let catIndex = -1
+    for (let i = 0; i < cats.length; i++) {
+      if (cats[i].rarity > highestRarity) {
+        highestRarity = cats[i].rarity
+        catIndex = i
+      }
+    }
+    if (catIndex === -1) return false
+    cats[catIndex].alive = false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
+    return result ? [catIndex] : false
+  } else if (disasterType === "famine") {
+    // lowest rarity cat
+    const cats = user.cats
+    let lowestRarity = 9999
+    let catIndex = -1
+    for (let i = 0; i < cats.length; i++) {
+      if (cats[i].rarity < lowestRarity) {
+        lowestRarity = cats[i].rarity
+        catIndex = i
+      }
+    }
+    if (catIndex === -1) return false
+    cats[catIndex].alive = false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
+    return result ? [catIndex] : false
+  }
 }
 
 function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
