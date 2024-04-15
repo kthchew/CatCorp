@@ -162,7 +162,7 @@ async function updateClasses(session, courses) {
     if (!data) {  
       const endDate = getLastSundayNight(Date.now()) + 86400000*7 + 3600000 * 4 + 100;
 
-      var numUnsubmitted = 0
+      let numUnsubmitted = 0
       c[2].forEach((a) => {
         var due = new Date(a[2]);
         if (due < endDate) {
@@ -195,6 +195,30 @@ async function updateClasses(session, courses) {
         }
       }
     
+      //update course participation
+      var numUnsubmitted = 0;
+      c[2].forEach((a) => {
+        var due = new Date(a[2]);
+        if (due < endDate) {
+          numUnsubmitted++;
+        } 
+      })
+      if (c[4].length + numUnsubmitted) {
+        data.users[username] = c[4].length / (c[4].length + numUnsubmitted);
+        await getClassDB().updateOne({"courseId": c[0]}, {$set: {"users": data.users}});
+      }
+
+      if (lastLogin <= endDate - 86400000*7) { //has not already logged in this week
+        let indexA = data.prevWinners.indexOf(username);
+        let indexB = data.prevLosers.indexOf(username)
+        if (indexA >= 0) {
+          data.prevWinners.splice(indexA, 0);
+          //CODE FOR REWARDING A USER
+        } else if (indexB >= 0) {
+          data.prevLosers.splice(indexB, 0);
+          //CODE FOR PUNISHING A USER
+        }
+      } 
     }
   }))
 }
