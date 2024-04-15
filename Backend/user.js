@@ -170,17 +170,31 @@ async function updateClasses(session, courses) {
         } //else break (assignments sorted by end date?)
       })
       
-      if (c[4].length + numUnsubmitted) {
+      if (c[4].length + numUnsubmitted) { //if a class has assignments...
         var users = {}
         users[username] = c[4].length / (c[4].length + numUnsubmitted);
-        await getClassDB().insertOne({ "courseId": c[0], "endDate": endDate, "users": users, "prevUsers": {} }) //make sure to check if users actually participated
+        await getClassDB().insertOne({ "courseName": c[1], "courseId": c[0], "endDate": endDate, "users": users, "prevWinners": [], "prevLosers": [] }) //make sure to check if users actually participated
       }
-      } else {
-      // const endDate = data.endDate
-      // if (Date.now() > endDate) {
-      console.log("found a course and attempting to update??")
-      // }
+    } else {
+      const endDate = data.endDate
+      if (Date.now() > endDate) {
+        var participants = [];
+        Object.keys.forEach((u) => participants.push(u));
 
+        const sum = Object.values(data.users).reduce((sum, a) => sum + a, 0) / Object.keys(data.users).length;
+        var newEnd = endDate;
+        while (Date.now() > newEnd) {
+          newEnd += 86400000*7;
+        }
+        if (sum >= .8) {
+          participants.concat(data.prevWinners);
+          await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevWinners": Array.from(participants), "endDate": newEnd}});
+        } else {
+          participants.concat(data.prevLosers);
+          await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": Array.from(participants), "endDate": newEnd}});
+        }
+      }
+    
     }
   }))
 }
