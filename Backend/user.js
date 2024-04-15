@@ -158,7 +158,7 @@ async function updateClasses(session, courses) {
   const username = await getUserProperty(session, "username")
   
   await Promise.all(courses.map(async (c) => { //forEach breaks
-    const data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
+    let data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
     if (!data) {  
       const endDate = getLastSundayNight(Date.now()) + 86400000*7 + 3600000 * 4 + 100;
 
@@ -173,14 +173,17 @@ async function updateClasses(session, courses) {
       if (c[4].length + numUnsubmitted) { //if a class has assignments...
         var users = {}
         users[username] = c[4].length / (c[4].length + numUnsubmitted);
-        await getClassDB().insertOne({ "courseName": c[1], "courseId": c[0], "endDate": endDate, "users": users, "prevWinners": [], "prevLosers": [] }) //make sure to check if users actually participated
+        data = { "courseName": c[1], "courseId": c[0], "endDate": endDate, "users": users, "prevWinners": [], "prevLosers": [] };
+        await getClassDB().insertOne(data) //make sure to check if users actually participated
       }
-    } else {
-      const endDate = data.endDate
-      if (Date.now() > endDate) {
-        var participants = [];
-        Object.keys.forEach((u) => participants.push(u));
+    } 
 
+    if (data) {
+      const endDate = data.endDate
+      if (Date.now() > endDate) { //catch class up to next week
+        var participants = [];
+        Object.keys(data.users).forEach((u) => participants.push(u));
+  
         const sum = Object.values(data.users).reduce((sum, a) => sum + a, 0) / Object.keys(data.users).length;
         var newEnd = endDate;
         while (Date.now() > newEnd) {
@@ -207,7 +210,7 @@ async function updateClasses(session, courses) {
         data.users[username] = c[4].length / (c[4].length + numUnsubmitted);
         await getClassDB().updateOne({"courseId": c[0]}, {$set: {"users": data.users}});
       }
-
+  
       if (lastLogin <= endDate - 86400000*7) { //has not already logged in this week
         let indexA = data.prevWinners.indexOf(username);
         let indexB = data.prevLosers.indexOf(username)
@@ -220,6 +223,7 @@ async function updateClasses(session, courses) {
         }
       } 
     }
+    
   }))
 }
 
