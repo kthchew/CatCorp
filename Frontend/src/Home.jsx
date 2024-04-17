@@ -11,9 +11,13 @@ import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
 import rewardButton from "./img/UI/reward.png";
+import CatGainNotification from "./CatGainNotification.jsx";
+
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
+  const [changedCats, setChangedCats] = useState([])
+  const [changeType, setChangeType] = useState("")
 
   async function logout() {
     try {
@@ -25,6 +29,16 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
     } catch (e) {
       console.log("logout failed");
     }
+  }
+
+  function gainedCat(cat) {
+    setChangeType("won")
+    setChangedCats([cat])
+  }
+
+  function closeNotif() {
+    setChangeType("")
+    setChangedCats([])
   }
 
   useEffect(() => {
@@ -42,13 +56,15 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
  
   return (
     <div>
+      {changeType === 'won' && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0]} closeNotif={closeNotif} />}
+
       {
       overlay == "rewards" ? 
         <Rewards courses={courses} setOverlay={setOverlay}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
-        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
+        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : <></>
       }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>

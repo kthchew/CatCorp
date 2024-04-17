@@ -8,12 +8,20 @@ import rare_loot_box from "./img/UI/lime.png"
 import close_button from "./img/UI/close_button.png"
 import adopt_button from "./img/UI/Adopt.png"
 import gem_count from "./img/UI/gem_display.png"
+import {useState} from "react";
 
-export default function Store ({setOverlay, userData, setUserData}) {
+export default function Store ({setOverlay, userData, setUserData, onGainCat}) {
+  const [purchaseInProgress, setPurchaseInProgress] = useState(false)
+
   async function buyLootbox(id) {
+    if (purchaseInProgress) return
+
     try {
+      setPurchaseInProgress(true)
       const lootboxResp = await axios.post(`/buyLootbox`, {lootboxID: id});
       setUserData({...userData, gems: userData.gems - lootboxResp.data.spent, cats: [...userData.cats, lootboxResp.data.cat]});
+      onGainCat(lootboxResp.data.cat);
+      setPurchaseInProgress(false)
     } catch (e) {
       // TODO: tell user it failed
       console.error("Purchase failed");
@@ -40,7 +48,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 300</p>
               </div>
-              <button className="adopt_button" onClick={() => buyLootbox("0")}>
+              <button className="adopt_button" onClick={() => buyLootbox("0")} disabled={purchaseInProgress}>
                 <img src={adopt_button}/>
               </button>
             </div>
@@ -51,7 +59,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 600</p>
               </div>
-              <button className="adopt_button" onClick={() => buyLootbox("1")}>
+              <button className="adopt_button" onClick={() => buyLootbox("1")}> disabled={purchaseInProgress}
                 <img src={adopt_button}/>
               </button>
             </div>
@@ -62,7 +70,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 1200</p>
               </div>
-              <button className="adopt_button" onClick={() => buyLootbox("2")}>
+              <button className="adopt_button" onClick={() => buyLootbox("2")} disabled={purchaseInProgress}>
                 <img src={adopt_button}/>
               </button>
             </div>
@@ -73,7 +81,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 2400</p>
               </div>
-              <button className="adopt_button" onClick={() => buyLootbox("3")}>
+              <button className="adopt_button" onClick={() => buyLootbox("3")} disabled={purchaseInProgress}>
                 <img src={adopt_button}/>
               </button>
             </div>
@@ -86,5 +94,6 @@ export default function Store ({setOverlay, userData, setUserData}) {
 Store.propTypes = {
   setOverlay: PropTypes.func,
   userData: PropTypes.object,
-  setUserData: PropTypes.func
+  setUserData: PropTypes.func,
+  onGainCat: PropTypes.func
 }
