@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import catTemplate from './img/CatTemplate.png'
 import deskImg from "./img/Cat_desk/tempdesk.png"
 
-function Cat({eyes, hat, pattern, patX, patY, x, y, z}) {
+function Cat({leftEye, rightEye, hat, pattern, patX, patY, x, y, z}) {
   return (
     <div className='cat' style={{bottom: y, left: x, zIndex: z}}>
       <img className='catPelt' 
@@ -15,7 +15,8 @@ function Cat({eyes, hat, pattern, patX, patY, x, y, z}) {
         }}
       ></img>
       <img className='catTemplate' src={catTemplate}></img>
-      <img className='catTemplate' src={`eyes/${eyes}.png`}></img>
+      <img className='catTemplate' src={`eyes/${leftEye}.png`}></img>
+      <img className='catTemplate' src={`eyes/${rightEye}.png`}></img>
       <img className='catTemplate' src={`hats/${hat}.png`}></img>
       <img src={deskImg} className='catTemplate'></img>
     </div>
@@ -25,7 +26,8 @@ function Cat({eyes, hat, pattern, patX, patY, x, y, z}) {
 export default Cat
 
 Cat.propTypes = {
-  eyes: PropTypes.string,
+  leftEye: PropTypes.string,
+  rightEye: PropTypes.string,
   hat: PropTypes.string,
   pattern: PropTypes.string,
   patX: PropTypes.number,
