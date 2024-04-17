@@ -223,6 +223,7 @@ async function updateClasses(session, courses) {
           
           effect.result = "win";
           effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
+          addCat(session, effect.newCat)
         } else if (indexB >= 0) {
           data.prevLosers.splice(indexB, 1);
           await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": data.prevLosers}});
@@ -276,7 +277,7 @@ async function applyBossDisaster(session, disasterType) {
     let highestRarity = -1
     let catIndex = -1
     for (let i = 0; i < cats.length; i++) {
-      if (cats[i].rarity > highestRarity) {
+      if (cats[i].alive && cats[i].rarity > highestRarity) {
         highestRarity = cats[i].rarity
         catIndex = i
       }
@@ -291,7 +292,7 @@ async function applyBossDisaster(session, disasterType) {
     let lowestRarity = 9999
     let catIndex = -1
     for (let i = 0; i < cats.length; i++) {
-      if (cats[i].rarity < lowestRarity) {
+      if (cats[i].alive && cats[i].rarity < lowestRarity) {
         lowestRarity = cats[i].rarity
         catIndex = i
       }
