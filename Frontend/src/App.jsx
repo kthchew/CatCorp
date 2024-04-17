@@ -56,6 +56,8 @@ COURSE STORAGE - NEW MODEL
       submission date
       submission points
     ]
+    new submissions since last weekend:
+    [(same as above)]
   ]
 */
 
