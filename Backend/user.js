@@ -219,11 +219,13 @@ async function updateClasses(session, courses) {
         let indexB = data.prevLosers.indexOf(username)
         if (indexA >= 0) {
           data.prevWinners.splice(indexA, 0);
+          await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevWinners": data.prevWinners}});
           
           effect.result = "win";
           effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
         } else if (indexB >= 0) {
           data.prevLosers.splice(indexB, 0);
+          await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": data.prevLosers}});
           
           effect.result = "lose";
           // TODO: properly decide disaster type based on class performance

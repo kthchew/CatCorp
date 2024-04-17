@@ -85,29 +85,6 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
           )
         })}
       </div>
-
-      {/* <h3>Your cash: {userData.gems}</h3> */}
-      {/* <Rewards courses={courses} userData={userData}/> */}
-      {/* <h1>Your course info {userId ? <>(UID: {userId})</> : <></>}</h1> */}
-      {/* {courses && courses.message != "No courses available" ? 
-        courses.map((c) => {
-          return <div key={c[0]}>
-            <h3>{c[1]} - {c[0]}</h3>
-            {c[2].map((a) => {
-              return <div key={a}>
-                <h4 style={{color:'lightgreen'}}>{a[1]} - {a[0]}</h4>
-              </div>
-            })}
-            {c[3].map((a) => {
-              return <div key={a}>
-                <h4 style={{color:'orange'}}>{a[1]} - {a[0]}</h4>
-              </div>
-            })}
-          </div>
-        })
-      : 
-        <h2>Finishing up...</h2>
-      } */}
     </div>
   )
 }
