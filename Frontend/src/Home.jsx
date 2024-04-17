@@ -80,7 +80,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
 
           return (
           <div key={i} style={{zIndex: 100000-i}}>
-            <Cat eyes={cat.eyes} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>  
+            <Cat leftEye={cat.leftEye} rightEye={cat.rightEye} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>
           </div>
           )
         })}
