@@ -16,16 +16,18 @@ export default class Cat {
     const hatIndex = rarityGenerator(CAT_HATS.length - 1);
 
     this.leftEye = CAT_EYES_LEFT[eyeIndex];
-    if (Math.random()>0.995) {
-      eyeIndex = rarityGenerator(CAT_EYES_RIGHT.length - 1);
-    }
-    this.rightEye = CAT_EYES_RIGHT[eyeIndex];
+    this.rarity = eyeIndex + colorIndex + hatIndex;
     this.pattern = CAT_COLORS[colorIndex];
     this.hat = CAT_HATS[hatIndex];
-    this.rarity = eyeIndex + colorIndex + hatIndex;
     this.name = words[Math.floor(Math.random() * words.length)];
     this.x = Math.random();
     this.y = Math.random();
     this.alive = true;
+
+    if (Math.random()<0.005) {
+      eyeIndex = rarityGenerator(CAT_EYES_RIGHT.length - 1);
+      this.rarity += eyeIndex + 4 //double eye bonus
+    }
+    this.rightEye = CAT_EYES_RIGHT[eyeIndex];
   }
 }
