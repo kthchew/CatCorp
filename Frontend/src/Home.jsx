@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-
+import floorTile from "./img/UI/floor.png";
 import Cat from "./Cat";
 import Rewards from "./Rewards";
 import Store from "./Store";
@@ -9,7 +9,7 @@ import Checklist from "./Checklist";
 import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
-
+import logoutButton from "./img/UI/logout.png";
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
@@ -38,6 +38,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
     }
   }, [])
 
+ 
   return (
     <div>
       {
@@ -49,18 +50,22 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
       : <></>
     }
-      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
+      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>
+        <img src={logoutButton}></img>      
+      </button>
       <div>
-        <div className='floor'></div>
+        <div className='floor'>
+          <img src={floorTile} style={{width:'100%', height:'100%'}}></img>
+        </div>
         <div className='back'>
-          <img src={StoreButton}></img>
-          <img src={StoreButton}></img>
-          <img src={upcomingButton}></img>
+          <img src={StoreButton} className="function"></img>
+          <img src={StoreButton} className="function"></img>
+          <img src={upcomingButton} className="function"></img>
         </div>
         <div className='backOverlay'>
-          <img onClick={() => setOverlay('store')} src={StoreButton} style={{opacity:0}}></img>
-          <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{opacity:0}}></img>
-          <img onClick={() => setOverlay('checklist')} src={upcomingButton} style={{opacity:0}}></img>
+          <img onClick={() => setOverlay('store')} src={StoreButton} title="Store" style={{opacity:0}}></img>
+          <img onClick={() => setOverlay('rewards')} src={StoreButton} title="Check Reward"style={{opacity:0}}></img>
+          <img onClick={() => setOverlay('checklist')} src={upcomingButton} title="Upcoming Assignment"style={{opacity:0}}></img>
         </div>
         <div className='wall'>
         </div>

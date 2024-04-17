@@ -2,7 +2,7 @@ import './css/Cat.css'
 import PropTypes from "prop-types";
 
 import catTemplate from './img/CatTemplate.png'
-import deskImg from "./img/Cat_desk/desk.png"
+import deskImg from "./img/Cat_desk/tempdesk.png"
 
 function Cat({eyes, hat, pattern, patX, patY, x, y, z}) {
   return (
