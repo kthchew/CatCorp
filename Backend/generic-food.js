@@ -17,7 +17,6 @@ var filteredWords = [
 "Oat",
 "Borage",
 "Swede",
-"Rape",
 "Cauliflower",
 "Kohlrabi",
 "Broccoli",

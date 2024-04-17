@@ -1,0 +1,20 @@
+.catLarge {
+    position: absolute;
+    image-rendering: pixelated;
+    scale: 3;
+}
+
+.catTemplateLarge {
+    position: absolute;
+    image-rendering: pixelated;
+}
+
+.catPeltLarge {
+    position: absolute;
+    image-rendering: pixelated;
+
+    -webkit-mask-image: url(../img/CatMask.png);
+    mask-image: url(../img/CatMask.png);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
