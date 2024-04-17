@@ -27,3 +27,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# max
+test.js
