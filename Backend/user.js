@@ -226,8 +226,8 @@ async function updateClasses(session, courses) {
           data.prevLosers.splice(indexB, 0);
           
           effect.result = "lose";
-          // TODO: properly decide disaster type
-          effect.disasterType = "earthquake";
+          // TODO: properly decide disaster type based on class performance
+          effect.disasterType = ["earthquake", "plague", "war", "death", "famine"][Math.floor(Math.random() * 5)]
           const disasterEffect = await applyBossDisaster(session, effect.disasterType)
           if (disasterEffect === false) {
             effect.result = "error";
