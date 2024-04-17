@@ -243,8 +243,8 @@ async function updateClasses(session, courses) {
 
       effects.push(effect)
     }
-    return effects
   }))
+  return effects
 }
 
 async function applyBossDisaster(session, disasterType) {
