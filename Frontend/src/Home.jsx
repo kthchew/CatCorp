@@ -67,7 +67,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
 
       <div>
         {
-        userData.cats.map((cat, i) => {
+        userData.cats.filter((cat) => cat.alive == true).map((cat, i) => {
           const deskWidth = 132;
           const deskHeight = 96;
 
