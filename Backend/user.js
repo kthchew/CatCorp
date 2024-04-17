@@ -218,13 +218,13 @@ async function updateClasses(session, courses) {
         let indexA = data.prevWinners.indexOf(username);
         let indexB = data.prevLosers.indexOf(username)
         if (indexA >= 0) {
-          data.prevWinners.splice(indexA, 0);
+          data.prevWinners.splice(indexA, 1);
           await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevWinners": data.prevWinners}});
           
           effect.result = "win";
           effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
         } else if (indexB >= 0) {
-          data.prevLosers.splice(indexB, 0);
+          data.prevLosers.splice(indexB, 1);
           await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": data.prevLosers}});
           
           effect.result = "lose";
