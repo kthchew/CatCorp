@@ -6,6 +6,7 @@ import Cat from "./Cat";
 import Rewards from "./Rewards";
 import Store from "./Store";
 import Checklist from "./Checklist";
+import Bosses from "./Bosses";
 import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 
@@ -46,6 +47,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
+      : overlay == "bosses" ? 
+        <Bosses courses={courses} setOverlay={setOverlay}/>
       : <></>
     }
       <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>
@@ -55,11 +58,13 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
           <img src={StoreButton}></img>
           <img src={StoreButton} ></img>
           <img src={StoreButton} ></img>
+          <img src={StoreButton} ></img>
         </div>
         <div className='backOverlay'>
           <img onClick={() => setOverlay('store')} src={StoreButton} style={{opacity:0}}></img>
           <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{opacity:0}}></img>
           <img onClick={() => setOverlay('checklist')} src={StoreButton} style={{opacity:0}}></img>
+          <img onClick={() => setOverlay('bosses')} src={StoreButton} style={{opacity:0}}></img>
         </div>
         <div className='wall'>
         </div>
