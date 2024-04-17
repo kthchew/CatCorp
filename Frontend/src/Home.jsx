@@ -12,11 +12,9 @@ import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 
-function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
+function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
-  const [changedCats, setChangedCats] = useState([])
-  const [changeType, setChangeType] = useState("")
 
   async function logout() {
     try {
@@ -120,5 +118,9 @@ Home.propTypes = {
   setCourses: PropTypes.func,
   overlay: PropTypes.string,
   setOverlay: PropTypes.func,
-  getCsrfToken: PropTypes.func
+  getCsrfToken: PropTypes.func,
+  changedCats: PropTypes.array,
+  setChangedCats: PropTypes.func,
+  changeType: PropTypes.string,
+  setChangeType: PropTypes.func
 }

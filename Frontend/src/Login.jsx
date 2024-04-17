@@ -26,7 +26,8 @@ export default function Login({onLoginDataReceived}) {
 
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
+        console.log(cashResp.data.gainedGems)
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossResults)
         console.log(cashResp.data)
       } catch (e) {
         // no session yet - just ignore
@@ -61,7 +62,7 @@ export default function Login({onLoginDataReceived}) {
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossResults)
         console.log("logged in");
       } catch (e) {
         if (e.response) {

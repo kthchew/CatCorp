@@ -4,6 +4,7 @@ import './css/App.css'
 import Login from "./Login"
 // import Rewards from "./Rewards"
 import Home from "./Home";
+import {getCsrfToken} from "./utils.jsx";
 
 axios.defaults.baseURL = 'http://localhost:3500';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -14,7 +15,10 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [overlay, setOverlay] = useState("login")
 
-  function onLoginDataReceived(newCourses, newUserData) {
+  const [changedCats, setChangedCats] = useState([])
+  const [changeType, setChangeType] = useState("")
+
+  function onLoginDataReceived(newCourses, newUserData, bossResults) {
     setCourses(newCourses)
     setUserData(newUserData)
     let newSubmissionsExist = false
@@ -24,6 +28,17 @@ function App() {
         break
       }
     }
+
+    for (const result of bossResults) {
+      if (result.result && result.result === "win") {
+        setChangeType("won")
+        setChangedCats([result.newCat])
+      } else if (result.result && result.result === "lose") {
+        setChangeType("lost")
+        setChangedCats(result.lostCats)
+      }
+    }
+
     if (newSubmissionsExist) {
       setOverlay("rewards")
     } else {
@@ -65,7 +80,7 @@ COURSE STORAGE - NEW MODEL
     case "login":
       return <Login onLoginDataReceived={onLoginDataReceived}/>
     default:
-      return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} overlay={overlay} setOverlay={setOverlay} />
+      return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} overlay={overlay} setOverlay={setOverlay} changedCats={changedCats} setChangedCats={setChangedCats} changeType={changeType} setChangeType={setChangeType} getCsrfToken={getCsrfToken} />
   }
 }
 
