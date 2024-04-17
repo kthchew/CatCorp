@@ -8,6 +8,7 @@ import Store from "./Store";
 import Checklist from "./Checklist";
 import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
+import upcomingButton from "./img/UI/assignment.png";
 
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -53,13 +54,13 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
         <div className='floor'></div>
         <div className='back'>
           <img src={StoreButton}></img>
-          <img src={StoreButton} ></img>
-          <img src={StoreButton} ></img>
+          <img src={StoreButton}></img>
+          <img src={upcomingButton}></img>
         </div>
         <div className='backOverlay'>
           <img onClick={() => setOverlay('store')} src={StoreButton} style={{opacity:0}}></img>
           <img onClick={() => setOverlay('rewards')} src={StoreButton} style={{opacity:0}}></img>
-          <img onClick={() => setOverlay('checklist')} src={StoreButton} style={{opacity:0}}></img>
+          <img onClick={() => setOverlay('checklist')} src={upcomingButton} style={{opacity:0}}></img>
         </div>
         <div className='wall'>
         </div>

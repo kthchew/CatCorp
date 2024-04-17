@@ -1,7 +1,10 @@
 import axios from "axios";
 import "./css/Store.css"
 import PropTypes from "prop-types";
-import loot_box from "./img/UI/lootbox.png"
+import common_loot_box from "./img/UI/blue.png"
+import epic_loot_box from "./img/UI/purple.png"
+import legendary_loot_box from "./img/UI/golden.png"
+import rare_loot_box from "./img/UI/lime.png"
 import close_button from "./img/UI/close_button.png"
 import adopt_button from "./img/UI/Adopt.png"
 import gem_count from "./img/UI/gem_display.png"
@@ -33,7 +36,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
           <div className="lootbox_collection">
             <div className="lootbox_container">
               <div className="display">
-                <img className="lootbox" src={loot_box}/>
+                <img className="lootbox" src={common_loot_box}/>
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 300</p>
               </div>
@@ -44,7 +47,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
 
             <div className="lootbox_container">
               <div className="display">
-                <img className="lootbox" src={loot_box}/>
+                <img className="lootbox" src={rare_loot_box}/>
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 600</p>
               </div>
@@ -55,7 +58,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
 
             <div className="lootbox_container">
               <div className="display">
-                <img className="lootbox" src={loot_box}/>
+                <img className="lootbox" src={epic_loot_box}/>
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 1200</p>
               </div>
@@ -66,7 +69,7 @@ export default function Store ({setOverlay, userData, setUserData}) {
 
             <div className="lootbox_container">
               <div className="display">
-                <img className="lootbox" src={loot_box}/>
+                <img className="lootbox" src={legendary_loot_box}/>
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 2400</p>
               </div>
