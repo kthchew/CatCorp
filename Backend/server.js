@@ -199,7 +199,7 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
       return [c.id, c.name, newAssignments, newSubmissions, weeklySubmissions]
     }))
     const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
-    return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2]});
+    return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2], bossfights: gainz[3]});
   } catch (error) {
     return res.status(error.status).json({ error: error.message });
   }

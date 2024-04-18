@@ -26,7 +26,7 @@ export default function Login({onLoginDataReceived}) {
 
         const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
+        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossfights)
         console.log(cashResp.data)
       } catch (e) {
         // no session yet - just ignore

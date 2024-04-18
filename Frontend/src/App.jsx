@@ -14,7 +14,7 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [overlay, setOverlay] = useState("login")
 
-  function onLoginDataReceived(newCourses, newUserData) {
+  function onLoginDataReceived(newCourses, newUserData, bossfights) {
     setCourses(newCourses)
     setUserData(newUserData)
     let newSubmissionsExist = false

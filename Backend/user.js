@@ -148,7 +148,7 @@ export async function cashSubmissions(session, courses) {
   const results = await updateClasses(session, courses)
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
-  return [courses, sum, results];
+  return [courses, sum, results[0], results[1]]; 
 }
 
 async function updateClasses(session, courses) {
@@ -156,7 +156,8 @@ async function updateClasses(session, courses) {
   lastLogin = Number(lastLogin)
   const username = await getUserProperty(session, "username")
 
-  const effects = []
+  const effects = [];
+  const bosses = [];
   
   await Promise.all(courses.map(async (c) => { //forEach breaks
     let data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
@@ -240,8 +241,9 @@ async function updateClasses(session, courses) {
       }
 
       effects.push(effect)
+      bosses.push([data.courseName, data.courseId, data.users]);
     }
-    return effects
+    return [effects, bosses]
   }))
 }
 
