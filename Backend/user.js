@@ -243,8 +243,9 @@ async function updateClasses(session, courses) {
       effects.push(effect)
       bosses.push([data.courseName, data.courseId, data.users]);
     }
-    return [effects, bosses]
   }))
+  
+  return [effects, bosses]
 }
 
 async function applyBossDisaster(session, disasterType) {
