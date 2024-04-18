@@ -10,7 +10,7 @@ import Bosses from "./Bosses";
 import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 
-function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
+function Home({ userData, setUserData, courses, setCourses, bossData, overlay, setOverlay }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
 
@@ -48,7 +48,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
       : overlay == "bosses" ? 
-        <Bosses courses={courses} setOverlay={setOverlay}/>
+        <Bosses courses={courses} setOverlay={setOverlay} bossData={bossData}/>
       : <></>
     }
       <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>Logout</button>

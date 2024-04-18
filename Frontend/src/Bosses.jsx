@@ -2,7 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import "./css/Rewards.css"
 
-export default function Bosses({ courses, setOverlay }) {
+export default function Bosses({ courses, setOverlay, bossData }) {
   const [index, setIndex] = useState(0)
 
   const upcomingAssignments = courses

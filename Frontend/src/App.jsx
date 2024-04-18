@@ -11,11 +11,13 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [courses, setCourses] = useState(null);
+  const [bossData, setBossData] = useState(null)
   const [userData, setUserData] = useState(null); //from db
   const [overlay, setOverlay] = useState("login")
 
   function onLoginDataReceived(newCourses, newUserData, bossfights) {
     setCourses(newCourses)
+    setBossData(bossfights);
     setUserData(newUserData)
     let newSubmissionsExist = false
     for (let course of newCourses) {
@@ -65,7 +67,7 @@ COURSE STORAGE - NEW MODEL
     case "login":
       return <Login onLoginDataReceived={onLoginDataReceived}/>
     default:
-      return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} overlay={overlay} setOverlay={setOverlay} />
+      return <Home userData={userData} setUserData={setUserData} courses={courses} setCourses={setCourses} bossData={bossData} overlay={overlay} setOverlay={setOverlay} />
   }
 }
 
