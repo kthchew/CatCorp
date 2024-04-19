@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import catTemplate from "./img/CatTemplate.png";
-import "./css/CatGainNotification.css";
+import "./css/CatChangeNotification.css";
 import "./css/Cat.css"
 import "./css/Store.css"
 import close_button from "./img/UI/close_button.png";
