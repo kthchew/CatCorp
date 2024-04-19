@@ -12,6 +12,7 @@ import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
 import rewardButton from "./img/UI/reward.png";
 import CatGainNotification from "./CatGainNotification.jsx";
+import CatLoseNotification from "./CatLoseNotification.jsx";
 
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -55,9 +56,11 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
   return (
     <div>
       {changeType === 'won' && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0]} closeNotif={closeNotif} />}
+      {changeType === 'lost' && changedCats.length !== 0 && <CatLoseNotification cats={changedCats} closeNotif={closeNotif} />}
 
       {
-      overlay == "rewards" ? 
+        (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
+      : overlay == "rewards" ? 
         <Rewards courses={courses} setOverlay={setOverlay}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>

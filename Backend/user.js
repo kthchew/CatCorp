@@ -219,6 +219,7 @@ async function updateClasses(session, courses) {
       if (lastLogin <= endDate - 86400000 * 7) { //has not already logged in this week
         let indexA = data.prevWinners.indexOf(username);
         let indexB = data.prevLosers.indexOf(username)
+        effect.courseName = c[1]
         if (indexA >= 0) {
           data.prevWinners.splice(indexA, 1);
           await getClassDB().updateOne({ "courseId": c[0] }, { $set: { "prevWinners": data.prevWinners } });
@@ -256,7 +257,7 @@ async function applyBossDisaster(session, disasterType) {
     const catIndex = Math.floor(Math.random() * cats.length)
     cats[catIndex].alive = false
     const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [catIndex] : false
+    return result ? [cats[catIndex]] : false
   } else if (disasterType === "plague") {
     // oldest cat
     const cats = user.cats
@@ -264,7 +265,7 @@ async function applyBossDisaster(session, disasterType) {
     if (catIndex === -1) return false
     cats[catIndex].alive = false
     const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [catIndex] : false
+    return result ? [cats[catIndex]] : false
   } else if (disasterType === "war") {
     // youngest cat
     const cats = user.cats
@@ -272,7 +273,7 @@ async function applyBossDisaster(session, disasterType) {
     if (catIndex === -1) return false
     cats[catIndex].alive = false
     const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${cats.length - catIndex - 1}.alive`]: false } })
-    return result ? [cats.length - catIndex - 1] : false
+    return result ? [cats[cats.length - catIndex - 1]] : false
   } else if (disasterType === "death") {
     // highest rarity cat
     const cats = user.cats
@@ -287,7 +288,7 @@ async function applyBossDisaster(session, disasterType) {
     if (catIndex === -1) return false
     cats[catIndex].alive = false
     const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [catIndex] : false
+    return result ? [cats[catIndex]] : false
   } else if (disasterType === "famine") {
     // lowest rarity cat
     const cats = user.cats

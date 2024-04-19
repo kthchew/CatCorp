@@ -18,3 +18,8 @@
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
 }
+
+.catRelative {
+    position: relative;
+    image-rendering: pixelated;
+}
