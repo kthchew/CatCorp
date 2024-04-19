@@ -23,12 +23,14 @@ body {
 }
 
 .back, .backOverlay {
+  border-right:1px solid black;
+  border-bottom:1px solid black;
   position:absolute;
   top: 0;
   left: 0;
   right: calc(14.036%);
   bottom: 75%;
-  background-color: #717171;
+  background-color: #90b6de;
   
   display: flex;
   flex-direction: row;
@@ -46,6 +48,10 @@ body {
   padding-top: 5%;
 }
 
+.function {
+  margin-bottom: 3.5%;
+}
+
 .wall {
   position:absolute;
   right: 0;
@@ -54,9 +60,9 @@ body {
   width: 0;
   height: 0;
 
-  border-bottom: 19.6vh solid transparent;
-  border-left: 19.6vw solid transparent;
-  border-right: 19.6vw solid #7A7A7A;
-  border-top: 19.6vh solid #7A7A7A;
+  border-bottom: 19.5vh solid transparent;
+  border-left: 19.5vw solid transparent;
+  border-right: 19.5vw solid #9abadb;
+  border-top: 19.5vh solid #9abadb;
   z-index: -2;
 }
