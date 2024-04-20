@@ -59,7 +59,7 @@ export default function Store ({setOverlay, userData, setUserData, onGainCat}) {
                 {/* TODO: this info should come from the server, not hardcoded here */}
                 <p>Cost: 600</p>
               </div>
-              <button className="adopt_button" onClick={() => buyLootbox("1")}> disabled={purchaseInProgress}
+              <button className="adopt_button" onClick={() => buyLootbox("1")} disabled={purchaseInProgress}>
                 <img src={adopt_button}/>
               </button>
             </div>
