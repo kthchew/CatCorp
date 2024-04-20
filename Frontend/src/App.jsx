@@ -14,20 +14,28 @@ function App() {
   const [userData, setUserData] = useState(null); //from db
   const [overlay, setOverlay] = useState("login")
 
-  function onLoginDataReceived(newCourses, newUserData) {
-    setCourses(newCourses)
+  async function onLoginDataReceived(newUserData) {
     setUserData(newUserData)
-    let newSubmissionsExist = false
-    for (let course of newCourses) {
-      if (course[3].length > 0) {
-        newSubmissionsExist = true
-        break
+    setOverlay("home")
+
+    try {
+      const cashResp = await axios.post(`/cashNewSubmissions`);
+      setCourses(cashResp.data.courses);
+      newUserData.gems += cashResp.data.gainedGems
+      setUserData(newUserData)
+
+      let newSubmissionsExist = false
+      for (let course of cashResp.data.courses) {
+        if (course[3].length > 0) {
+          newSubmissionsExist = true
+          break
+        }
       }
-    }
-    if (newSubmissionsExist) {
-      setOverlay("rewards")
-    } else {
-      setOverlay("home")
+      if (newSubmissionsExist) {
+        setOverlay("rewards")
+      }
+    } catch (e) {
+      console.log("Failed to cash submissions");
     }
   }
 

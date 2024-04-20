@@ -31,8 +31,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
       setWidth(window.innerWidth);
       setHeight(window.innerHeight);
     }
-
     window.addEventListener('resize', setDimensions)
+
     return () => {
       window.removeEventListener('resize', setDimensions)
     }
