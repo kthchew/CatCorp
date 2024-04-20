@@ -26,7 +26,9 @@ export default class Cat {
 
     if (Math.random()<0.005) {
       eyeIndex = rarityGenerator(CAT_EYES_RIGHT.length - 1);
-      this.rarity += eyeIndex + 4 //double eye bonus
+      if (CAT_EYES_RIGHT[eyeIndex] != this.leftEye) {
+        this.rarity += eyeIndex + 4 //double eye bonus
+      }
     }
     this.rightEye = CAT_EYES_RIGHT[eyeIndex];
   }
