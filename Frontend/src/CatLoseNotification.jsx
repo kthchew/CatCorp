@@ -18,7 +18,7 @@ export default function CatLoseNotification({cats, closeNotif}) {
                     <h1 style={{marginTop: '0', paddingTop: '0', paddingRight: '4.7rem', fontSize: '3rem'}}>You lost cat(s) in your last boss fight.</h1>
                 </div>
                 <div className="catChangeNotif" style={{height: '70%'}}>
-                    <div className="catChangeNotifList" style={{overflowY: "scroll", maxHeight: '100%'}}>
+                    <div className="catChangeNotifList" style={{overflowY: "auto", maxHeight: '100%'}}>
                         {
                             cats.map((cat, i) => {
                                 const rarityLabel = cat.rarity >= 18 ? "Legendary" :
