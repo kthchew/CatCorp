@@ -20,7 +20,7 @@ export default function CatGainNotification({cat, closeNotif}) {
             <div className="store_ears"></div>
             <div className="store_container">
                 <div style={{marginBottom: 0}} className="store_header">
-                    <button className="close_store" onClick={closeNotif}>
+                    <button className="close_store" onClick={closeNotif} style={{zIndex:"110002"}}>
                         <img src={close_button}/>
                     </button>
                 </div>
