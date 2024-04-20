@@ -31,8 +31,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
       setWidth(window.innerWidth);
       setHeight(window.innerHeight);
     }
-
     window.addEventListener('resize', setDimensions)
+
     return () => {
       window.removeEventListener('resize', setDimensions)
     }
@@ -49,8 +49,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
       : <></>
-    }
-      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>
+      }
+      <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
         <img src={logoutButton}></img>      
       </button>
       <div>

@@ -9,6 +9,7 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
+    "async-lock": "^1.4.1",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "cookie-session": "^2.1.0",
