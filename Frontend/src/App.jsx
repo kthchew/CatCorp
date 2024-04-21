@@ -16,7 +16,7 @@ function App() {
   const [overlay, setOverlay] = useState("login")
 
   const [changedCats, setChangedCats] = useState([])
-  const [changeType, setChangeType] = useState("")
+  const [changeType, setChangeType] = useState([])
 
   async function onLoginDataReceived(newUserData) {
     setUserData(newUserData)
@@ -39,15 +39,20 @@ function App() {
         setOverlay("rewards")
       }
 
+      const newChangeType = [...changeType]
+      const newChangedCats = [...changedCats]
       for (const result of cashResp.data.bossResults) {
         if (result.result && result.result === "win") {
-          setChangeType("won")
-          setChangedCats([result.newCat])
+          newChangeType.push("won")
+          newChangedCats.push([result.newCat])
         } else if (result.result && result.result === "lose") {
-          setChangeType("lost")
-          setChangedCats(result.lostCats)
+          newChangeType.push("lost")
+          newChangedCats.push(result.lostCats)
         }
       }
+
+      setChangeType(newChangeType)
+      setChangedCats(newChangedCats)
     } catch (e) {
       console.log("Failed to cash submissions");
     }

@@ -31,13 +31,13 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
   }
 
   function gainedCat(cat) {
-    setChangeType("won")
-    setChangedCats([cat])
+    setChangeType([...changeType, "won"])
+    setChangedCats([...changedCats, [cat]])
   }
 
   function closeNotif() {
-    setChangeType("")
-    setChangedCats([])
+    setChangeType(changeType.slice(1))
+    setChangedCats(changedCats.slice(1))
   }
 
   useEffect(() => {
@@ -55,8 +55,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
  
   return (
     <div>
-      {changeType === 'won' && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0]} closeNotif={closeNotif} />}
-      {changeType === 'lost' && changedCats.length !== 0 && <CatLoseNotification cats={changedCats} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "won" && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "lost" && changedCats.length !== 0 && <CatLoseNotification cats={changedCats[0]} closeNotif={closeNotif} />}
 
       {
         (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
@@ -125,6 +125,6 @@ Home.propTypes = {
   getCsrfToken: PropTypes.func,
   changedCats: PropTypes.array,
   setChangedCats: PropTypes.func,
-  changeType: PropTypes.string,
+  changeType: PropTypes.array,
   setChangeType: PropTypes.func
 }
