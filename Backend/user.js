@@ -5,6 +5,9 @@ import * as canvas from './canvas.js'
 import * as lootbox from "./lootbox.js";
 import Cat from "./cat.js";
 
+import AsyncLock from 'async-lock';
+const penaltyLock = new AsyncLock();
+
 export async function checkUsernameAvailable(username) {
   const user = await getUserDB().findOne({ "username": { $eq: username } })
   return user === null
@@ -232,8 +235,10 @@ async function updateClasses(session, courses) {
 
           effect.result = "lose";
           // TODO: properly decide disaster type based on class performance
-          effect.disasterType = ["earthquake", "plague", "war", "death", "famine"][Math.floor(Math.random() * 5)]
-          const disasterEffect = await applyBossDisaster(session, effect.disasterType)
+          effect.disasterType = ["plague", "war", "death", "famine"][Math.floor(Math.random() * 4)]
+          const disasterEffect = await penaltyLock.acquire(session.ccUserId, async () => {
+            return await applyBossDisaster(session, effect.disasterType)
+          })
           if (disasterEffect === false) {
             effect.result = "error";
           }
@@ -251,19 +256,13 @@ async function applyBossDisaster(session, disasterType) {
   const user = await getUserDataFromSession(session)
   if (!user) return false
 
-  if (disasterType === "earthquake") {
-    const cats = user.cats
-    const catIndex = Math.floor(Math.random() * cats.length)
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [catIndex] : false
-  } else if (disasterType === "plague") {
+  if (disasterType === "plague") {
     // oldest cats
     const cats = user.cats
     const numCats = Math.max(1, Math.ceil(cats.filter((cat) => cat.alive).length * 0.05))
     const catIndices = []
     for (let i = 0; i < cats.length && catIndices.length < numCats; ) {
-      const catIndex = cats.slice(i).findIndex(cat => cat.alive)
+      const catIndex = cats.slice(i).findIndex(cat => cat.alive) + i
       if (catIndex === -1) break;
       i = catIndex + 1
 
@@ -278,7 +277,7 @@ async function applyBossDisaster(session, disasterType) {
     const numCats = Math.max(1, Math.ceil(cats.filter((cat) => cat.alive).length * 0.05))
     const catIndices = []
     for (let i = 0; i < cats.length && catIndices.length < numCats; ) {
-      const catIndex = cats.slice(i).findIndex(cat => cat.alive)
+      const catIndex = cats.slice(i).findIndex(cat => cat.alive) + i
       if (catIndex === -1) break;
       i = catIndex + 1
 
