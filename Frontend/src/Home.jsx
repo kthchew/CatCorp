@@ -10,6 +10,7 @@ import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
+import rewardButton from "./img/UI/reward.png";
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
@@ -59,7 +60,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
         </div>
         <div className='back'>
           <img src={StoreButton} className="function"></img>
-          <img src={StoreButton} className="function"></img>
+          <img src={rewardButton} className="function"></img>
           <img src={upcomingButton} className="function"></img>
         </div>
         <div className='backOverlay'>
