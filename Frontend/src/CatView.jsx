@@ -5,7 +5,7 @@ import "./css/Cat.css"
 import "./css/Store.css"
 import close_button from "./img/UI/close_button.png";
 
-export default function CatGainNotification({cat, closeNotif}) {
+export default function CatViewNotification({cat, closeNotif}) {
     const rarityLabel = cat.rarity >= 18 ? "Legendary" :
         cat.rarity >= 13 ? "Epic" :
         cat.rarity >= 8 ? "Rare" :
@@ -20,12 +20,12 @@ export default function CatGainNotification({cat, closeNotif}) {
             <div className="store_ears"></div>
             <div className="store_container">
                 <div style={{marginBottom: 0}} className="store_header">
-                    <button className="close_store" onClick={closeNotif} style={{zIndex:"110002"}}>
+                    <button className="close_store" onClick={closeNotif} style={{zIndex: 110002}}>
                         <img src={close_button}/>
                     </button>
                 </div>
                 <div className="catChangeNotif">
-                    <h1>You gained a new cat!</h1>
+                    <h1>Say hi to {cat.name}!</h1>
                     <div className="catChangeNotifCats">
                         <p style={{color: "black"}}>Name: {cat.name}</p>
                         <p style={{color: "black"}}>Rarity: <span style={{color: rarityColor}}>{rarityLabel}</span></p>
@@ -50,7 +50,7 @@ export default function CatGainNotification({cat, closeNotif}) {
     )
 }
 
-CatGainNotification.propTypes = {
+CatViewNotification.propTypes = {
     cat: PropTypes.object,
     closeNotif: PropTypes.func
 }

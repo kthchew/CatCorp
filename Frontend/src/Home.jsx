@@ -11,6 +11,7 @@ import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
 import CatGainNotification from "./CatGainNotification.jsx";
+import CatViewNotification from "./CatView.jsx";
 import CatLoseNotification from "./CatLoseNotification.jsx";
 
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
@@ -31,6 +32,11 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
 
   function gainedCat(cat) {
     setChangeType("won")
+    setChangedCats([cat])
+  }
+
+  function viewCat(cat) {
+    setChangeType("view")
     setChangedCats([cat])
   }
 
@@ -56,6 +62,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
     <div>
       {changeType === 'won' && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0]} closeNotif={closeNotif} />}
       {changeType === 'lost' && changedCats.length !== 0 && <CatLoseNotification cats={changedCats} closeNotif={closeNotif} />}
+      {changeType === 'view' && changedCats.length !== 0 && <CatViewNotification cat={changedCats[0]} closeNotif={closeNotif} />}
 
       {
         (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
@@ -67,7 +74,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : <></>
     }
-      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0}}>
+      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0, zIndex:110000}}>
         <img src={logoutButton}></img>      
       </button>
       <div>
@@ -90,7 +97,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
 
       <div>
         {
-        userData.cats.filter((cat) => cat.alive == true).map((cat, i) => {
+        userData.cats.filter((cat) => cat.alive === true).map((cat, i) => {
           const deskWidth = 132;
           const deskHeight = 96;
 
@@ -102,8 +109,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
           var offset = ((width / height) * (yCoord - deskHeight)) % deskWidth - deskWidth
 
           return (
-          <div key={i} style={{zIndex: 100000-i}}>
-            <Cat leftEye={cat.leftEye} rightEye={cat.rightEye} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>
+          <div key={i}>
+            <Cat cat={cat} x={xCoord - offset} y={yCoord} z={100000-i} viewCat={viewCat}/>
           </div>
           )
         })}
