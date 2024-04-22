@@ -73,6 +73,7 @@ export default function Login({onLoginDataReceived}) {
           setLoginResponse(`Could not contact CatCorp/Canvas servers!`);
           console.log(`Could not contact CatCorp/Canvas servers!`);
         }
+        localStorage.removeItem("canvasAPIKey");
       }
 
     } else if (logState === "create") {
