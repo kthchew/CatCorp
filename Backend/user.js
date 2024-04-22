@@ -307,7 +307,7 @@ async function applyBossDisaster(session, disasterType) {
     const cats = user.cats
     // find numCats cats with lowest rarity
     const sortedCats = cats.filter((cat) => cat.alive).sort((a, b) => a.rarity - b.rarity);
-    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.05));
+    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.08));
     const catIndices = sortedCats.slice(0, numCats).map((cat) => cats.indexOf(cat));
     if (catIndices.length === 0) return false
 
