@@ -5,6 +5,9 @@ import * as canvas from './canvas.js'
 import * as lootbox from "./lootbox.js";
 import Cat from "./cat.js";
 
+import AsyncLock from 'async-lock';
+const penaltyLock = new AsyncLock();
+
 export async function checkUsernameAvailable(username) {
   const user = await getUserDB().findOne({ "username": { $eq: username } })
   return user === null
@@ -233,8 +236,10 @@ async function updateClasses(session, courses) {
 
           effect.result = "lose";
           // TODO: properly decide disaster type based on class performance
-          effect.disasterType = ["earthquake", "plague", "war", "death", "famine"][Math.floor(Math.random() * 5)]
-          const disasterEffect = await applyBossDisaster(session, effect.disasterType)
+          effect.disasterType = ["plague", "war", "death", "famine"][Math.floor(Math.random() * 4)]
+          const disasterEffect = await penaltyLock.acquire(session.ccUserId, async () => {
+            return await applyBossDisaster(session, effect.disasterType)
+          })
           if (disasterEffect === false) {
             effect.result = "error";
           }
@@ -252,58 +257,65 @@ async function applyBossDisaster(session, disasterType) {
   const user = await getUserDataFromSession(session)
   if (!user) return false
 
-  if (disasterType === "earthquake") {
+  if (disasterType === "plague") {
+    // oldest cats
     const cats = user.cats
-    const catIndex = Math.floor(Math.random() * cats.length)
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [cats[catIndex]] : false
-  } else if (disasterType === "plague") {
-    // oldest cat
-    const cats = user.cats
-    const catIndex = cats.findIndex(cat => cat.alive)
-    if (catIndex === -1) return false
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [cats[catIndex]] : false
+    const numCats = Math.max(1, Math.ceil(cats.filter((cat) => cat.alive).length * 0.05))
+    const catIndices = []
+    for (let i = 0; i < cats.length && catIndices.length < numCats; ) {
+      const catIndex = cats.slice(i).findIndex(cat => cat.alive) + i
+      if (catIndex === -1) break;
+      i = catIndex + 1
+
+      cats[catIndex].alive = false
+      catIndices.push(catIndex)
+    }
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: catIndices.reduce((acc, i) => { acc[`cats.${i}.alive`] = false; return acc }, {}) })
+    return result ? catIndices.map((i) => cats[i]) : false
   } else if (disasterType === "war") {
-    // youngest cat
-    const cats = user.cats
-    const catIndex = cats.reverse().findIndex(cat => cat.alive)
-    if (catIndex === -1) return false
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${cats.length - catIndex - 1}.alive`]: false } })
-    return result ? [cats[cats.length - catIndex - 1]] : false
+    // youngest cats
+    const cats = user.cats.reverse()
+    const numCats = Math.max(1, Math.ceil(cats.filter((cat) => cat.alive).length * 0.05))
+    const catIndices = []
+    for (let i = 0; i < cats.length && catIndices.length < numCats; ) {
+      const catIndex = cats.slice(i).findIndex(cat => cat.alive) + i
+      if (catIndex === -1) break;
+      i = catIndex + 1
+
+      cats[catIndex].alive = false
+      catIndices.push(cats.length - catIndex - 1)
+    }
+    user.cats.reverse()
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: catIndices.reduce((acc, i) => { acc[`cats.${i}.alive`] = false; return acc }, {}) })
+    return result ? catIndices.map((i) => cats[i]) : false
   } else if (disasterType === "death") {
-    // highest rarity cat
+    // highest rarity cats
     const cats = user.cats
-    let highestRarity = -1
-    let catIndex = -1
-    for (let i = 0; i < cats.length; i++) {
-      if (cats[i].alive && cats[i].rarity > highestRarity) {
-        highestRarity = cats[i].rarity
-        catIndex = i
-      }
+    // find numCats cats with highest rarity
+    const sortedCats = cats.filter((cat) => cat.alive).sort((a, b) => b.rarity - a.rarity);
+    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.02));
+    const catIndices = sortedCats.slice(0, numCats).map((cat) => cats.indexOf(cat));
+    if (catIndices.length === 0) return false
+
+    for (const catIndex of catIndices) {
+      cats[catIndex].alive = false
     }
-    if (catIndex === -1) return false
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [cats[catIndex]] : false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: catIndices.reduce((acc, i) => { acc[`cats.${i}.alive`] = false; return acc }, {}) })
+    return result ? catIndices.map((i) => cats[i]) : false
   } else if (disasterType === "famine") {
-    // lowest rarity cat
+    // lowest rarity cats
     const cats = user.cats
-    let lowestRarity = 9999
-    let catIndex = -1
-    for (let i = 0; i < cats.length; i++) {
-      if (cats[i].alive && cats[i].rarity < lowestRarity) {
-        lowestRarity = cats[i].rarity
-        catIndex = i
-      }
+    // find numCats cats with lowest rarity
+    const sortedCats = cats.filter((cat) => cat.alive).sort((a, b) => a.rarity - b.rarity);
+    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.08));
+    const catIndices = sortedCats.slice(0, numCats).map((cat) => cats.indexOf(cat));
+    if (catIndices.length === 0) return false
+
+    for (const catIndex of catIndices) {
+      cats[catIndex].alive = false
     }
-    if (catIndex === -1) return false
-    cats[catIndex].alive = false
-    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: { [`cats.${catIndex}.alive`]: false } })
-    return result ? [catIndex] : false
+    const result = await getUserDB().updateOne({ "_id": { $eq: user._id } }, { $set: catIndices.reduce((acc, i) => { acc[`cats.${i}.alive`] = false; return acc }, {}) })
+    return result ? catIndices.map((i) => cats[i]) : false
   }
 }
 
