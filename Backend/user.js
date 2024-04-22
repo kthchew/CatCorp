@@ -145,7 +145,11 @@ export async function cashSubmissions(session, courses) {
       })
       
   const streakMult = await getUserProperty(session, "streak");
-  sum *= (1 + streakMult/20);
+  if (isNaN(streakMult)) {
+    await setUserProperty(session, "streak", 0)
+  } else {
+    sum *= (1 + streakMult/20);
+  }
   const results = await updateClasses(session, courses);
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
