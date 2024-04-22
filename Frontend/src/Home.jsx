@@ -10,8 +10,9 @@ import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
-import rewardButton from "./img/UI/reward.png";
 import CatGainNotification from "./CatGainNotification.jsx";
+import CatViewNotification from "./CatView.jsx";
+import rewardButton from "./img/UI/reward.png";
 import CatLoseNotification from "./CatLoseNotification.jsx";
 
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
@@ -35,6 +36,11 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
     setChangedCats([...changedCats, [cat]])
   }
 
+  function viewCat(cat) {
+    setChangeType([...changeType, "view"])
+    setChangedCats([...changedCats, [cat]])
+  }
+
   function closeNotif() {
     setChangeType(changeType.slice(1))
     setChangedCats(changedCats.slice(1))
@@ -55,6 +61,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
  
   return (
     <div>
+      {changeType.length !== 0 && changeType[0] === "view" && changedCats.length !== 0 && <CatViewNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
       {changeType.length !== 0 && changeType[0] === "won" && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
       {changeType.length !== 0 && changeType[0] === "lost" && changedCats.length !== 0 && <CatLoseNotification cats={changedCats[0]} closeNotif={closeNotif} />}
 
@@ -91,7 +98,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
 
       <div>
         {
-        userData.cats.filter((cat) => cat.alive == true).map((cat, i) => {
+        userData.cats.filter((cat) => cat.alive === true).map((cat, i) => {
           const deskWidth = 132;
           const deskHeight = 96;
 
@@ -103,8 +110,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
           var offset = ((width / height) * (yCoord - deskHeight)) % deskWidth - deskWidth
 
           return (
-          <div key={i} style={{zIndex: 100000-i}}>
-            <Cat leftEye={cat.leftEye} rightEye={cat.rightEye} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>
+          <div key={i}>
+            <Cat cat={cat} x={xCoord - offset} y={yCoord} z={100000-i} viewCat={viewCat}/>
           </div>
           )
         })}
