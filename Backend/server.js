@@ -3,6 +3,9 @@ import cors from 'cors';
 import axios from 'axios';
 import lusca from 'lusca';
 
+import AsyncLock from 'async-lock';
+const lock = new AsyncLock();
+
 import RateLimit from 'express-rate-limit';
 const limiter = RateLimit({
   windowMs: 15 * 60 * 1000,
@@ -36,6 +39,7 @@ app.use(lusca({
   nosniff: true,
   referrerPolicy: 'same-origin'
 }))
+app.set('trust proxy', 1)
 
 app.use((req, res, next) => {
   CatCorpUser.renewSession(req.session);
@@ -188,21 +192,25 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
     return res.status(401).json({message: "Invalid session!"});
   }
 
-  try {
-    const userData = await CatCorpUser.getUserDataFromSession(req.session);
-    const courses = await canvas.getCourses(canvasKey);
-    const newCourses = await Promise.all(courses.map(async (c) => {
-      const newAssignments = await canvas.getAssignments(canvasKey, c.id)
-      const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
-      const weeklySubmissions = await canvas.getNewSubmissions(canvasKey, c.id, getLastSundayNight(Date.now()))
+  const result = await lock.acquire(userId, async () => {
+    try {
+      const userData = await CatCorpUser.getUserDataFromSession(req.session);
+      const courses = await canvas.getCourses(canvasKey);
+      const newCourses = await Promise.all(courses.map(async (c) => {
+        const newAssignments = await canvas.getAssignments(canvasKey, c.id)
+        const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
+        const weeklySubmissions = await canvas.getNewSubmissions(canvasKey, c.id, getLastSundayNight(Date.now()))
 
-      return [c.id, c.name, newAssignments, newSubmissions, weeklySubmissions]
-    }))
-    const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
-    return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2]});
-  } catch (error) {
-    return res.status(error.status).json({ error: error.message });
-  }
+        return [c.id, c.name, newAssignments, newSubmissions, weeklySubmissions]
+      }))
+      const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
+      return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2]});
+    } catch (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+  })
+
+  return result
 })
 
 function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
@@ -234,19 +242,23 @@ app.post('/logout', async (req, res) => {
 })
 
 app.post('/buyLootbox', limiter, async (req, res) => {
+  const userID = req.session.ccUserId;
   const lootboxID = parseInt(req.body.lootboxID);
-  if (isNaN(lootboxID)) {
+  if (isNaN(lootboxID) || !userID) {
     return res.status(400).json({message: "Invalid lootbox"});
   }
 
-  try {
-    const purchased = await CatCorpUser.buyLootbox(req.session, lootboxID);
-    return res.status(200).json(purchased);
-  } catch (error) {
-    if (error instanceof lootbox.LootboxOpenError) {
-      return res.status(400).json({ message: error.message });
+  const result = await lock.acquire(userID, async () => {
+    try {
+      const purchased = await CatCorpUser.buyLootbox(req.session, lootboxID);
+      return res.status(200).json(purchased);
+    } catch (error) {
+      if (error instanceof lootbox.LootboxOpenError) {
+        return res.status(400).json({ message: error.message });
+      }
     }
-  }
+  })
+  return result
 });
 
 app.get('/randomCat', async (req, res) => {

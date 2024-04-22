@@ -12,6 +12,7 @@ import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 import CatViewNotification from "./CatView.jsx";
+import rewardButton from "./img/UI/reward.png";
 import CatLoseNotification from "./CatLoseNotification.jsx";
 
 function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
@@ -31,18 +32,18 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
   }
 
   function gainedCat(cat) {
-    setChangeType("won")
-    setChangedCats([cat])
+    setChangeType([...changeType, "won"])
+    setChangedCats([...changedCats, [cat]])
   }
 
   function viewCat(cat) {
-    setChangeType("view")
-    setChangedCats([cat])
+    setChangeType([...changeType, "view"])
+    setChangedCats([...changedCats, [cat]])
   }
 
   function closeNotif() {
-    setChangeType("")
-    setChangedCats([])
+    setChangeType(changeType.slice(1))
+    setChangedCats(changedCats.slice(1))
   }
 
   useEffect(() => {
@@ -50,8 +51,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
       setWidth(window.innerWidth);
       setHeight(window.innerHeight);
     }
-
     window.addEventListener('resize', setDimensions)
+
     return () => {
       window.removeEventListener('resize', setDimensions)
     }
@@ -60,9 +61,9 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
  
   return (
     <div>
-      {changeType === 'won' && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0]} closeNotif={closeNotif} />}
-      {changeType === 'lost' && changedCats.length !== 0 && <CatLoseNotification cats={changedCats} closeNotif={closeNotif} />}
-      {changeType === 'view' && changedCats.length !== 0 && <CatViewNotification cat={changedCats[0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "view" && changedCats.length !== 0 && <CatViewNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "won" && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "lost" && changedCats.length !== 0 && <CatLoseNotification cats={changedCats[0]} closeNotif={closeNotif} />}
 
       {
         (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
@@ -73,8 +74,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : <></>
-    }
-      <button onClick={() => logout()} style={{position:'absolute',bottom:0, right:0, zIndex:110000}}>
+      }
+      <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
         <img src={logoutButton}></img>      
       </button>
       <div>
@@ -83,7 +84,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
         </div>
         <div className='back'>
           <img src={StoreButton} className="function"></img>
-          <img src={StoreButton} className="function"></img>
+          <img src={rewardButton} className="function"></img>
           <img src={upcomingButton} className="function"></img>
         </div>
         <div className='backOverlay'>
@@ -131,6 +132,6 @@ Home.propTypes = {
   getCsrfToken: PropTypes.func,
   changedCats: PropTypes.array,
   setChangedCats: PropTypes.func,
-  changeType: PropTypes.string,
+  changeType: PropTypes.array,
   setChangeType: PropTypes.func
 }
