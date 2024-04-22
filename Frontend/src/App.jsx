@@ -5,7 +5,7 @@ import Login from "./Login"
 // import Rewards from "./Rewards"
 import Home from "./Home";
 
-axios.defaults.baseURL = 'http://localhost:3500';
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3500';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.withCredentials = true;
 
