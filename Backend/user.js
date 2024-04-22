@@ -293,7 +293,7 @@ async function applyBossDisaster(session, disasterType) {
     const cats = user.cats
     // find numCats cats with highest rarity
     const sortedCats = cats.filter((cat) => cat.alive).sort((a, b) => b.rarity - a.rarity);
-    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.05));
+    const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.02));
     const catIndices = sortedCats.slice(0, numCats).map((cat) => cats.indexOf(cat));
     if (catIndices.length === 0) return false
 
@@ -305,7 +305,7 @@ async function applyBossDisaster(session, disasterType) {
   } else if (disasterType === "famine") {
     // lowest rarity cats
     const cats = user.cats
-    // find numCats cats with highest rarity
+    // find numCats cats with lowest rarity
     const sortedCats = cats.filter((cat) => cat.alive).sort((a, b) => a.rarity - b.rarity);
     const numCats = Math.max(1, Math.ceil(sortedCats.length * 0.05));
     const catIndices = sortedCats.slice(0, numCats).map((cat) => cats.indexOf(cat));
