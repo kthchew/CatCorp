@@ -13,7 +13,7 @@ export async function checkUsernameAvailable(username) {
 // This function does NOT do any checks for unique usernames, etc.
 export async function registerAccount(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [] })
+  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [], "streak": 0 })
   return user.insertedId
 }
 
@@ -144,8 +144,9 @@ export async function cashSubmissions(session, courses) {
 
       })
       
-  
-  const results = await updateClasses(session, courses)
+  const streakMult = await getUserProperty(session, "streak");
+  sum *= (1 + streakMult/100);
+  const results = await updateClasses(session, courses);
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
   return [courses, sum, results[0], results[1]]; 
@@ -226,11 +227,13 @@ async function updateClasses(session, courses) {
           effect.result = "win";
           effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
           addCat(session, effect.newCat)
+          await incrementUserProperty(session, "streak", 1)
         } else if (indexB >= 0) {
           data.prevLosers.splice(indexB, 1);
           await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": data.prevLosers}});
           
           effect.result = "lose";
+          await setUserProperty(session, "streak", 0)
           // TODO: properly decide disaster type based on class performance
           effect.disasterType = ["earthquake", "plague", "war", "death", "famine"][Math.floor(Math.random() * 5)]
           const disasterEffect = await applyBossDisaster(session, effect.disasterType)
