@@ -36,6 +36,11 @@
   margin-top: 5%; 
 }
 
+.rewardsStreak {
+  color: grey;
+  margin-top: -0%;
+}
+
 .rewardsList {
   overflow-y: auto;
   align-items: center;
