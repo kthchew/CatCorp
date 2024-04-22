@@ -222,6 +222,7 @@ async function updateClasses(session, courses) {
       if (lastLogin <= endDate - 86400000 * 7) { //has not already logged in this week
         let indexA = data.prevWinners.indexOf(username);
         let indexB = data.prevLosers.indexOf(username)
+        effect.courseName = c[1]
         if (indexA >= 0) {
           data.prevWinners.splice(indexA, 1);
           await getClassDB().updateOne({ "courseId": c[0] }, { $set: { "prevWinners": data.prevWinners } });
@@ -248,8 +249,8 @@ async function updateClasses(session, courses) {
 
       effects.push(effect)
     }
-    return effects
   }))
+  return effects
 }
 
 async function applyBossDisaster(session, disasterType) {
