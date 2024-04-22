@@ -49,3 +49,44 @@
   align-self: center;
   margin: 0 5%;
 }
+
+.bossBackground {
+  width: 75%;
+}
+
+.bossHealthbar{
+  width: 55%;
+  height: 20px;
+  background-color: red;
+  position: absolute;
+  left: 10%;
+  top: 0px;
+}
+
+.bossStatus {
+  color: white;
+  font-weight: bold;
+  position:absolute;
+  left: 10%;
+  top: 20px;
+}
+
+.bossCat {
+  position: absolute;
+  opacity: .75;
+  width: 35%;
+  left: 18%;
+	animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+	0% {
+		transform: translatey(10px);
+	}
+	50% {
+		transform: translatey(-10px);
+	}
+	100% {
+		transform: translatey(10px);
+	}
+}
