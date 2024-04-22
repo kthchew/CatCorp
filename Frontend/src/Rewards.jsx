@@ -52,6 +52,6 @@ export default function Rewards({ courses, setOverlay }) {
 }
 
 Rewards.propTypes = {
-  courses: PropTypes.object,
+  courses: PropTypes.array,
   setOverlay: PropTypes.func,
 }

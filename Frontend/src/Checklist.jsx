@@ -45,6 +45,6 @@ export default function Checklist({ courses, setOverlay }) {
 }
 
 Checklist.propTypes = {
-  courses: PropTypes.object,
+  courses: PropTypes.array,
   setOverlay: PropTypes.func,
 }
