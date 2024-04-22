@@ -39,6 +39,7 @@ app.use(lusca({
   nosniff: true,
   referrerPolicy: 'same-origin'
 }))
+app.set('trust proxy', 1)
 
 app.use((req, res, next) => {
   CatCorpUser.renewSession(req.session);
