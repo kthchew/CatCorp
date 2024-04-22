@@ -227,13 +227,11 @@ async function updateClasses(session, courses) {
           effect.result = "win";
           effect.newCat = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[2]);
           addCat(session, effect.newCat)
-          await incrementUserProperty(session, "streak", 1)
         } else if (indexB >= 0) {
           data.prevLosers.splice(indexB, 1);
           await getClassDB().updateOne({"courseId": c[0]}, {$set: {"prevLosers": data.prevLosers}});
           
           effect.result = "lose";
-          await setUserProperty(session, "streak", 0)
           // TODO: properly decide disaster type based on class performance
           effect.disasterType = ["earthquake", "plague", "war", "death", "famine"][Math.floor(Math.random() * 5)]
           const disasterEffect = await applyBossDisaster(session, effect.disasterType)
@@ -249,6 +247,12 @@ async function updateClasses(session, courses) {
     }
   }))
   
+  const wonAll = effects.every(effect => effect.result === "win")
+  if (wonAll) {
+    await incrementUserProperty(session, "streak", effects.length)
+  } else {
+    await setUserProperty(session, "streak", 0)
+  }
   return [effects, bosses]
 }
 
