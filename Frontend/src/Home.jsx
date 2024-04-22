@@ -101,6 +101,7 @@ Home.propTypes = {
   setUserData: PropTypes.func,
   courses: PropTypes.array,
   setCourses: PropTypes.func,
+  bossData: PropTypes.array,
   overlay: PropTypes.string,
   setOverlay: PropTypes.func,
   getCsrfToken: PropTypes.func
