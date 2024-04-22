@@ -185,6 +185,7 @@ async function updateClasses(session, courses) {
       if (Date.now() > endDate) { //catch class up to next week
         var participants = [];
         Object.keys(data.users).forEach((u) => participants.push(u));
+        data.users = {}
   
         const sum = Object.values(data.users).reduce((sum, a) => sum + a, 0) / Object.keys(data.users).length;
         var newEnd = endDate;
