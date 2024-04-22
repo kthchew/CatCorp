@@ -276,8 +276,8 @@ app.get('/', async (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-
-app.listen(3500, () => {
-  connectToServer();
-  console.log('Server running on port 3500');
-});
+connectToServer().then(() => {
+  app.listen(3500, () => {
+    console.log('Server running on port 3500');
+  });
+})
