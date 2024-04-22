@@ -6,9 +6,9 @@ import boss from "../src/img/bossTemp.png"
 
 export default function Bosses({ setOverlay, bossData }) {
   const [index, setIndex] = useState(0)
-  const averages = bossData.map((course) => {
+  const averages = bossData ? bossData.map((course) => {
     return Math.round(Object.values(course[2]).reduce((x, y) => x + y, 0) / Object.values(course[2]).length * 100)
-  })
+  }) : 0
 
   return (
     <div className="rewardsBackground">
