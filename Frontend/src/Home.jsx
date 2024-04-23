@@ -86,16 +86,20 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
           <img src={floorTile} style={{width:'100%', height:'100%'}}></img>
         </div>
         <div className='back'>
-          <img src={StoreButton} className="function"></img>
-          <img src={rewardButton} className="function"></img>
-          <img src={upcomingButton} className="function"></img>
-          <img src={upcomingButton} className="function"></img>
+          <img src={StoreButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={rewardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
         </div>
         <div className='backOverlay'>
-          <img onClick={() => {if (courses) setOverlay('store')}} src={StoreButton} title="Store" style={{opacity:0}}></img>
-          <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} title="Check Rewards"style={{opacity:0}}></img>
-          <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} title="Upcoming Assignments"style={{opacity:0}}></img>
-          <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} title="View Bossfights"style={{opacity:0}}></img>
+          {
+            courses && <>
+              <img onClick={() => {if (courses) setOverlay('store')}} src={StoreButton} title="Store" style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} title="Check Rewards"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} title="Upcoming Assignments"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} title="View Bossfights"style={{opacity:0}}></img>
+            </>
+          }
         </div>
         <div className='wall'>
         </div>
