@@ -31,6 +31,8 @@ app.use(session({
   name: 'session',
   secret: SESSION_SECRET,
   maxAge: 24 * 60 * 60 * 1000, // 1 day
+  sameSite: 'none',
+  partitioned: true,
 }))
 app.use(lusca({
   csrf: true,
