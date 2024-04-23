@@ -26,8 +26,10 @@ export default function Login({onLoginDataReceived}) {
       try {
         await getCsrfToken();
 
-        const accInfoResp = await axios.get(`/getAccountInfo`);
         if (!ignore) {
+          const cashResp = await axios.post(`/cashNewSubmissions`);
+          const accInfoResp = await axios.get(`/getAccountInfo`);
+
           onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossfights)
           console.log(cashResp.data)
         }
@@ -67,6 +69,7 @@ export default function Login({onLoginDataReceived}) {
           password: password,
           apiKey: currentKey
         });
+        const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
         onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossfights)

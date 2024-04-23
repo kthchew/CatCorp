@@ -73,9 +73,9 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
-        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
+        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : overlay == "bosses" ? 
-      <Bosses setOverlay={setOverlay} bossData={bossData}/>
+          <Bosses setOverlay={setOverlay} bossData={bossData}/>
     : <></>
       }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
