@@ -109,6 +109,11 @@ export async function getCanvasUserId(session) {
 }
 
 export async function cashSubmissions(session, courses) {
+    let streakMult = await getUserProperty(session, "streak");
+    if (isNaN(streakMult)) {
+      await setUserProperty(session, "streak", 0)
+      streakMult = 0;
+    }
     var sum = 0
     courses.forEach((course, i) => { 
       var temp = course[3];
@@ -137,19 +142,15 @@ export async function cashSubmissions(session, courses) {
           const frac = (due - sub) / (due - unlock);
           multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
         }
+
+        multiplier *= (1 + streakMult/20);
         // submission.push(Math.ceil(multiplier * 100)) this works too???
         sum += Math.ceil(multiplier * 100);
         courses[i][3][j].push(Math.ceil(multiplier * 100))
       })
 
       })
-      
-  const streakMult = await getUserProperty(session, "streak");
-  if (isNaN(streakMult)) {
-    await setUserProperty(session, "streak", 0)
-  } else {
-    sum *= (1 + streakMult/20);
-  }
+
   const results = await updateClasses(session, courses);
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
