@@ -14,7 +14,7 @@ function Cat({cat, x, y, z, viewCat}) {
         src={catTemplate}
         ></img>
 
-    <div className='cat' style={{zIndex: z}}>
+    <div className='cat' style={{zIndex: z, height: 96, width: 132, overflow: 'hidden'}}>
       <img className='catPelt' 
         src={`pelts/${cat.pattern}.jpg`}
         style={{
