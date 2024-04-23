@@ -46,6 +46,7 @@ body {
 
 .back, .backOverlay > img {
   padding-top: 5%;
+  cursor: pointer;
 }
 
 .function {
