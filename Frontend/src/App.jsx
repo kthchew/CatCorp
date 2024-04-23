@@ -18,15 +18,14 @@ function App() {
   const [changedCats, setChangedCats] = useState([])
   const [changeType, setChangeType] = useState([])
 
-  async function onLoginDataReceived(newCourses, newUserData, bossfights) {
-    setCourses(newCourses)
-    setBossData(bossfights);
+  async function onLoginDataReceived(newUserData) {
     setUserData(newUserData)
     setOverlay("home")
 
     try {
       const cashResp = await axios.post(`/cashNewSubmissions`);
       setCourses(cashResp.data.courses);
+      setBossData(cashResp.data.bossfights);
       newUserData.gems += cashResp.data.gainedGems
       setUserData(newUserData)
 

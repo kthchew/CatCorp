@@ -27,11 +27,9 @@ export default function Login({onLoginDataReceived}) {
         await getCsrfToken();
 
         if (!ignore) {
-          const cashResp = await axios.post(`/cashNewSubmissions`);
           const accInfoResp = await axios.get(`/getAccountInfo`);
 
-          onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossfights)
-          console.log(cashResp.data)
+          onLoginDataReceived(accInfoResp.data.userData)
         }
       } catch (e) {
         // no session yet - just ignore
@@ -69,11 +67,9 @@ export default function Login({onLoginDataReceived}) {
           password: password,
           apiKey: currentKey
         });
-        const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData, cashResp.data.bossfights)
-        console.log(cashResp.data)
+        onLoginDataReceived(accInfoResp.data.userData)
       } catch (e) {
         if (e.response) {
           console.log(e.response.data.message);
