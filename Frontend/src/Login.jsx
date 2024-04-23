@@ -14,10 +14,10 @@ import { getCsrfToken } from './utils';
 export default function Login({onLoginDataReceived}) {
   const [username, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [apiKey, setApiKey] = useState("")
+  const [apiKey, setApiKey] = useState("");
   const [logState, setLogState] = useState("login");
   const [loginResponse, setLoginResponse] = useState("");
-  const [usingSession, setUsingSession] = useState(true)
+  const [usingSession, setUsingSession] = useState(true);
 
   useEffect(() => {
     let ignore = false
@@ -54,9 +54,11 @@ export default function Login({onLoginDataReceived}) {
   const attemptLogin = async (method) => {
     if (method === "login") {
       try {
+        if (localStorage.getItem("canvasAPIKey") == null) {
+          localStorage.setItem("canvasAPIKey", apiKey);
+        }
         const currentKey = localStorage.getItem("canvasAPIKey");
         setApiKey(currentKey);
-
         setLoginResponse(`Logging in user ${username}...`);
 
         await axios.post(`/loginUser`, {
@@ -76,11 +78,11 @@ export default function Login({onLoginDataReceived}) {
           setLoginResponse(`Could not contact CatCorp/Canvas servers!`);
           console.log(`Could not contact CatCorp/Canvas servers!`);
         }
+        localStorage.removeItem("canvasAPIKey");
       }
 
     } else if (logState === "create") {
       setLoginResponse(`Registering user ${username}...`);
-
       try {
         await axios.post(`/registerAccount`, {
           username: username,
@@ -140,7 +142,7 @@ export default function Login({onLoginDataReceived}) {
                  type="password"/>
         </div>
         {
-          logState === "create" && <CanvasAPIKeyContainer keyVal={apiKey}
+          (!localStorage.getItem("canvasAPIKey") || logState === 'create') && <CanvasAPIKeyContainer keyVal={apiKey}
                                                           setKey={setApiKey}/>
         }
         <div className="loginAccount">
