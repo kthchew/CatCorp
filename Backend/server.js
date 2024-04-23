@@ -27,7 +27,8 @@ const httpLocalhost = /^http:\/\/localhost:[0-9]{1,5}$/;
 const stagingVercelDeployments = /^https:\/\/catcorp-frontend-.*-kenneths-projects-[a-z0-9]{8}\.vercel\.app$/;
 app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost, stagingVercelDeployments], credentials: true }));
 app.use(_json());
-const usingLocalhost = !process.env.VITE_BACKEND_URL || httpLocalhost.test(process.env.VITE_BACKEND_URL);
+const usingLocalhost = process.env.NODE_ENV !== "production";
+console.log(usingLocalhost)
 app.use(session({
   name: 'session',
   secret: SESSION_SECRET,
