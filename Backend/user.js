@@ -246,16 +246,20 @@ async function updateClasses(session, courses) {
         }
       }
 
-      effects.push(effect)
+      if (effect.result !== undefined) {
+        effects.push(effect)
+      }
       bosses.push([data.courseName, data.courseId, data.users]);
     }
   }))
-
-  const wonAll = effects.every(effect => effect.result === "win")
-  if (wonAll) {
-    await incrementUserProperty(session, "streak", 1)
-  } else if (effects.some(e => e.result === "lose")) {
-    await setUserProperty(session, "streak", 0)
+  
+  if (effects.length > 0) {
+    const wonAll = effects.every(effect => effect.result === "win")
+    if (wonAll) {
+      await incrementUserProperty(session, "streak", 1)
+    } else if (effects.some(e => e.result === "lose")) {
+      await setUserProperty(session, "streak", 0)
+    }
   }
   return [effects, bosses]
 }
