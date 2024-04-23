@@ -10,8 +10,12 @@ import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
+import CatGainNotification from "./CatGainNotification.jsx";
+import CatViewNotification from "./CatView.jsx";
 import rewardButton from "./img/UI/reward.png";
-function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay }) {
+import CatLoseNotification from "./CatLoseNotification.jsx";
+
+function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
 
@@ -27,13 +31,28 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
     }
   }
 
+  function gainedCat(cat) {
+    setChangeType([...changeType, "won"])
+    setChangedCats([...changedCats, [cat]])
+  }
+
+  function viewCat(cat) {
+    setChangeType([...changeType, "view"])
+    setChangedCats([...changedCats, [cat]])
+  }
+
+  function closeNotif() {
+    setChangeType(changeType.slice(1))
+    setChangedCats(changedCats.slice(1))
+  }
+
   useEffect(() => {
     const setDimensions = () => {
       setWidth(window.innerWidth);
       setHeight(window.innerHeight);
     }
-
     window.addEventListener('resize', setDimensions)
+
     return () => {
       window.removeEventListener('resize', setDimensions)
     }
@@ -42,15 +61,20 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
  
   return (
     <div>
+      {changeType.length !== 0 && changeType[0] === "view" && changedCats.length !== 0 && <CatViewNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "won" && changedCats.length !== 0 && <CatGainNotification cat={changedCats[0][0]} closeNotif={closeNotif} />}
+      {changeType.length !== 0 && changeType[0] === "lost" && changedCats.length !== 0 && <CatLoseNotification cats={changedCats[0]} closeNotif={closeNotif} />}
+
       {
-      overlay == "rewards" ? 
+        (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
+      : overlay == "rewards" ? 
         <Rewards courses={courses} setOverlay={setOverlay}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
-        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData}/>
+        <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : <></>
-    }
+      }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
         <img src={logoutButton}></img>      
       </button>
@@ -74,7 +98,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
 
       <div>
         {
-        userData.cats.filter((cat) => cat.alive == true).map((cat, i) => {
+        userData.cats.filter((cat) => cat.alive === true).map((cat, i) => {
           const deskWidth = 132;
           const deskHeight = 96;
 
@@ -86,8 +110,8 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay 
           var offset = ((width / height) * (yCoord - deskHeight)) % deskWidth - deskWidth
 
           return (
-          <div key={i} style={{zIndex: 100000-i}}>
-            <Cat leftEye={cat.leftEye} rightEye={cat.rightEye} hat={cat.hat} pattern={cat.pattern} patX={cat.x} patY={cat.y} x={xCoord - offset} y={yCoord} z={100000-i}/>
+          <div key={i}>
+            <Cat cat={cat} x={xCoord - offset} y={yCoord} z={100000-i} viewCat={viewCat}/>
           </div>
           )
         })}
@@ -105,5 +129,9 @@ Home.propTypes = {
   setCourses: PropTypes.func,
   overlay: PropTypes.string,
   setOverlay: PropTypes.func,
-  getCsrfToken: PropTypes.func
+  getCsrfToken: PropTypes.func,
+  changedCats: PropTypes.array,
+  setChangedCats: PropTypes.func,
+  changeType: PropTypes.array,
+  setChangeType: PropTypes.func
 }

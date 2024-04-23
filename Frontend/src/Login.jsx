@@ -20,14 +20,16 @@ export default function Login({onLoginDataReceived}) {
   const [usingSession, setUsingSession] = useState(true);
 
   useEffect(() => {
+    let ignore = false
+
     async function tryLogin() {
       try {
         await getCsrfToken();
 
-        const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
-        console.log(cashResp.data)
+        if (!ignore) {
+          onLoginDataReceived(accInfoResp.data.userData)
+        }
       } catch (e) {
         // no session yet - just ignore
       } finally {
@@ -36,6 +38,10 @@ export default function Login({onLoginDataReceived}) {
     }
 
     tryLogin();
+
+    return () => {
+      ignore = true
+    }
   }, [onLoginDataReceived]);
 
   const handleSubmit = (e) => {
@@ -60,10 +66,9 @@ export default function Login({onLoginDataReceived}) {
           password: password,
           apiKey: currentKey
         });
-        const cashResp = await axios.post(`/cashNewSubmissions`);
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
-        onLoginDataReceived(cashResp.data.courses, accInfoResp.data.userData)
+        onLoginDataReceived(accInfoResp.data.userData)
         console.log("logged in");
       } catch (e) {
         if (e.response) {

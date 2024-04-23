@@ -23,8 +23,7 @@ body {
 }
 
 .back, .backOverlay {
-  border-right:1px solid black;
-  border-bottom:1px solid black;
+  border-right:1px solid rgba(0, 0, 0, .125);
   position:absolute;
   top: 0;
   left: 0;
@@ -42,6 +41,7 @@ body {
 .backOverlay {
   background-color: transparent;
   z-index: 100001;
+  border-right: none;
 }
 
 .back, .backOverlay > img {
