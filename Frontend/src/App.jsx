@@ -42,15 +42,24 @@ function App() {
 
       const newChangeType = [...changeType]
       const newChangedCats = [...changedCats]
+      const gainedCats  = []
+      const lostCats = []
       for (const result of cashResp.data.bossResults) {
         if (result.result && result.result === "win") {
           newChangeType.push("won")
           newChangedCats.push([result.newCat])
+          gainedCats.push(result.newCat)
         } else if (result.result && result.result === "lose") {
           newChangeType.push("lost")
           newChangedCats.push(result.lostCats)
+          lostCats.push(...result.lostCats)
         }
       }
+
+      // TODO: also update for lost cats. This is more difficult and we should
+      // probably add IDs to cats.
+      newUserData.cats.push(...gainedCats)
+      setUserData(newUserData)
 
       setChangeType(newChangeType)
       setChangedCats(newChangedCats)
