@@ -42,7 +42,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
     <div>
       {
       overlay == "rewards" ? 
-        <Rewards courses={courses} setOverlay={setOverlay}/>
+        <Rewards courses={courses} setOverlay={setOverlay} streak={userData.streak}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
