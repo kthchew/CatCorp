@@ -82,6 +82,7 @@
   width: 35%;
   left: 18%;
 	animation: float 6s ease-in-out infinite;
+  image-rendering: pixelated;
 }
 
 @keyframes float {
