@@ -79,7 +79,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
         <img src={logoutButton}></img>      
       </button>
       <div>
-        <div className='floor'>
+        <div className='floor' style={{overflow: "hidden"}}>
           <img src={floorTile} style={{width:'100%', height:'100%'}}></img>
         </div>
         <div className='back'>
