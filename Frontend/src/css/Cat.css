@@ -6,6 +6,11 @@
   position: absolute;
 }
 
+.catButton {
+  position: absolute;
+  opacity: 0;
+}
+
 .catPelt {
   position: absolute;
 

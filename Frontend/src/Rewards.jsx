@@ -53,7 +53,7 @@ export default function Rewards({ courses, setOverlay, streak }) {
 }
 
 Rewards.propTypes = {
-  courses: PropTypes.object,
+  courses: PropTypes.array,
   setOverlay: PropTypes.func,
   streak: PropTypes.number
 }
