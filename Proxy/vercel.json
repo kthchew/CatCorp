@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+      {"source": "/api", "destination": "https://catcorp-api.vercel.com/"},
+      {"source": "/api/:match*", "destination": "https://your-app.vercel.com/:match*"},
+      {"source": "/", "destination": "https://catcorp-frontend.vercel.com/"},
+      {"source": "/:match*", "destination": "https://catcorp-frontend.vercel.com/:match*"}
+    ]
+  }
