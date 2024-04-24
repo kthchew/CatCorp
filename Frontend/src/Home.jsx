@@ -14,9 +14,10 @@ import logoutButton from "./img/UI/logout.png";
 import leaderboardButton from "./img/UI/Leader.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 import CatViewNotification from "./CatView.jsx";
-import rewardButton from "./img/UI/reward.png";
+import rewardButton from "./img/UI/rewards.png";
 import CatLoseNotification from "./CatLoseNotification.jsx";
 import Leaderboard from "./Leaderboard.jsx";
+import bossFight from "./img/UI/teams.png";
 
 function Home({ userData, setUserData, courses, setCourses, bossData, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -93,7 +94,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
           <img src={StoreButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
           <img src={rewardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
           <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
-          <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={bossFight} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
           <img src={leaderboardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
         </div>
         <div className='backOverlay'>
