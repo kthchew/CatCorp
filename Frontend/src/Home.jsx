@@ -79,7 +79,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
       : overlay == "bosses" ? 
         <Bosses setOverlay={setOverlay} bossData={bossData}/>
       : overlay === "leaderboard" ?
-        <Leaderboard closeNotif={setOverlay}/>
+        <Leaderboard closeNotif={() => setOverlay("home")}/>
     : <></>
       }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
