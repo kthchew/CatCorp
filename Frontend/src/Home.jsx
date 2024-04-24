@@ -11,7 +11,7 @@ import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
-import leaderboardButton from "./img/UI/Leader.png";
+import leaderboardButton from "./img/UI/leader.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 import CatViewNotification from "./CatView.jsx";
 import rewardButton from "./img/UI/rewards.png";
