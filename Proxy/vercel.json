@@ -1,8 +1,8 @@
 {
     "rewrites": [
-      {"source": "/api", "destination": "https://catcorp-api.vercel.com/"},
-      {"source": "/api/:match*", "destination": "https://your-app.vercel.com/:match*"},
-      {"source": "/", "destination": "https://catcorp-frontend.vercel.com/"},
-      {"source": "/:match*", "destination": "https://catcorp-frontend.vercel.com/:match*"}
+      {"source": "/api", "destination": "https://catcorp-api.vercel.app/"},
+      {"source": "/api/:match*", "destination": "https://your-app.vercel.app/:match*"},
+      {"source": "/", "destination": "https://catcorp-frontend.vercel.app/"},
+      {"source": "/:match*", "destination": "https://catcorp-frontend.vercel.app/:match*"}
     ]
   }
