@@ -29,7 +29,7 @@ export default function CatGainNotification({cat, closeNotif}) {
                     <div className="catChangeNotifCats">
                         <p style={{color: "black"}}>Name: {cat.name}</p>
                         <p style={{color: "black"}}>Rarity: <span style={{color: rarityColor}}>{rarityLabel}</span></p>
-                        <div className='catLarge' style={{bottom: "50%", left: "70%", zIndex: 100000}}>
+                        <div className='catLarge' style={{bottom: "30%", left: "75%", zIndex: 100000}}>
                             <img className='catPeltLarge'
                                  src={`pelts/${cat.pattern}.jpg`}
                                  style={{

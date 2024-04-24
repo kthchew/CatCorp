@@ -1,6 +1,9 @@
 .catLarge {
     position: absolute;
     image-rendering: pixelated;
+    height: 64px;
+    width: 64px;
+    overflow: hidden;
     scale: 3;
 }
 
