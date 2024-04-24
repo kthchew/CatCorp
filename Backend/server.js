@@ -34,7 +34,7 @@ app.use(session({
   secret: SESSION_SECRET,
   maxAge: 24 * 60 * 60 * 1000, // 1 day
   sameSite: usingLocalhost ? 'lax' : 'none',
-  partitioned: true,
+  partitioned: usingLocalhost ? false : true,
   secure: usingLocalhost ? false : true,
 }))
 app.use(lusca({
