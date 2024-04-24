@@ -16,7 +16,7 @@ export async function checkUsernameAvailable(username) {
 // This function does NOT do any checks for unique usernames, etc.
 export async function registerAccount(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [] })
+  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 299, "cats": [], "streak": 0 })
   return user.insertedId
 }
 
@@ -113,47 +113,53 @@ export async function getCanvasUserId(session) {
 
 export async function cashSubmissions(session, courses) {
   if (!session.ccUserId) return false
+  let streakMult = await getUserProperty(session, "streak");
+  if (isNaN(streakMult)) {
+    await setUserProperty(session, "streak", 0)
+    streakMult = 0;
+  }
 
-  var sum = 0
-  courses.forEach((course, i) => {
-    var temp = course[3];
-    temp.forEach((submission, j) => {
-      let multiplier = 1;
-      //multiplier *= WEIGHT_LOGIC
-      const studentScore = submission[7];
-      const maximumScore = submission[4];
-      if (studentScore && maximumScore) { //score
-        multiplier *= (10 * studentScore / 8 / maximumScore);
-      }
-      const dueDate = submission[3];
-      const submissionDate = submission[6];
-      const unlockDate = submission[2];
-      if (dueDate && submissionDate) { //due date
-        let due = new Date(dueDate);
-        due = due.getTime();
-        let sub = new Date(submissionDate);
-        sub = sub.getTime();
-        let unlock;
-        if (unlockDate) { //unlock date given
-          unlock = new Date(unlockDate);
-        } else { // assume it unlocks 4 weeks before it's due
-          unlock = due - 4 * 604800000;
+    var sum = 0
+    courses.forEach((course, i) => { 
+      var temp = course[3];
+      temp.forEach((submission, j) => {
+        let multiplier = 1;
+        //multiplier *= WEIGHT_LOGIC
+        const studentScore = submission[7];
+        const maximumScore = submission[4];
+        if (studentScore && maximumScore) { //score
+          multiplier *= (10*studentScore / 8 / maximumScore);
         }
-        const frac = (due - sub) / (due - unlock);
-        multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
-      }
-      // submission.push(Math.ceil(multiplier * 100)) this works too???
-      sum += Math.ceil(multiplier * 100);
-      courses[i][3][j].push(Math.ceil(multiplier * 100))
-    })
+        const dueDate = submission[3];
+        const submissionDate = submission[6];
+        const unlockDate = submission[2];
+        if (dueDate && submissionDate) { //due date
+          let due = new Date(dueDate);
+          due = due.getTime();
+          let sub = new Date(submissionDate);
+          sub = sub.getTime();
+          let unlock;
+          if (unlockDate) { //unlock date given
+            unlock = new Date(unlockDate);
+          } else { // assume it unlocks 4 weeks before it's due
+            unlock = due - 4 * 604800000;
+          }
+          const frac = (due - sub) / (due - unlock);
+          multiplier *= Math.min(Math.max((Math.cbrt(frac) + .5), .000000001), 1.5);
+        }
+        multiplier *= (1 + streakMult/20);
+        // submission.push(Math.ceil(multiplier * 100)) this works too???
+        sum += Math.ceil(multiplier * 100);
+        courses[i][3][j].push(Math.ceil(multiplier * 100))
+      })
 
-  })
-
-
-  const results = await updateClasses(session, courses)
+      })
+      
+  
+  const results = await updateClasses(session, courses);
   await incrementUserProperty(session, "gems", sum);
   await updateLastLogin(session);
-  return [courses, sum, results];
+  return [courses, sum, results[0], results[1]]; 
 }
 
 async function updateClasses(session, courses) {
@@ -162,7 +168,8 @@ async function updateClasses(session, courses) {
   const username = await getUserProperty(session, "username")
 
   const effects = []
-
+  const bosses = [];
+  
   await Promise.all(courses.map(async (c) => { //forEach breaks
     let data = await getClassDB().findOne({ "courseId": { $eq: c[0] } })
     if (!data) {
@@ -189,7 +196,8 @@ async function updateClasses(session, courses) {
       if (Date.now() > endDate) { //catch class up to next week
         var participants = [];
         Object.keys(data.users).forEach((u) => participants.push(u));
-
+        data.users = {}
+  
         const sum = Object.values(data.users).reduce((sum, a) => sum + a, 0) / Object.keys(data.users).length;
         var newEnd = endDate;
         while (Date.now() > newEnd) {
@@ -247,10 +255,22 @@ async function updateClasses(session, courses) {
         }
       }
 
-      effects.push(effect)
+      if (effect.result !== undefined) {
+        effects.push(effect)
+      }
+      bosses.push([data.courseName, data.courseId, data.users]);
     }
   }))
-  return effects
+  
+  if (effects.length > 0) {
+    const wonAll = effects.every(effect => effect.result === "win")
+    if (wonAll) {
+      await incrementUserProperty(session, "streak", 1)
+    } else if (effects.some(e => e.result === "lose")) {
+      await setUserProperty(session, "streak", 0)
+    }
+  }
+  return [effects, bosses]
 }
 
 async function applyBossDisaster(session, disasterType) {
@@ -361,4 +381,17 @@ export async function buyLootbox(session, lootboxID) {
   } else {
     throw new lootbox.LootboxOpenError("Database issue, try again later");
   }
+}
+
+export async function getLeaderboardUsers() {
+  // get top 10 users with highest count of cats that have a property "alive" set to true
+  const users = await getUserDB().find({ "cats.alive": { $eq: true } }).sort({ "cats": -1 }).limit(10)
+  const userArray = await users.toArray();
+  return userArray
+    .map(user => {
+      // get first alive cat of each user
+      const publicUser = { username: user.username, cats: user.cats.length, gems: user.gems, catRepresentation: user.cats.find(cat => cat.alive) }
+      return publicUser;
+    })
+    .sort((a, b) => b.cats - a.cats);
 }

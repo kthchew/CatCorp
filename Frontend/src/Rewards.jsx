@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./css/Rewards.css"
 import gem from "../src/img/gem.png"
 
-export default function Rewards({ courses, setOverlay }) {
+export default function Rewards({ courses, setOverlay, streak }) {
   const [index, setIndex] = useState(0)
 
   const newSubmissions = courses
@@ -17,8 +17,9 @@ export default function Rewards({ courses, setOverlay }) {
   return (
     <div className="rewardsBackground">
       <h1 className="rewardsHeader">Gems earned:</h1>
+    <h3 className="rewardsStreak">Boss Fight Win Streak: {streak}</h3>
       {newSubmissions.length != 0 ?
-        <div style={{ height: "100%" }}>
+        <div style={{ height: "60%" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             {index != 0 ?
               <button className="rewardsIndexButton" onClick={() => { setIndex(index - 1) }}>&lt;</button>
@@ -44,9 +45,9 @@ export default function Rewards({ courses, setOverlay }) {
             })}
           </div>
         </div>
-        : <h2>No assignments submitted since last login!</h2>
+        : <h2 style={{ height: "60%" }}>No assignments submitted since last login!</h2>
       }
-      <button onClick={() => setOverlay("home")} className="rewardsConfirm">OK</button>
+        <button onClick={() => setOverlay("home")} className="rewardsConfirm">OK</button>
     </div>
   )
 }
@@ -54,4 +55,5 @@ export default function Rewards({ courses, setOverlay }) {
 Rewards.propTypes = {
   courses: PropTypes.array,
   setOverlay: PropTypes.func,
+  streak: PropTypes.number
 }

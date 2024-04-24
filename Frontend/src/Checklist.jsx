@@ -17,7 +17,7 @@ export default function Checklist({ courses, setOverlay }) {
     <div className="rewardsBackground">
       <h1 className="rewardsHeader">Upcoming assignments:</h1>
       {upcomingAssignments.length != 0 ?
-        <div style={{ height: "100%" }}>
+        <div style={{ height: "60%" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             {index != 0 ?
               <button className="rewardsIndexButton" onClick={() => { setIndex(index - 1) }}>&lt;</button>

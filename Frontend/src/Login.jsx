@@ -26,8 +26,9 @@ export default function Login({onLoginDataReceived}) {
       try {
         await getCsrfToken();
 
-        const accInfoResp = await axios.get(`/getAccountInfo`);
         if (!ignore) {
+          const accInfoResp = await axios.get(`/getAccountInfo`);
+
           onLoginDataReceived(accInfoResp.data.userData)
         }
       } catch (e) {
@@ -69,7 +70,6 @@ export default function Login({onLoginDataReceived}) {
         const accInfoResp = await axios.get(`/getAccountInfo`);
         
         onLoginDataReceived(accInfoResp.data.userData)
-        console.log("logged in");
       } catch (e) {
         if (e.response) {
           console.log(e.response.data.message);
@@ -167,7 +167,7 @@ export default function Login({onLoginDataReceived}) {
 function CanvasAPIKeyContainer({ keyVal, setKey }) {
   return (
     <div className="inputContainer">
-      <p className="loginLabel">Canvas API Key</p>
+      <a className="loginLabel" href="https://community.canvaslms.com/t5/Admin-Guide/How-do-I-add-a-developer-API-key-for-an-account/ta-p/259" target="_blank" rel="noreferrer">Canvas API Key</a>
       <input value={keyVal}
              onChange={(e) => setKey(e.target.value)}
              type="password"/>

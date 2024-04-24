@@ -6,16 +6,19 @@ import Cat from "./Cat";
 import Rewards from "./Rewards";
 import Store from "./Store";
 import Checklist from "./Checklist";
+import Bosses from "./Bosses";
 import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
+import leaderboardButton from "./img/UI/Leader.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 import CatViewNotification from "./CatView.jsx";
 import rewardButton from "./img/UI/reward.png";
 import CatLoseNotification from "./CatLoseNotification.jsx";
+import Leaderboard from "./Leaderboard.jsx";
 
-function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
+function Home({ userData, setUserData, courses, setCourses, bossData, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight)
 
@@ -66,14 +69,18 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
       {changeType.length !== 0 && changeType[0] === "lost" && changedCats.length !== 0 && <CatLoseNotification cats={changedCats[0]} closeNotif={closeNotif} />}
 
       {
-        (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
+      (changeType === 'won' && changedCats.length !== 0) || (changeType === 'lost' && changedCats.length !== 0) ? <></>
       : overlay == "rewards" ? 
-        <Rewards courses={courses} setOverlay={setOverlay}/>
+        <Rewards courses={courses} setOverlay={setOverlay} streak={userData.streak}/>
       : overlay == "checklist" ? 
         <Checklist courses={courses} setOverlay={setOverlay}/>
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
-      : <></>
+      : overlay == "bosses" ? 
+        <Bosses setOverlay={setOverlay} bossData={bossData}/>
+      : overlay === "leaderboard" ?
+        <Leaderboard closeNotif={() => setOverlay("home")}/>
+    : <></>
       }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
         <img src={logoutButton}></img>      
@@ -83,14 +90,22 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
           <img src={floorTile} style={{width:'100%', height:'100%'}}></img>
         </div>
         <div className='back'>
-          <img src={StoreButton} className="function"></img>
-          <img src={rewardButton} className="function"></img>
-          <img src={upcomingButton} className="function"></img>
+          <img src={StoreButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={rewardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={leaderboardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
         </div>
         <div className='backOverlay'>
-          <img onClick={() => setOverlay('store')} src={StoreButton} title="Store" style={{opacity:0}}></img>
-          <img onClick={() => setOverlay('rewards')} src={StoreButton} title="Check Reward"style={{opacity:0}}></img>
-          <img onClick={() => setOverlay('checklist')} src={upcomingButton} title="Upcoming Assignment"style={{opacity:0}}></img>
+          {
+            courses && <>
+              <img onClick={() => {if (courses) setOverlay('store')}} className="function" src={StoreButton} title="Store" style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} className="function" title="Check Rewards"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} className="function" title="Upcoming Assignments"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} className="function" title="View Bossfights"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('leaderboard')}} src={leaderboardButton} className="function" title="Leaderboard"style={{opacity:0}}></img>
+            </>
+          }
         </div>
         <div className='wall'>
         </div>
@@ -103,7 +118,7 @@ function Home({ userData, setUserData, courses, setCourses, overlay, setOverlay,
           const deskHeight = 96;
 
           var desksPerRow = Math.floor((width * .86) / deskWidth)
-          var desksPerCol = (Math.ceil(userData.cats.length / desksPerRow));
+          var desksPerCol = (Math.ceil(userData.cats.filter((cat) => cat.alive === true).length / desksPerRow));
           
           var yCoord = deskHeight + height * .75 * (Math.floor(i / desksPerRow) / desksPerCol);
           var xCoord = (i % desksPerRow) * deskWidth
@@ -127,6 +142,7 @@ Home.propTypes = {
   setUserData: PropTypes.func,
   courses: PropTypes.array,
   setCourses: PropTypes.func,
+  bossData: PropTypes.array,
   overlay: PropTypes.string,
   setOverlay: PropTypes.func,
   getCsrfToken: PropTypes.func,

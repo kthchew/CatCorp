@@ -27,12 +27,15 @@ const httpLocalhost = /^http:\/\/localhost:[0-9]{1,5}$/;
 const stagingVercelDeployments = /^https:\/\/catcorp-frontend-.*-kenneths-projects-[a-z0-9]{8}\.vercel\.app$/;
 app.use(cors({ origin: ["https://catcorp.vercel.app", "https://catcorporation.vercel.app", httpLocalhost, stagingVercelDeployments], credentials: true }));
 app.use(_json());
+const usingLocalhost = process.env.NODE_ENV !== "production";
+console.log(usingLocalhost)
 app.use(session({
   name: 'session',
   secret: SESSION_SECRET,
   maxAge: 24 * 60 * 60 * 1000, // 1 day
-  sameSite: 'none',
-  partitioned: true,
+  sameSite: usingLocalhost ? 'lax' : 'none',
+  partitioned: usingLocalhost ? false : true,
+  secure: usingLocalhost ? false : true,
 }))
 app.use(lusca({
   csrf: true,
@@ -195,24 +198,24 @@ app.post('/cashNewSubmissions', limiter, async (req, res) => {
   }
 
   const result = await lock.acquire(userId, async () => {
-    try {
-      const userData = await CatCorpUser.getUserDataFromSession(req.session);
-      const courses = await canvas.getCourses(canvasKey);
-      const newCourses = await Promise.all(courses.map(async (c) => {
-        const newAssignments = await canvas.getAssignments(canvasKey, c.id)
-        const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
-        const weeklySubmissions = await canvas.getNewSubmissions(canvasKey, c.id, getLastSundayNight(Date.now()))
+      try {
+        const userData = await CatCorpUser.getUserDataFromSession(req.session);
+        const courses = await canvas.getCourses(canvasKey);
+        const newCourses = await Promise.all(courses.map(async (c) => {
+          const newAssignments = await canvas.getAssignments(canvasKey, c.id)
+          const newSubmissions = await canvas.getNewSubmissions(canvasKey, c.id, userData.lastLogin)
+          const weeklySubmissions = await canvas.getNewSubmissions(canvasKey, c.id, getLastSundayNight(Date.now()))
 
         return [c.id, c.name, newAssignments, newSubmissions, weeklySubmissions]
       }))
       const gainz = await CatCorpUser.cashSubmissions(req.session, newCourses);
-      return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2]});
+      return res.status(200).json({courses: gainz[0], gainedGems: gainz[1], bossResults: gainz[2], bossfights: gainz[3]});
     } catch (error) {
       return res.status(error.status).json({ error: error.message });
     }
   })
 
-  return result
+return result;
 })
 
 function getLastSundayNight(date) { //inputs unix timestamp, output unix timestamp
@@ -262,6 +265,11 @@ app.post('/buyLootbox', limiter, async (req, res) => {
   })
   return result
 });
+
+app.get('/getLeaderboard', limiter, async (req, res) => {
+  const leaderboard = await CatCorpUser.getLeaderboardUsers();
+  return res.status(200).json(leaderboard);
+})
 
 app.get('/randomCat', async (req, res) => {
   const cat1 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[0]);

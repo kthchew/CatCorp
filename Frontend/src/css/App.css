@@ -50,7 +50,8 @@ body {
 }
 
 .function {
-  margin-bottom: 3.5%;
+  margin-bottom: 5%;
+  width: calc(min(15vw, 15vh));
 }
 
 .wall {
