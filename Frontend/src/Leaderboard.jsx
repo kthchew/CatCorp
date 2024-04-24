@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import axios from "axios";
+import { Blocks } from "react-loader-spinner";
 import catTemplate from "./img/CatTemplate.png";
 import "./css/CatChangeNotification.css";
 import "./css/Cat.css"
@@ -36,9 +37,9 @@ export default function Leaderboard({closeNotif}) {
                     <h1 style={{marginTop: '0', paddingTop: '0', paddingRight: '27rem', fontSize: '3rem'}}>Leaderboard</h1>
                 </div>
                 <div className="catChangeNotif" style={{height: '70%'}}>
-                    <div className="catChangeNotifList" style={{overflowY: "auto", maxHeight: '100%'}}>
+                    <div className="catChangeNotifList" style={{overflowY: "auto", height: '100%'}}>
                         {
-                            loading ? <></> : users.map((user, i) => {
+                            loading ? <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}><Blocks style={{}} /></div> : users.map((user, i) => {
 
                                 return (
                                     <div key={user.username} style={{color: "black"}}>
@@ -74,7 +75,6 @@ export default function Leaderboard({closeNotif}) {
                 </div>
             </div>
         </div>
-
     )
 }
 
