@@ -16,7 +16,7 @@ export async function checkUsernameAvailable(username) {
 // This function does NOT do any checks for unique usernames, etc.
 export async function registerAccount(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 0, "cats": [], "streak": 0 })
+  const user = await getUserDB().insertOne({ "username": username, "password": hashedPassword, "lastLogin": Date.now(), "gems": 299, "cats": [], "streak": 0 })
   return user.insertedId
 }
 

@@ -94,10 +94,10 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
         <div className='backOverlay'>
           {
             courses && <>
-              <img onClick={() => {if (courses) setOverlay('store')}} src={StoreButton} title="Store" style={{opacity:0}}></img>
-              <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} title="Check Rewards"style={{opacity:0}}></img>
-              <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} title="Upcoming Assignments"style={{opacity:0}}></img>
-              <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} title="View Bossfights"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('store')}} className="function" src={StoreButton} title="Store" style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} className="function" title="Check Rewards"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} className="function" title="Upcoming Assignments"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} className="function" title="View Bossfights"style={{opacity:0}}></img>
             </>
           }
         </div>
@@ -112,7 +112,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
           const deskHeight = 96;
 
           var desksPerRow = Math.floor((width * .86) / deskWidth)
-          var desksPerCol = (Math.ceil(userData.cats.length / desksPerRow));
+          var desksPerCol = (Math.ceil(userData.cats.filter((cat) => cat.alive === true).length / desksPerRow));
           
           var yCoord = deskHeight + height * .75 * (Math.floor(i / desksPerRow) / desksPerCol);
           var xCoord = (i % desksPerRow) * deskWidth
