@@ -11,10 +11,12 @@ import { getCsrfToken } from './utils';
 import StoreButton from "./img/UI/store_button.png";
 import upcomingButton from "./img/UI/assignment.png";
 import logoutButton from "./img/UI/logout.png";
+import leaderboardButton from "./img/UI/Leader.png";
 import CatGainNotification from "./CatGainNotification.jsx";
 import CatViewNotification from "./CatView.jsx";
 import rewardButton from "./img/UI/reward.png";
 import CatLoseNotification from "./CatLoseNotification.jsx";
+import Leaderboard from "./Leaderboard.jsx";
 
 function Home({ userData, setUserData, courses, setCourses, bossData, overlay, setOverlay, changedCats, setChangedCats, changeType, setChangeType }) {
   const [width, setWidth] = useState(window.innerWidth);
@@ -75,7 +77,9 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
       : overlay == "store" ? 
         <Store setOverlay={setOverlay} userData={userData} setUserData={setUserData} onGainCat={gainedCat}/>
       : overlay == "bosses" ? 
-          <Bosses setOverlay={setOverlay} bossData={bossData}/>
+        <Bosses setOverlay={setOverlay} bossData={bossData}/>
+      : overlay === "leaderboard" ?
+        <Leaderboard closeNotif={setOverlay}/>
     : <></>
       }
       <button onClick={() => logout()} style={{position:'absolute',top:0, right:0}}>
@@ -90,6 +94,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
           <img src={rewardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
           <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
           <img src={upcomingButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
+          <img src={leaderboardButton} className="function" style={{opacity: courses ? 1 : 0.5}}></img>
         </div>
         <div className='backOverlay'>
           {
@@ -98,6 +103,7 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
               <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} className="function" title="Check Rewards"style={{opacity:0}}></img>
               <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} className="function" title="Upcoming Assignments"style={{opacity:0}}></img>
               <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} className="function" title="View Bossfights"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('leaderboard')}} src={leaderboardButton} className="function" title="Leaderboard"style={{opacity:0}}></img>
             </>
           }
         </div>

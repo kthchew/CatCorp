@@ -266,6 +266,11 @@ app.post('/buyLootbox', limiter, async (req, res) => {
   return result
 });
 
+app.get('/getLeaderboard', limiter, async (req, res) => {
+  const leaderboard = await CatCorpUser.getLeaderboardUsers();
+  return res.status(200).json(leaderboard);
+})
+
 app.get('/randomCat', async (req, res) => {
   const cat1 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[0]);
   const cat2 = new Cat(lootbox.LOOTBOX_RARITY_FUNCTIONS[1]);
