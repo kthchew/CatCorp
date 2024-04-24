@@ -14,7 +14,7 @@ export default function Bosses({ setOverlay, bossData }) {
     <div className="rewardsBackground">
       <h1 className="rewardsHeader">Class goals:</h1>
       {bossData && bossData.length != 0 ?
-        <div style={{display: "flex", height:"60%"}}>
+        <div style={{display: "flex", height:"60%", marginTop: "1%"}}>
           <div style={{ height: "60%", width: "40%" }}>
             <div style={{ display: "flex", justifyContent: "center" }}>
               {index != 0 ?

@@ -17,7 +17,8 @@
   border: 1px black solid;
   width: 20%;
   color: black;
-  margin: 0% 0;
+  position: absolute;
+  bottom: 10%;
 }
 
 .rewardsIndexButton, .rewardsFakeButton {
@@ -33,12 +34,12 @@
 
 .rewardsHeader {
   color: black;
-  margin-top: 5%; 
+  margin: 0%; 
 }
 
 .rewardsStreak {
   color: grey;
-  margin-top: -0%;
+  margin: 0;
 }
 
 .rewardsList {

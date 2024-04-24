@@ -93,7 +93,7 @@ h2 {
     text-align: center;
 }
 
-.leader{
+.leader {
     position:absolute; top:0; right:0;
 }
 
@@ -114,4 +114,8 @@ h2 {
 
 .loginLabel {
     margin: -22px 0;
+}
+
+a.loginLabel {
+    color: #0066CC;
 }
