@@ -382,3 +382,16 @@ export async function buyLootbox(session, lootboxID) {
     throw new lootbox.LootboxOpenError("Database issue, try again later");
   }
 }
+
+export async function getLeaderboardUsers() {
+  // get top 10 users with highest count of cats that have a property "alive" set to true
+  const users = await getUserDB().find({ "cats.alive": { $eq: true } }).sort({ "cats": -1 }).limit(10)
+  const userArray = await users.toArray();
+  return userArray
+    .map(user => {
+      // get first alive cat of each user
+      const publicUser = { username: user.username, cats: user.cats.length, gems: user.gems, catRepresentation: user.cats.find(cat => cat.alive) }
+      return publicUser;
+    })
+    .sort((a, b) => b.cats - a.cats);
+}
