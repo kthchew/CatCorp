@@ -100,10 +100,10 @@ function Home({ userData, setUserData, courses, setCourses, bossData, overlay, s
         <div className='backOverlay'>
           {
             courses && <>
-              <img onClick={() => {if (courses) setOverlay('store')}} className="function" src={StoreButton} title="Store" style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('store')}} src={StoreButton} className="function" title="Store" style={{opacity:0}}></img>
               <img onClick={() => {if (courses) setOverlay('rewards')}} src={rewardButton} className="function" title="Check Rewards"style={{opacity:0}}></img>
               <img onClick={() => {if (courses) setOverlay('checklist')}} src={upcomingButton} className="function" title="Upcoming Assignments"style={{opacity:0}}></img>
-              <img onClick={() => {if (courses) setOverlay('bosses')}} src={upcomingButton} className="function" title="View Bossfights"style={{opacity:0}}></img>
+              <img onClick={() => {if (courses) setOverlay('bosses')}} src={bossFight} className="function" title="View Bossfights"style={{opacity:0}}></img>
               <img onClick={() => {if (courses) setOverlay('leaderboard')}} src={leaderboardButton} className="function" title="Leaderboard"style={{opacity:0}}></img>
             </>
           }
